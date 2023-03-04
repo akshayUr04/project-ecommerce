@@ -6,3 +6,8 @@ type CreateAdmin struct {
 	Password string ` json:"password" validate:"required"`
 	IsSuper  bool   `json:"isSuper" validate:"required"`
 }
+
+type BlockData struct {
+	UserId uint   ` json:"userid" validate:"required"`
+	Reason string ` json:"reason" validate:"required"`
+}

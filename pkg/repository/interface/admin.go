@@ -10,4 +10,6 @@ type AdminRepository interface {
 	IsSuperAdmin(createrId int) (bool, error)
 	CreateAdmin(admin helperStruct.CreateAdmin) (response.AdminData, error)
 	AdminLogin(email string) (domain.Admins, error)
+	BlockUser(body helperStruct.BlockData, adminId int) error
+	UnblockUser(id int) error
 }

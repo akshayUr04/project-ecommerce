@@ -6,8 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AdminAuthorizationMiddleware(c *gin.Context) {
-	// s := c.Request.Header.Get("Authorization")
+func AdminAuth(c *gin.Context) {
 	tokenString, err := c.Cookie("AdminAuth")
 	if err != nil {
 		c.AbortWithStatus(http.StatusUnauthorized)

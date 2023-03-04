@@ -7,6 +7,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 
 	handler "github.com/akshayur04/project-ecommerce/pkg/api/handler"
+	"github.com/akshayur04/project-ecommerce/pkg/api/middleware"
 )
 
 type ServerHTTP struct {
@@ -25,19 +26,21 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	user := engine.Group("/")
+	admin := engine.Group("/admin")
 
 	user.POST("signup", userHandler.UserSignUp)
-	user.POST("login", userHandler.UserLogin)
+	user.POST("userlogin", userHandler.UserLogin)
 	user.POST("sendotp", otpHandler.SendOtp)
 	user.POST("verifyotp", otpHandler.ValidateOtp)
 	user.POST("logout", userHandler.UserLogout)
 
-	admin := engine.Group("/admin")
-
-	admin.POST("/login", adminHandler.AdminLoging)
+	admin.POST("/adminlogin", adminHandler.AdminLoging)
 	admin.POST("/creatadmin", adminHandler.CreateAdmin)
-	admin.POST("/logout", adminHandler.AdminLogout)
 
+	admin.Use(middleware.AdminAuth)
+	admin.POST("/adminlogout", adminHandler.AdminLogout)
+	admin.POST("blockuser", adminHandler.BlockUser)
+	admin.PATCH("unblockuser/:id", adminHandler.UnblockUser)
 	return &ServerHTTP{engine: engine}
 }
 

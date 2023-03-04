@@ -140,14 +140,15 @@
 | 10  | 5         | Asus-VivoBook-15-002 | 55           | [product image URL] | 800   |
 
 ## Table: product
+## Table: product
 
-| Id  | category_id | name                | Description                                                        | Product_image        |
-|-----| ---------- | ------------------- | ------------------------------------------------------------------ | --------------------|
-| 1   | 1          | HP Pavilion 15      | This laptop is ideal for work and entertainment. It comes with a 10th Gen Intel Core i5 processor and 8GB of RAM. | [product image URL] |
-| 2   | 1          | Dell Inspiron 14    | This laptop is perfect for everyday use. It has a 10th Gen Intel Core i3 processor and 4GB of RAM. | [product image URL] |
-| 3   | 1          | Lenovo IdeaPad 3    | This laptop is great for both work and play. It comes with a 10th Gen Intel Core i7 processor and 16GB of RAM. | [product image URL] |
-| 4   | 2          | Apple MacBook Air   | This laptop is designed for Apple enthusiasts. It comes with an M1 chip and 8GB of RAM. | [product image URL] |
-| 5   | 3          | Asus VivoBook 15    | This laptop is ideal for students and professionals. It comes with an AMD Ryzen 5 processor and 8GB of RAM. | [product image URL] |
+| Id  | category_id | name            | brand  | Description                                                                                                       | Product_image        |
+|-----|-------------|-----------------|--------|-------------------------------------------------------------------------------------------------------------------|----------------------|
+| 1   | 1           | Pavilion 15     | HP     | This laptop is ideal for work and entertainment. It comes with a 10th Gen Intel Core i5 processor and 8GB of RAM. | [product image URL]                                                                                         |
+| 2   | 1           | Inspiron 14     | Dell   | This laptop is perfect for everyday use. It has a 10th Gen Intel Core i3 processor and 4GB of RAM.                | [product image URL]                                                                                         |
+| 3   | 1           | IdeaPad 3       | Lenovo | This laptop is great for both work and play. It comes with a 10th Gen Intel Core i7 processor and 16GB of RAM.    | [product image URL]                                                                                         |
+| 4   | 2           | MacBook Air     | Apple  | This laptop is designed for Apple enthusiasts. It comes with an M1 chip and 8GB of RAM.                           | [product image URL]                                                                                         |
+| 5   | 3           | VivoBook 15     | Asus   | This laptop is ideal for students and professionals. It comes with an AMD Ryzen 5 processor and 8GB of RAM.       | [product image URL]      
 
 ## Table: product_category
 

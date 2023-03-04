@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"fmt"
+
 	"github.com/akshayur04/project-ecommerce/pkg/common/helperStruct"
 	"github.com/akshayur04/project-ecommerce/pkg/common/response"
 	"github.com/akshayur04/project-ecommerce/pkg/domain"
@@ -34,4 +36,46 @@ func (c *adminDatabase) AdminLogin(email string) (domain.Admins, error) {
 	var adminData domain.Admins
 	err := c.DB.Raw("SELECT * FROM admins WHERE email=?", email).Scan(&adminData).Error
 	return adminData, err
+}
+
+func (c *adminDatabase) BlockUser(body helperStruct.BlockData, adminId int) error {
+	// Start a transaction
+	tx := c.DB.Begin()
+	// Execute the first SQL command (UPDATE)
+	if err := tx.Exec("UPDATE users SET is_blocked = true WHERE id = ?", body.UserId).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	// Execute the second SQL command (INSERT)
+	if err := tx.Exec("INSERT INTO user_infos (users_id, reason_for_blocking, blocked_at, blocked_by) VALUES (?, ?, NOW(), ?)", body.UserId, body.Reason, adminId).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	// Commit the transaction
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	// If all commands were executed successfully, return nil
+	return nil
+
+}
+
+func (c *adminDatabase) UnblockUser(id int) error {
+	tx := c.DB.Begin()
+	fmt.Println(id)
+	if err := tx.Exec("UPDATE users SET is_blocked = false WHERE id=$1", id).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	query := "UPDATE user_infos SET reason_for_blocking=$1,blocked_at=NULL,blocked_by=$2 WHERE users_id=$3"
+	if err := tx.Exec(query, "", 0, id).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	return nil
 }

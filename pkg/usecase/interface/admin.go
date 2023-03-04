@@ -10,4 +10,6 @@ import (
 type AdminUsecase interface {
 	CreateAdmin(ctx context.Context, admis helperStruct.CreateAdmin, createrId int) (response.AdminData, error)
 	AdminLogin(admin helperStruct.LoginReq) (string, error)
+	BlockUser(body helperStruct.BlockData, adminId int) error
+	UnblockUser(id int) error
 }

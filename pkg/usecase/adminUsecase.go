@@ -15,11 +15,13 @@ import (
 
 type adminUseCae struct {
 	adminRepo interfaces.AdminRepository
+	// findIdUseCase services.FindIdUseCase
 }
 
 func NewAdminUsecase(adminRepo interfaces.AdminRepository) services.AdminUsecase {
 	return &adminUseCae{
 		adminRepo: adminRepo,
+		// findIdUseCase: findIdUseCase,
 	}
 }
 
@@ -72,4 +74,14 @@ func (c *adminUseCae) AdminLogin(admin helperStruct.LoginReq) (string, error) {
 	}
 
 	return ss, nil
+}
+
+func (c *adminUseCae) BlockUser(body helperStruct.BlockData, adminId int) error {
+	err := c.adminRepo.BlockUser(body, adminId)
+	return err
+}
+
+func (c *adminUseCae) UnblockUser(id int) error {
+	err := c.adminRepo.UnblockUser(id)
+	return err
 }

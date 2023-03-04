@@ -9,7 +9,7 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-func UserAuthorizationMiddleware(c *gin.Context) {
+func UserAut(c *gin.Context) {
 	// s := c.Request.Header.Get("Authorization")
 	tokenString, err := c.Cookie("UserAuth")
 	if err != nil {

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/akshayur04/project-ecommerce/pkg/common/helperStruct"
 	"github.com/akshayur04/project-ecommerce/pkg/common/response"
@@ -108,5 +109,85 @@ func (cr *AdminHandler) AdminLogout(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Logout succesfully",
 	})
+}
 
+func (cr *AdminHandler) BlockUser(c *gin.Context) {
+	var body helperStruct.BlockData
+	err := c.Bind(&body)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "bind faild",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	cookie, err := c.Cookie("AdminAuth")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Can't find AdminId",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	adminId, err := cr.findIdUseCase.FindId(cookie)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Can't find AdminId",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	err = cr.adminUseCase.BlockUser(body, adminId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Can't Block",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, response.Response{
+		StatusCode: 200,
+		Message:    "User Blocked",
+		Data:       nil,
+		Errors:     nil,
+	})
+}
+
+func (cr *AdminHandler) UnblockUser(c *gin.Context) {
+	paramsId := c.Param("id")
+	id, err := strconv.Atoi(paramsId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "bind faild",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	err = cr.adminUseCase.UnblockUser(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "cant unblock user",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, response.Response{
+		StatusCode: 200,
+		Message:    "user unblocked",
+		Data:       nil,
+		Errors:     nil,
+	})
 }
