@@ -38,9 +38,12 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 	admin.POST("/creatadmin", adminHandler.CreateAdmin)
 
 	admin.Use(middleware.AdminAuth)
-	admin.POST("/adminlogout", adminHandler.AdminLogout)
+	admin.POST("adminlogout", adminHandler.AdminLogout)
 	admin.POST("blockuser", adminHandler.BlockUser)
 	admin.PATCH("unblockuser/:id", adminHandler.UnblockUser)
+	admin.GET("finduser/:id", adminHandler.FindUser)
+	admin.GET("findall", adminHandler.FindAllUsers)
+
 	return &ServerHTTP{engine: engine}
 }
 

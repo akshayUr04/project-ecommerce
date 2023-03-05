@@ -22,7 +22,8 @@ func NewUserRepository(DB *gorm.DB) interfaces.UserRepository {
 
 func (c *userDatabase) UserSignUp(ctx context.Context, user helperStruct.UserReq) (response.UserData, error) {
 	var userData response.UserData
-	insertQuery := "INSERT INTO users (name,email,mobile,password)VALUES($1,$2,$3,$4) RETURNING id,name,email,mobile"
+	insertQuery := `INSERT INTO users (name,email,mobile,password)VALUES($1,$2,$3,$4) 
+					RETURNING id,name,email,mobile`
 	err := c.DB.Raw(insertQuery, user.Name, user.Email, user.Mobile, user.Password).Scan(&userData).Error
 	return userData, err
 }
@@ -35,6 +36,7 @@ func (c *userDatabase) UserLogin(ctx context.Context, email string) (domain.User
 	return userData, err
 }
 
+// to check whether there is any user exists coresponding to the given mobile number
 func (c *userDatabase) IsSignIn(phno string) (bool, error) {
 	quwery := "select exists(select 1 from users where mobile=?)"
 	var isSignIng bool

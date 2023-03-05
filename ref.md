@@ -140,7 +140,6 @@
 | 10  | 5         | Asus-VivoBook-15-002 | 55           | [product image URL] | 800   |
 
 ## Table: product
-## Table: product
 
 | Id  | category_id | name            | brand  | Description                                                                                                       | Product_image        |
 |-----|-------------|-----------------|--------|-------------------------------------------------------------------------------------------------------------------|----------------------|
@@ -162,26 +161,18 @@
 | 6   | 1                 | Lenovo        |
 
 
-## Table: variation
-
-| Id  | Category_id | name         |
-|-----| -----------| ------------ |
-| 1   | 1          | Color        |
-| 2   | 1          | RAM          |
-| 3   | 1          | Storage      |
-
 ## Table: variation_option
 
-| Id  | Variation_id | Value |
+| Id  | Variation   | Value |
 |-----| ------------| ----- |
-| 1   | 1           | Black |
-| 2   | 1           | Silver |
-| 3   | 2           | 4GB   |
-| 4   | 2           | 8GB   |
-| 5   | 2           | 16GB  |
-| 6   | 3           | 256GB |
-| 7   | 3           | 512GB |
-| 8   | 3           | 1TB   |
+| 1   | Color       | Black |
+| 2   | Color       | Silver |
+| 3   | RAM         | 4GB   |
+| 4   | RAM         | 8GB   |
+| 5   | RAM         | 16GB  |
+| 6   | Storage     | 256GB |
+| 7   | Storage     | 512GB |
+| 8   | Storage     | 1TB   |
 
 ## Table: product_configuration
 

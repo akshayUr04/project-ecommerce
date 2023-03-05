@@ -13,19 +13,19 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type adminUseCae struct {
+type adminUseCase struct {
 	adminRepo interfaces.AdminRepository
 	// findIdUseCase services.FindIdUseCase
 }
 
 func NewAdminUsecase(adminRepo interfaces.AdminRepository) services.AdminUsecase {
-	return &adminUseCae{
+	return &adminUseCase{
 		adminRepo: adminRepo,
 		// findIdUseCase: findIdUseCase,
 	}
 }
 
-func (c *adminUseCae) CreateAdmin(ctx context.Context, admin helperStruct.CreateAdmin, createrId int) (response.AdminData, error) {
+func (c *adminUseCase) CreateAdmin(ctx context.Context, admin helperStruct.CreateAdmin, createrId int) (response.AdminData, error) {
 	IsSuper, err := c.adminRepo.IsSuperAdmin(createrId)
 	if err != nil {
 		return response.AdminData{}, err
@@ -44,7 +44,7 @@ func (c *adminUseCae) CreateAdmin(ctx context.Context, admin helperStruct.Create
 	return adminData, err
 }
 
-func (c *adminUseCae) AdminLogin(admin helperStruct.LoginReq) (string, error) {
+func (c *adminUseCase) AdminLogin(admin helperStruct.LoginReq) (string, error) {
 	adminData, err := c.adminRepo.AdminLogin(admin.Email)
 	if err != nil {
 		return "", err
@@ -76,12 +76,22 @@ func (c *adminUseCae) AdminLogin(admin helperStruct.LoginReq) (string, error) {
 	return ss, nil
 }
 
-func (c *adminUseCae) BlockUser(body helperStruct.BlockData, adminId int) error {
+func (c *adminUseCase) BlockUser(body helperStruct.BlockData, adminId int) error {
 	err := c.adminRepo.BlockUser(body, adminId)
 	return err
 }
 
-func (c *adminUseCae) UnblockUser(id int) error {
+func (c *adminUseCase) UnblockUser(id int) error {
 	err := c.adminRepo.UnblockUser(id)
 	return err
+}
+
+func (c *adminUseCase) FindUser(id int) (response.UserDetails, error) {
+	userDetails, err := c.adminRepo.FindUser(id)
+	return userDetails, err
+}
+
+func (c *adminUseCase) FindAll() ([]response.UserDetails, error) {
+	users, err := c.adminRepo.FindAll()
+	return users, err
 }

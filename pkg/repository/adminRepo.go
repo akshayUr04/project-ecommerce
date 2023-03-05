@@ -27,7 +27,10 @@ func (c *adminDatabase) IsSuperAdmin(createrId int) (bool, error) {
 
 func (c *adminDatabase) CreateAdmin(admin helperStruct.CreateAdmin) (response.AdminData, error) {
 	var adminData response.AdminData
-	query := "INSERT INTO admins (name,email,password,is_super_admin)VALUES($1,$2,$3,$4)RETURNING id,name,email,is_super_admin"
+	query := `INSERT INTO admins (name,email,password,is_super_admin)
+								  VALUES($1,$2,$3,$4)
+								  RETURNING id,name,email,is_super_admin`
+
 	err := c.DB.Raw(query, admin.Name, admin.Email, admin.Password, admin.IsSuper).Scan(&adminData).Error
 	return adminData, err
 }
@@ -78,4 +81,34 @@ func (c *adminDatabase) UnblockUser(id int) error {
 		return err
 	}
 	return nil
+}
+
+func (c *adminDatabase) FindUser(id int) (response.UserDetails, error) {
+	var userDetails response.UserDetails
+	qury := `SELECT users.name,
+			 users.email, 
+			 users.mobile,  
+			 users.is_blocked, 
+			 infos.blocked_by,
+			 infos.blocked_at,
+			 infos.reason_for_blocking 
+			 FROM users as users FULL OUTER JOIN user_infos as infos ON users.id = infos.users_id
+			 WHERE users.id = $1;`
+
+	err := c.DB.Raw(qury, id).Scan(&userDetails).Error
+	return userDetails, err
+}
+
+func (c *adminDatabase) FindAll() ([]response.UserDetails, error) {
+	var users []response.UserDetails
+	qury := `SELECT users.name,
+			 users.email, 
+			 users.mobile,  
+			 users.is_blocked, 
+			 infos.blocked_by,
+			 infos.blocked_at,
+			 infos.reason_for_blocking 
+			 FROM users as users FULL OUTER JOIN user_infos as infos ON users.id = infos.users_id`
+	err := c.DB.Raw(qury).Scan(&users).Error
+	return users, err
 }

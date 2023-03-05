@@ -191,3 +191,55 @@ func (cr *AdminHandler) UnblockUser(c *gin.Context) {
 		Errors:     nil,
 	})
 }
+
+func (cr *AdminHandler) FindUser(c *gin.Context) {
+	paramsId := c.Param("id")
+	id, err := strconv.Atoi(paramsId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "bind faild",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	user, err := cr.adminUseCase.FindUser(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "cant find user",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, response.Response{
+		StatusCode: 200,
+		Message:    "user details",
+		Data:       user,
+		Errors:     nil,
+	})
+}
+
+func (cr *AdminHandler) FindAllUsers(c *gin.Context) {
+	users, err := cr.adminUseCase.FindAll()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "cant find user",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, response.Response{
+		StatusCode: 200,
+		Message:    "users are",
+		Data:       users,
+		Errors:     nil,
+	})
+
+}
