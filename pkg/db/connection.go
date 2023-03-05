@@ -23,7 +23,7 @@ func ConnectDatabase(cfg config.Config) (*gorm.DB, error) {
 		&domain.Admins{},
 		&domain.Category{},
 		&domain.Product{},
-		&domain.ProductItme{},
+		&domain.ProductItem{},
 		&domain.ProductVariation{},
 	)
 

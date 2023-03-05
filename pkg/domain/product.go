@@ -20,7 +20,7 @@ type Product struct {
 	Updated_at  time.Time
 }
 
-type ProductItme struct {
+type ProductItem struct {
 	Id           uint `gorm:"primaryKey;unique;not null"`
 	Product_id   uint
 	Product      Product `gorm:"foreignKey:Product_id"`
@@ -34,7 +34,7 @@ type ProductItme struct {
 type ProductVariation struct {
 	Id              uint `gorm:"primaryKey;unique;not null"`
 	Product_item_id uint
-	ProductItme     ProductItme `gorm:"foreignKey:Product_id"`
+	ProductItem     ProductItem `gorm:"foreignKey:Product_item_id"`
 	Color           string
 	Ram             int
 	Battery         int

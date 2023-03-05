@@ -16,7 +16,9 @@ type ServerHTTP struct {
 
 func NewServerHTTP(userHandler *handler.UserHandler,
 	otpHandler *handler.OtpHandler,
-	adminHandler *handler.AdminHandler) *ServerHTTP {
+	adminHandler *handler.AdminHandler,
+	productHandler *handler.ProductHandler) *ServerHTTP {
+
 	engine := gin.New()
 
 	// Use logger from Gin
@@ -26,23 +28,35 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	user := engine.Group("/")
+	{
+		user.POST("signup", userHandler.UserSignUp)
+		user.POST("userlogin", userHandler.UserLogin)
+		user.POST("sendotp", otpHandler.SendOtp)
+		user.POST("verifyotp", otpHandler.ValidateOtp)
+		user.POST("logout", userHandler.UserLogout)
+	}
+
 	admin := engine.Group("/admin")
+	{
+		admin.POST("/adminlogin", adminHandler.AdminLoging)
 
-	user.POST("signup", userHandler.UserSignUp)
-	user.POST("userlogin", userHandler.UserLogin)
-	user.POST("sendotp", otpHandler.SendOtp)
-	user.POST("verifyotp", otpHandler.ValidateOtp)
-	user.POST("logout", userHandler.UserLogout)
+		admin.Use(middleware.AdminAuth)
+		{
+			admin.POST("creatadmin", adminHandler.CreateAdmin)
+			admin.POST("adminlogout", adminHandler.AdminLogout)
+			admin.POST("blockuser", adminHandler.BlockUser)
+			admin.PATCH("unblockuser/:id", adminHandler.UnblockUser)
+			admin.GET("finduser/:id", adminHandler.FindUser)
+			admin.GET("findall", adminHandler.FindAllUsers)
+			//categorys
+			admin.POST("addcatergory", productHandler.CreateCategory)
+			admin.PATCH("updatedcategory/:id", productHandler.UpdatCategory)
+			admin.DELETE("deletecategory/:id", productHandler.DeleteCategory)
+			admin.GET("listallcategories", productHandler.ListCategories)
+			admin.GET("findcategories/:id", productHandler.DisplayCategory)
+		}
 
-	admin.POST("/adminlogin", adminHandler.AdminLoging)
-	admin.POST("/creatadmin", adminHandler.CreateAdmin)
-
-	admin.Use(middleware.AdminAuth)
-	admin.POST("adminlogout", adminHandler.AdminLogout)
-	admin.POST("blockuser", adminHandler.BlockUser)
-	admin.PATCH("unblockuser/:id", adminHandler.UnblockUser)
-	admin.GET("finduser/:id", adminHandler.FindUser)
-	admin.GET("findall", adminHandler.FindAllUsers)
+	}
 
 	return &ServerHTTP{engine: engine}
 }
