@@ -169,3 +169,30 @@ func (c *ProductDatabase) UpdateProductItem(id int, productItem helperStruct.Pro
 
 	return updatedItem, err
 }
+
+func (c *ProductDatabase) DeleteProductItem(id int) error {
+	query := `DELETE FROM product_items WHERE id=?`
+	err := c.DB.Exec(query, id).Error
+	return err
+}
+
+func (c *ProductDatabase) DisaplyaAllProductItems() ([]response.ProductItem, error) {
+	var productItems []response.ProductItem
+	query := `SELECT * FROM product_items`
+	err := c.DB.Raw(query).Scan(&productItems).Error
+	return productItems, err
+}
+
+func (c *ProductDatabase) DisaplyProductItem(id int) (response.ProductItem, error) {
+	var productItem response.ProductItem
+	query := `SELECT * FROM product_items WHERE  id=?`
+	err := c.DB.Raw(query, id).Scan(&productItem).Error
+	return productItem, err
+}
+
+func (c *ProductDatabase) ListAllProduct() ([]response.Product, error) {
+	var products []response.Product
+	query := `SELECT * FROM products `
+	err := c.DB.Raw(query).Scan(&products).Error
+	return products, err
+}

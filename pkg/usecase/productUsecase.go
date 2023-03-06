@@ -66,3 +66,23 @@ func (c *ProductUsecase) UpdateProductItem(id int, productItem helperStruct.Prod
 	updatedItem, err := c.productRepo.UpdateProductItem(id, productItem)
 	return updatedItem, err
 }
+
+func (c *ProductUsecase) DeleteProductItem(id int) error {
+	err := c.productRepo.DeleteProductItem(id)
+	return err
+}
+
+func (c *ProductUsecase) DisaplyaAllProductItems() ([]response.ProductItem, error) {
+	productItems, err := c.productRepo.DisaplyaAllProductItems()
+	return productItems, err
+}
+
+func (c *ProductUsecase) DisaplyProductItem(id int) (response.ProductItem, error) {
+	productItem, err := c.productRepo.DisaplyProductItem(id)
+	return productItem, err
+}
+
+func (c *ProductUsecase) ListAllProduct() ([]response.Product, error) {
+	products, err := c.productRepo.ListAllProduct()
+	return products, err
+}

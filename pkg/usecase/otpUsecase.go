@@ -10,19 +10,19 @@ import (
 	openapi "github.com/twilio/twilio-go/rest/verify/v2"
 )
 
-type otpUseCase struct {
+type OtpUseCase struct {
 	// otpRepo interfaces.OtpRepository
 	cfg config.Config
 }
 
 func NewOtpUseCase(cfg config.Config) services.OtpUseCase {
-	return &otpUseCase{
+	return &OtpUseCase{
 		// otpRepo: repo,
 		cfg: cfg,
 	}
 }
 
-func (c *otpUseCase) SendOtp(ctx context.Context, phno helperStruct.OTPData) error {
+func (c *OtpUseCase) SendOtp(ctx context.Context, phno helperStruct.OTPData) error {
 	var client *twilio.RestClient = twilio.NewRestClientWithParams(twilio.ClientParams{
 		Username: c.cfg.TWILIOACCOUNTSID,
 		Password: c.cfg.TWILIOAUTHTOKEN,
@@ -35,7 +35,7 @@ func (c *otpUseCase) SendOtp(ctx context.Context, phno helperStruct.OTPData) err
 	return err
 }
 
-func (c *otpUseCase) ValidateOtp(otpDetails helperStruct.VerifyOtp) (*openapi.VerifyV2VerificationCheck, error) {
+func (c *OtpUseCase) ValidateOtp(otpDetails helperStruct.VerifyOtp) (*openapi.VerifyV2VerificationCheck, error) {
 	var client *twilio.RestClient = twilio.NewRestClientWithParams(twilio.ClientParams{
 		Username: c.cfg.TWILIOACCOUNTSID,
 		Password: c.cfg.TWILIOAUTHTOKEN,

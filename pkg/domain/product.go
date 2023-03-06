@@ -13,7 +13,7 @@ type Product struct {
 	Id          uint   `gorm:"primaryKey;unique;not null"`
 	Name        string `gorm:"unique;not null"`
 	Description string
-	Brand       string `gorm:"unique;not null"`
+	Brand       string
 	Category_id uint
 	Category    Category `gorm:"foreignKey:Category_id"`
 	Created_at  time.Time
@@ -24,7 +24,7 @@ type ProductItem struct {
 	Id           uint `gorm:"primaryKey;unique;not null"`
 	Product_id   uint
 	Product      Product `gorm:"foreignKey:Product_id"`
-	Sku          string  `gorm:"unique;not null"`
+	Sku          string  `gorm:"not null"`
 	Qty_in_stock int
 	Color        string
 	Ram          int

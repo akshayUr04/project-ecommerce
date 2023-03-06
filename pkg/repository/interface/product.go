@@ -16,4 +16,8 @@ type ProductRepository interface {
 	DeleteProduct(id int) error
 	AddProductItem(productItem helperStruct.ProductItem) (response.ProductItem, error)
 	UpdateProductItem(id int, productItem helperStruct.ProductItem) (response.ProductItem, error)
+	DeleteProductItem(id int) error
+	DisaplyaAllProductItems() ([]response.ProductItem, error)
+	DisaplyProductItem(id int) (response.ProductItem, error)
+	ListAllProduct() ([]response.Product, error)
 }

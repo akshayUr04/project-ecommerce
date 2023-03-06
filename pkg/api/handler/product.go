@@ -286,6 +286,29 @@ func (cr *ProductHandler) DeleteProduct(c *gin.Context) {
 	})
 }
 
+func (cr *ProductHandler) ListAllProduct(c *gin.Context) {
+	products, err := cr.productUsecase.ListAllProduct()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "can't find products",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, response.Response{
+		StatusCode: 200,
+		Message:    "product",
+		Data:       products,
+		Errors:     nil,
+	})
+}
+
+// func (cr *ProductHandler) ShowProduct(c *gin.Context) {
+
+// }
+
 func (cr *ProductHandler) AddProductItem(c *gin.Context) {
 	var productItem helperStruct.ProductItem
 	err := c.Bind(&productItem)
@@ -315,6 +338,7 @@ func (cr *ProductHandler) AddProductItem(c *gin.Context) {
 		Errors:     nil,
 	})
 }
+
 func (cr *ProductHandler) UpdateProductItem(c *gin.Context) {
 	var productItem helperStruct.ProductItem
 	err := c.Bind(&productItem)
@@ -359,13 +383,84 @@ func (cr *ProductHandler) UpdateProductItem(c *gin.Context) {
 }
 
 func (cr *ProductHandler) DeleteProductItem(c *gin.Context) {
-
+	paramsId := c.Param("id")
+	id, err := strconv.Atoi(paramsId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "can't find id",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	err = cr.productUsecase.DeleteProductItem(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "can't delete item",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, response.Response{
+		StatusCode: 200,
+		Message:    "item deleted",
+		Data:       nil,
+		Errors:     nil,
+	})
 }
 
-// func (cr *ProductHandler) ListAllProduct(c *gin.Context) {
+func (cr *ProductHandler) DisaplyaAllProductItems(c *gin.Context) {
+	productItems, err := cr.productUsecase.DisaplyaAllProductItems()
 
-// }
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "can't disaply items",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
 
-// func (cr *ProductHandler) ShowProduct(c *gin.Context) {
+	c.JSON(http.StatusOK, response.Response{
+		StatusCode: 200,
+		Message:    "product items are",
+		Data:       productItems,
+		Errors:     nil,
+	})
+}
 
-// }
+func (cr *ProductHandler) DisaplyProductItem(c *gin.Context) {
+	paramsId := c.Param("id")
+	id, err := strconv.Atoi(paramsId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "can't find id",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	productItem, err := cr.productUsecase.DisaplyProductItem(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "can't find product",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, response.Response{
+		StatusCode: 200,
+		Message:    "product",
+		Data:       productItem,
+		Errors:     nil,
+	})
+
+}
