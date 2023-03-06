@@ -26,23 +26,14 @@ type ProductItem struct {
 	Product      Product `gorm:"foreignKey:Product_id"`
 	Sku          string  `gorm:"unique;not null"`
 	Qty_in_stock int
+	Color        string
+	Ram          int
+	Battery      int
+	Screen_size  float64
+	Storage      int
+	Camera       int
+	Price        int
 	Imag         string
 	Created_at   time.Time
-	Cpdated_at   time.Time
-}
-
-type ProductVariation struct {
-	Id              uint `gorm:"primaryKey;unique;not null"`
-	Product_item_id uint
-	ProductItem     ProductItem `gorm:"foreignKey:Product_item_id"`
-	Color           string
-	Ram             int
-	Battery         int
-	Screen_size     float64
-	Storage         int
-	Camera          int
-	Price           int
-	Imag            string
-	Created_at      time.Time
-	Updated         time.Time
+	Updated_at   time.Time
 }

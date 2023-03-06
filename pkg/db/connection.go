@@ -24,7 +24,6 @@ func ConnectDatabase(cfg config.Config) (*gorm.DB, error) {
 		&domain.Category{},
 		&domain.Product{},
 		&domain.ProductItem{},
-		&domain.ProductVariation{},
 	)
 
 	return db, dbErr

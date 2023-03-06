@@ -163,7 +163,7 @@ func (cr *ProductHandler) DisplayCategory(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
 			StatusCode: 400,
-			Message:    "can't find product",
+			Message:    "can't find category",
 			Data:       nil,
 			Errors:     err.Error(),
 		})
@@ -177,3 +177,195 @@ func (cr *ProductHandler) DisplayCategory(c *gin.Context) {
 		Errors:     nil,
 	})
 }
+
+func (cr *ProductHandler) AddProduct(c *gin.Context) {
+	var product helperStruct.Product
+	err := c.Bind(&product)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "can't bind",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	newProduct, err := cr.productUsecase.AddProduct(product)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "can't add product",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, response.Response{
+		StatusCode: 200,
+		Message:    "Product Added",
+		Data:       newProduct,
+		Errors:     nil,
+	})
+
+}
+
+func (cr *ProductHandler) UpdateProduct(c *gin.Context) {
+	var product helperStruct.Product
+	paramsId := c.Param("id")
+	id, err := strconv.Atoi(paramsId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Cant find id",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	if err := c.Bind(&product); err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Cant bind body",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	updatedProduct, err := cr.productUsecase.UpdateProduct(id, product)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Cant update product",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusBadRequest, response.Response{
+		StatusCode: 400,
+		Message:    "Cant find id",
+		Data:       updatedProduct,
+		Errors:     nil,
+	})
+
+}
+
+func (cr *ProductHandler) DeleteProduct(c *gin.Context) {
+
+	paramsId := c.Param("id")
+	id, err := strconv.Atoi(paramsId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "can't find productid",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	err = cr.productUsecase.DeleteProduct(id)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "can't delete product",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, response.Response{
+		StatusCode: 200,
+		Message:    "product deleted",
+		Data:       nil,
+		Errors:     nil,
+	})
+}
+
+func (cr *ProductHandler) AddProductItem(c *gin.Context) {
+	var productItem helperStruct.ProductItem
+	err := c.Bind(&productItem)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Cant bind",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	newProductItem, err := cr.productUsecase.AddProductItem(productItem)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Cant create",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, response.Response{
+		StatusCode: 200,
+		Message:    "product created",
+		Data:       newProductItem,
+		Errors:     nil,
+	})
+}
+func (cr *ProductHandler) UpdateProductItem(c *gin.Context) {
+	var productItem helperStruct.ProductItem
+	err := c.Bind(&productItem)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Cant bind",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+
+	paramsId := c.Param("id")
+	id, err := strconv.Atoi(paramsId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "can't find id",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+
+	updatedItem, err := cr.productUsecase.UpdateProductItem(id, productItem)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "can't update productitem",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, response.Response{
+		StatusCode: 200,
+		Message:    "productitem updated",
+		Data:       updatedItem,
+		Errors:     nil,
+	})
+}
+
+func (cr *ProductHandler) DeleteProductItem(c *gin.Context) {
+
+}
+
+// func (cr *ProductHandler) ListAllProduct(c *gin.Context) {
+
+// }
+
+// func (cr *ProductHandler) ShowProduct(c *gin.Context) {
+
+// }
