@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"github.com/akshayur04/project-ecommerce/pkg/common/response"
 	interfaces "github.com/akshayur04/project-ecommerce/pkg/repository/interface"
 	services "github.com/akshayur04/project-ecommerce/pkg/usecase/interface"
 )
@@ -28,4 +29,9 @@ func (c *CartUseCase) AddToCart(productId, userId int) error {
 func (c *CartUseCase) RemoveFromCart(userId, productId int) error {
 	err := c.cartRepo.RemoveFromCart(userId, productId)
 	return err
+}
+
+func (c *CartUseCase) ListCart(userId int) ([]response.Cart, error) {
+	items, err := c.cartRepo.ListCart(userId)
+	return items, err
 }

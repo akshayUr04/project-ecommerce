@@ -3,6 +3,7 @@ package repository
 import (
 	"fmt"
 
+	"github.com/akshayur04/project-ecommerce/pkg/common/response"
 	interfaces "github.com/akshayur04/project-ecommerce/pkg/repository/interface"
 	"gorm.io/gorm"
 )
@@ -110,4 +111,35 @@ func (c *CartDatabase) RemoveFromCart(userId, productId int) error {
 		return err
 	}
 	return nil
+}
+
+func (c *CartDatabase) ListCart(userId int) ([]response.Cart, error) {
+	fmt.Println(userId)
+	var items []response.Cart
+	tx := c.DB.Begin()
+	var cartId int
+	query1 := `SELECT id FROM carts WHERE user_id=? `
+	err := tx.Raw(query1, userId).Scan(&cartId).Error
+	if err != nil {
+		tx.Rollback()
+		return []response.Cart{}, err
+	}
+	fmt.Println(2)
+
+	query2 := `SELECT c.product_item_id, c.quantity, t.tottal 
+	FROM cart_items c JOIN carts t ON c.cart_id = t.id 
+	WHERE t.user_id = $1`
+	err = tx.Raw(query2, userId).Scan(&items).Error
+	if err != nil {
+		tx.Rollback()
+		return []response.Cart{}, err
+	}
+
+	fmt.Println(3)
+	if err = tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return []response.Cart{}, err
+	}
+	return items, nil
+
 }

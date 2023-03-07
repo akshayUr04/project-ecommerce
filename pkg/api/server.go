@@ -38,6 +38,7 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 
 		user.POST("addtocaart/:id", cartHandler.AddToCart)
 		user.PATCH("removefromcart/:id", cartHandler.RemoveFromCart)
+		user.GET("listcart", cartHandler.ListCart)
 	}
 
 	admin := engine.Group("/admin")
