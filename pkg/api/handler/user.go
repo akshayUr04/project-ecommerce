@@ -13,11 +13,13 @@ import (
 
 type UserHandler struct {
 	userUseCase services.UserUseCase
+	cartUseCase services.CartUsecase
 }
 
-func NewUserHandler(usecase services.UserUseCase) *UserHandler {
+func NewUserHandler(usecase services.UserUseCase, cartUseCase services.CartUsecase) *UserHandler {
 	return &UserHandler{
 		userUseCase: usecase,
+		cartUseCase: cartUseCase,
 	}
 }
 
@@ -44,6 +46,18 @@ func (cr *UserHandler) UserSignUp(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response.Response{
 			StatusCode: 400,
 			Message:    "unable signup",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+
+	err = cr.cartUseCase.CreateCart(userData.Id)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "unable create cart",
 			Data:       nil,
 			Errors:     err.Error(),
 		})

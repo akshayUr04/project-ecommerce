@@ -17,7 +17,8 @@ type ServerHTTP struct {
 func NewServerHTTP(userHandler *handler.UserHandler,
 	otpHandler *handler.OtpHandler,
 	adminHandler *handler.AdminHandler,
-	productHandler *handler.ProductHandler) *ServerHTTP {
+	productHandler *handler.ProductHandler,
+	cartHandler *handler.CartHandler) *ServerHTTP {
 
 	engine := gin.New()
 
@@ -34,6 +35,9 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 		user.POST("sendotp", otpHandler.SendOtp)
 		user.POST("verifyotp", otpHandler.ValidateOtp)
 		user.POST("logout", userHandler.UserLogout)
+
+		user.POST("addtocaart/:id", cartHandler.AddToCart)
+		user.PATCH("removefromcart/:id", cartHandler.RemoveFromCart)
 	}
 
 	admin := engine.Group("/admin")
@@ -65,6 +69,7 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 			admin.DELETE("deleteproductitem/:id", productHandler.DeleteProductItem)
 			admin.GET("disaplyaallproductItems", productHandler.DisaplyaAllProductItems)
 			admin.GET("disaplyproductItem/:id", productHandler.DisaplyProductItem)
+
 		}
 
 	}

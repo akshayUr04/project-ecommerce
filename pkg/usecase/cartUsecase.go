@@ -5,12 +5,27 @@ import (
 	services "github.com/akshayur04/project-ecommerce/pkg/usecase/interface"
 )
 
-type cartUseCase struct {
+type CartUseCase struct {
 	cartRepo interfaces.CartRepository
 }
 
-func NewcartUsecase(cartRepo interfaces.CartRepository) services.CartUsecase {
-	return &cartUseCase{
+func NewCartUsecase(cartRepo interfaces.CartRepository) services.CartUsecase {
+	return &CartUseCase{
 		cartRepo: cartRepo,
 	}
+}
+
+func (c *CartUseCase) CreateCart(id int) error {
+	err := c.cartRepo.CreateCart(id)
+	return err
+}
+
+func (c *CartUseCase) AddToCart(productId, userId int) error {
+	err := c.cartRepo.AddToCart(productId, userId)
+	return err
+}
+
+func (c *CartUseCase) RemoveFromCart(userId, productId int) error {
+	err := c.cartRepo.RemoveFromCart(userId, productId)
+	return err
 }
