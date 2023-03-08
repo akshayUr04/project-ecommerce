@@ -92,3 +92,13 @@ func (c *userUseCase) OtpLogin(phno string) (string, error) {
 
 	return ss, nil
 }
+
+func (c *userUseCase) AddAddress(id int, address helperStruct.Address) error {
+	err := c.userRepo.AddAddress(id, address)
+	return err
+}
+
+// func (c *userUseCase) UpdateAddress(id int, address helperStruct.Address) error {
+// 	err := c.userRepo.UpdateAddAddress(id, address)
+// 	return err
+// }

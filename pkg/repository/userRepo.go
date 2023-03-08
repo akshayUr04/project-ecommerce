@@ -51,3 +51,21 @@ func (c *userDatabase) OtpLogin(phno string) (int, error) {
 	err := c.DB.Raw(query, phno).Scan(&id).Error
 	return id, err
 }
+
+func (c *userDatabase) AddAddress(id int, address helperStruct.Address) error {
+	query1 := `INSERT INTO addresses (users_id,house_number,street,city, district,landmark,pincode,is_default)
+		VALUES($1,$2,$3,$4,$5,$6,$7,$8)`
+	err := c.DB.Exec(query1, id, address.
+		House_number,
+		address.Street,
+		address.City,
+		address.District,
+		address.Landmark,
+		address.Pincode,
+		address.IsDefault).Error
+	return err
+}
+
+// func (c *userDatabase) UpdateAddress(id int, address helperStruct.Address) error {
+// 	query:=``
+// }

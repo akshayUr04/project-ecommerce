@@ -18,7 +18,8 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 	otpHandler *handler.OtpHandler,
 	adminHandler *handler.AdminHandler,
 	productHandler *handler.ProductHandler,
-	cartHandler *handler.CartHandler) *ServerHTTP {
+	cartHandler *handler.CartHandler,
+	orderHandler *handler.OrderHandler) *ServerHTTP {
 
 	engine := gin.New()
 
@@ -35,10 +36,15 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 		user.POST("sendotp", otpHandler.SendOtp)
 		user.POST("verifyotp", otpHandler.ValidateOtp)
 		user.POST("logout", userHandler.UserLogout)
+		user.Use(middleware.UserAut)
+		{
+			user.POST("addtocaart/:id", cartHandler.AddToCart)
+			user.PATCH("removefromcart/:id", cartHandler.RemoveFromCart)
+			user.GET("listcart", cartHandler.ListCart)
+			user.POST("addaddress", userHandler.AddAddress)
+			user.POST("placeorder", orderHandler.PlaceOrder)
+		}
 
-		user.POST("addtocaart/:id", cartHandler.AddToCart)
-		user.PATCH("removefromcart/:id", cartHandler.RemoveFromCart)
-		user.GET("listcart", cartHandler.ListCart)
 	}
 
 	admin := engine.Group("/admin")

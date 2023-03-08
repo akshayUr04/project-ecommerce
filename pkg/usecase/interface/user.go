@@ -12,4 +12,6 @@ type UserUseCase interface {
 	UserLogin(ctx context.Context, user helperStruct.LoginReq) (string, error)
 	OtpLogin(phno string) (string, error)
 	IsSignIn(phno string) (bool, error)
+	AddAddress(id int, address helperStruct.Address) error
+	// UpdateAddress(id int, address helperStruct.Address) error
 }

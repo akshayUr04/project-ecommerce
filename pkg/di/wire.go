@@ -19,17 +19,20 @@ func InitializeAPI(cfg config.Config) (*http.ServerHTTP, error) {
 		repository.NewAdminRepository,
 		repository.NewProductRepository,
 		repository.NewCartRepository,
+		repository.NewOrderRepository,
 		usecase.NewUserUseCase,
 		usecase.NewOtpUseCase,
 		usecase.NewAdminUsecase,
 		usecase.NewFindIdUseCase,
 		usecase.NewProductUsecase,
+		usecase.NewOrderUseCase,
 		usecase.NewCartUsecase,
 		handler.NewUserHandler,
 		handler.NewOtpHandler,
 		handler.NewAdminHandler,
 		handler.NewProductHandler,
 		handler.NewCartHandler,
+		handler.NewOrderHandler,
 		http.NewServerHTTP)
 
 	return &http.ServerHTTP{}, nil

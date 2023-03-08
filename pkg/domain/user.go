@@ -13,19 +13,22 @@ type Users struct {
 }
 
 type Address struct {
-	ID           uint   `gorm:"primaryKey;unique;not null"`
+	ID           uint `gorm:"primaryKey;unique;not null"`
+	UsersID      uint
+	Users        Users  `gorm:"foreignKey:UsersID"`
 	House_number string `json:"house_number" binding:"required"`
 	Street       string `json:"street" binding:"required"`
 	City         string `json:"city " binding:"required"`
 	District     string `json:"district " binding:"required"`
 	Landmark     string `json:"landmark" binding:"required"`
 	Pincode      int    `json:"pincode " binding:"required"`
+	IsDefault    bool   `gorm:"default:false"`
 }
 
 type UserInfo struct {
 	ID                uint `gorm:"primaryKey"`
 	UsersID           uint
-	Users             Users
+	Users             Users `gorm:"foreignKey:UsersID"`
 	BlockedAt         time.Time
 	BlockedBy         uint
 	ReasonForBlocking string

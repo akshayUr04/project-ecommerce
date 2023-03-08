@@ -13,4 +13,6 @@ type UserRepository interface {
 	UserLogin(ctx context.Context, email string) (domain.Users, error)
 	IsSignIn(phno string) (bool, error)
 	OtpLogin(phno string) (int, error)
+	AddAddress(id int, address helperStruct.Address) error
+	// UpdateAddress(id int, address helperStruct.Address) error
 }

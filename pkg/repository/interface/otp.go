@@ -1,4 +1,4 @@
 package interfaces
 
-type OtpRepository interface {
-}
+// type OtpRepository interface {
+// }

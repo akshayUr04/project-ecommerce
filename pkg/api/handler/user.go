@@ -12,19 +12,28 @@ import (
 )
 
 type UserHandler struct {
-	userUseCase services.UserUseCase
-	cartUseCase services.CartUsecase
+	userUseCase   services.UserUseCase
+	cartUseCase   services.CartUsecase
+	findIdUseCase services.FindIdUseCase
 }
 
-func NewUserHandler(usecase services.UserUseCase, cartUseCase services.CartUsecase) *UserHandler {
+func NewUserHandler(usecase services.UserUseCase, cartUseCase services.CartUsecase, findIdUseCase services.FindIdUseCase) *UserHandler {
 	return &UserHandler{
-		userUseCase: usecase,
-		cartUseCase: cartUseCase,
+		userUseCase:   usecase,
+		cartUseCase:   cartUseCase,
+		findIdUseCase: findIdUseCase,
 	}
 }
 
 // --------------------------------------------------UserSignUp------------------------------------------------------------
 
+// @Summary user signup
+// @ID user-signup
+// @accept json
+// @Param user_details body helperStruct.UserReq true "User Data"
+// @Success 200 {object} response.UserData
+// @Failure 400 {object} response.Response
+// @Router /signup [post]
 func (cr *UserHandler) UserSignUp(c *gin.Context) {
 	// ctx, cancel := context.WithTimeout(c.Request.Context(), time.Minute)
 	// defer cancel()
@@ -73,7 +82,13 @@ func (cr *UserHandler) UserSignUp(c *gin.Context) {
 }
 
 // --------------------------------------------------UserLogin------------------------------------------------------------
-
+// @Summary user login
+// @ID user-login
+// @accept json
+// @Param user_details body  helperStruct.LoginReq true "User Data"
+// @Success 200 {object}
+// @Failure 400 {object} response.Response
+// @Router /userlogin [post]
 func (cr *UserHandler) UserLogin(c *gin.Context) {
 
 	var user helperStruct.LoginReq
@@ -104,9 +119,124 @@ func (cr *UserHandler) UserLogin(c *gin.Context) {
 	c.SetCookie("UserAuth", ss, 3600*24*30, "", "", false, true)
 }
 
+// @Summary user logout
+// @ID user-logout
+// @Produce json
+// @Success 200 {object}
+// @Router /logout [get]
 func (cr *UserHandler) UserLogout(c *gin.Context) {
 	c.SetCookie("UserAuth", "", -1, "", "", false, true)
 	c.JSON(http.StatusOK, gin.H{
 		"message": "UserLogouted",
 	})
 }
+
+// @Summary user add address
+// @ID user-add-address
+// @accept json
+// @Param user_address body  helperStruct.Address true "User address"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /addaddress [post]
+func (cr *UserHandler) AddAddress(c *gin.Context) {
+	cookie, err := c.Cookie("UserAuth")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Can't find Id",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	Id, err := cr.findIdUseCase.FindId(cookie)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Can't find Id",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	var address helperStruct.Address
+	err = c.Bind(&address)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Can't bind",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+
+	err = cr.userUseCase.AddAddress(Id, address)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Can't add address",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, response.Response{
+		StatusCode: 200,
+		Message:    "address added",
+		Data:       nil,
+		Errors:     nil,
+	})
+}
+
+// func (cr *UserHandler) UpdateAddress(c *gin.Context) {
+// 	cookie, err := c.Cookie("UserAuth")
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, response.Response{
+// 			StatusCode: 400,
+// 			Message:    "Can't find Id",
+// 			Data:       nil,
+// 			Errors:     err.Error(),
+// 		})
+// 		return
+// 	}
+// 	Id, err := cr.findIdUseCase.FindId(cookie)
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, response.Response{
+// 			StatusCode: 400,
+// 			Message:    "Can't find Id",
+// 			Data:       nil,
+// 			Errors:     err.Error(),
+// 		})
+// 		return
+// 	}
+// 	var address helperStruct.Address
+// 	err = c.Bind(&address)
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, response.Response{
+// 			StatusCode: 400,
+// 			Message:    "Can't bind",
+// 			Data:       nil,
+// 			Errors:     err.Error(),
+// 		})
+// 		return
+// 	}
+// 	err = cr.userUseCase.UpdateAddress(Id, address)
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, response.Response{
+// 			StatusCode: 400,
+// 			Message:    "Can't update address",
+// 			Data:       nil,
+// 			Errors:     err.Error(),
+// 		})
+// 		return
+// 	}
+
+// 	c.JSON(http.StatusOK, response.Response{
+// 		StatusCode: 200,
+// 		Message:    "address updated",
+// 		Data:       nil,
+// 		Errors:     nil,
+// 	})
+// }
