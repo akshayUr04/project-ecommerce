@@ -6,16 +6,19 @@ type Category struct {
 }
 
 type Product struct {
-	Id          int
-	Name        string
-	Description string
-	Brand       string
-	CategoryId  string
+	Id           int
+	Name         string
+	Description  string
+	Brand        string
+	CategoryName string
 }
 
 type ProductItem struct {
 	Id           uint
-	Product_id   uint
+	Name         string
+	Description  string
+	Brand        string
+	CategoryName string
 	Sku          string
 	Qty_in_stock int
 	Color        string

@@ -20,4 +20,5 @@ type ProductRepository interface {
 	DisaplyaAllProductItems() ([]response.ProductItem, error)
 	DisaplyProductItem(id int) (response.ProductItem, error)
 	ListAllProduct() ([]response.Product, error)
+	ShowProduct(id int) (response.Product, error)
 }

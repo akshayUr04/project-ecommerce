@@ -86,3 +86,8 @@ func (c *ProductUsecase) ListAllProduct() ([]response.Product, error) {
 	products, err := c.productRepo.ListAllProduct()
 	return products, err
 }
+
+func (c *ProductUsecase) ShowProduct(id int) (response.Product, error) {
+	product, err := c.productRepo.ShowProduct(id)
+	return product, err
+}

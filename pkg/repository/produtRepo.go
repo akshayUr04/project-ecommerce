@@ -178,21 +178,43 @@ func (c *ProductDatabase) DeleteProductItem(id int) error {
 
 func (c *ProductDatabase) DisaplyaAllProductItems() ([]response.ProductItem, error) {
 	var productItems []response.ProductItem
-	query := `SELECT * FROM product_items`
+	query := `SELECT p.name,
+		p.description,
+		p.brand,
+		c.name, 
+		pi.*
+		FROM products p 
+		JOIN categories c ON p.category_id=c.id 
+		JOIN product_items pi ON p.id=pi.product_id;`
 	err := c.DB.Raw(query).Scan(&productItems).Error
 	return productItems, err
 }
 
 func (c *ProductDatabase) DisaplyProductItem(id int) (response.ProductItem, error) {
 	var productItem response.ProductItem
-	query := `SELECT * FROM product_items WHERE  id=?`
+	query := `SELECT p.name,
+	p.description,
+	p.brand,
+	c.name, 
+	pi.*
+	FROM products p 
+	JOIN categories c ON p.category_id=c.id 
+	JOIN product_items pi ON p.id=pi.product_id WHERE pi.id=$1`
 	err := c.DB.Raw(query, id).Scan(&productItem).Error
 	return productItem, err
 }
 
 func (c *ProductDatabase) ListAllProduct() ([]response.Product, error) {
 	var products []response.Product
-	query := `SELECT * FROM products `
+	query := `SELECT p.name,p.description,p.brand,c.name FROM products p JOIN categories c ON p.category_id=c.id `
 	err := c.DB.Raw(query).Scan(&products).Error
 	return products, err
+}
+
+func (c *ProductDatabase) ShowProduct(id int) (response.Product, error) {
+	var product response.Product
+	query := `SELECT p.name,p.description,p.brand,c.name FROM products p 
+		JOIN categories c ON p.category_id=c.id WHERE p.id=$1`
+	err := c.DB.Raw(query, id).Scan(&product).Error
+	return product, err
 }

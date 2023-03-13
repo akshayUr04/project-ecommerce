@@ -305,9 +305,36 @@ func (cr *ProductHandler) ListAllProduct(c *gin.Context) {
 	})
 }
 
-// func (cr *ProductHandler) ShowProduct(c *gin.Context) {
+func (cr *ProductHandler) ShowProduct(c *gin.Context) {
 
-// }
+	paramsId := c.Param("id")
+	id, err := strconv.Atoi(paramsId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "can't find productid",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	product, err := cr.productUsecase.ShowProduct(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "can't find products",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, response.Response{
+		StatusCode: 200,
+		Message:    "product",
+		Data:       product,
+		Errors:     nil,
+	})
+}
 
 func (cr *ProductHandler) AddProductItem(c *gin.Context) {
 	var productItem helperStruct.ProductItem

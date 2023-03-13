@@ -36,6 +36,11 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 		user.POST("sendotp", otpHandler.SendOtp)
 		user.POST("verifyotp", otpHandler.ValidateOtp)
 		user.POST("logout", userHandler.UserLogout)
+		user.GET("disaplyaallproductItems", productHandler.DisaplyaAllProductItems)
+		user.GET("disaplyproductItem/:id", productHandler.DisaplyProductItem)
+		user.GET("listallproduct", productHandler.ListAllProduct)
+		user.GET("listallcategories", productHandler.ListCategories)
+		user.GET("findcategories/:id", productHandler.DisplayCategory)
 		user.Use(middleware.UserAut)
 		{
 			user.POST("addtocaart/:id", cartHandler.AddToCart)
@@ -65,17 +70,18 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 			admin.DELETE("deletecategory/:id", productHandler.DeleteCategory)
 			admin.GET("listallcategories", productHandler.ListCategories)
 			admin.GET("findcategories/:id", productHandler.DisplayCategory)
-
+			//product
 			admin.POST("addproduct", productHandler.AddProduct)
 			admin.PATCH("updateproduct/:id", productHandler.UpdateProduct)
 			admin.DELETE("deleteproduct/:id", productHandler.DeleteProduct)
 			admin.GET("listallproduct", productHandler.ListAllProduct)
-
+			admin.GET("showproduct/:id", productHandler.ShowProduct)
+			//product item
 			admin.POST("addproductitem", productHandler.AddProductItem)
 			admin.PATCH("updatedproductitem/:id", productHandler.UpdateProductItem)
 			admin.DELETE("deleteproductitem/:id", productHandler.DeleteProductItem)
 			admin.GET("disaplyaallproductItems", productHandler.DisaplyaAllProductItems)
-			admin.GET("disaplyproductItem/:id", productHandler.DisaplyProductItem)
+			admin.GET("disaplyproductitem/:id", productHandler.DisaplyProductItem)
 
 		}
 
