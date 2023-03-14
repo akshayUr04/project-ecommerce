@@ -40,8 +40,8 @@ func (c *OrderDatabase) OrderAll(id, paymentTypeId int) (domain.Orders, error) {
 
 	//Add the details to the orders and return the orderid
 	var order domain.Orders
-	insetOrder := `INSERT INTO orders (user_id,order_date,payment_type_id,shipping_address,order_total,order_status)
-		VALUES($1,NOW(),$2,$3,$4,'shipped') RETURNING *`
+	insetOrder := `INSERT INTO orders (user_id,order_date,payment_type_id,shipping_address,order_total,order_status_id)
+		VALUES($1,NOW(),$2,$3,$4,1) RETURNING *`
 	err = tx.Raw(insetOrder, id, paymentTypeId, addressId, cart.Tottal).Scan(&order).Error
 	if err != nil {
 		tx.Rollback()
@@ -72,6 +72,14 @@ func (c *OrderDatabase) OrderAll(id, paymentTypeId int) (domain.Orders, error) {
 		}
 	}
 
+	//Update the cart total
+	updateCart := `UPDATE carts SET tottal=0 WHERE user_id=?`
+	err = tx.Exec(updateCart, id).Error
+	if err != nil {
+		tx.Rollback()
+		return domain.Orders{}, err
+	}
+
 	//Remove the items from the cart_items
 	for _, items := range cartItmes {
 		removeCartItems := `DELETE FROM cart_items WHERE carts_id =$1 AND product_item_id=$2`
@@ -97,4 +105,48 @@ func (c *OrderDatabase) OrderAll(id, paymentTypeId int) (domain.Orders, error) {
 		return domain.Orders{}, err
 	}
 	return order, nil
+}
+
+func (c *OrderDatabase) UserCancelOrder(orderId, userId int) error {
+	tx := c.DB.Begin()
+
+	//find the orderd product and qty and update the product_items with those
+	var items []helperStruct.CartItems
+	findProducts := `SELECT product_item_id,quantity FROM order_items WHERE orders_id=?`
+	err := tx.Raw(findProducts, orderId).Scan(&items).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	if len(items) == 0 {
+		return fmt.Errorf("no order found with this id")
+	}
+	for _, item := range items {
+		updateProductItem := `UPDATE product_items SET qty_in_stock=qty_in_stock+$1 WHERE id=$2`
+		err = tx.Exec(updateProductItem, item.Quantity, item.ProductItemId).Error
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+	//Remove the items from order_items
+	removeItems := `DELETE FROM order_items WHERE orders_id=$1`
+	err = tx.Exec(removeItems, orderId).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	//update the order status as canceled
+	cancelOrder := `UPDATE orders SET order_status_id=$1 WHERE id=$2 AND user_id=$3`
+	err = tx.Exec(cancelOrder, 4, orderId, userId).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if err = tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	return nil
 }

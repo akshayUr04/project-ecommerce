@@ -20,3 +20,8 @@ func (c *OrderUseCase) OrderAll(id, paymentTypeId int) (domain.Orders, error) {
 	order, err := c.orderRepo.OrderAll(id, paymentTypeId)
 	return order, err
 }
+
+func (c *OrderUseCase) UserCancelOrder(orderId, userId int) error {
+	err := c.orderRepo.UserCancelOrder(orderId, userId)
+	return err
+}

@@ -49,6 +49,7 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 			user.POST("addaddress", userHandler.AddAddress)
 			user.PATCH("updateaddress/:id", userHandler.UpdateAddress)
 			user.POST("orderall/:id", orderHandler.OrderAll)
+			user.PATCH("usercancelordrder/:id", orderHandler.UserCancelOrder)
 		}
 
 	}

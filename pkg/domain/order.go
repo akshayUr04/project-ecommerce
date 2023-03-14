@@ -12,12 +12,14 @@ type PaymentType struct {
 type Orders struct {
 	Id              uint `gorm:"primaryKey;unique;not null"`
 	UserId          uint
+	Users           Users `gorm:"foreignKey:UserId"`
 	OrderDate       time.Time
 	PaymentTypeId   uint
 	PaymentType     PaymentType `gorm:"foreignKey:PaymentTypeId"`
 	ShippingAddress uint
 	OrderTotal      int
-	OrderStatus     string
+	OrderStatusID   uint
+	OrderStatus     OrderStatus `gorm:"foreignKey:OrderStatusID"`
 }
 
 type OrderItem struct {
@@ -28,4 +30,9 @@ type OrderItem struct {
 	ProductItem   ProductItem `gorm:"foreignKey:ProductItemId"`
 	Quantity      int
 	Price         int
+}
+
+type OrderStatus struct {
+	Id     uint   `gorm:"primaryKey;unique;not null"`
+	Status string `grom:"unique"`
 }
