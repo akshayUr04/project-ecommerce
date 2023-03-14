@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/akshayur04/project-ecommerce/pkg/common/response"
 	services "github.com/akshayur04/project-ecommerce/pkg/usecase/interface"
@@ -20,7 +21,19 @@ func NewOrderHandler(orderUseCase services.OrderUseCase, findIdUseCase services.
 	}
 }
 
-func (cr *OrderHandler) PlaceOrder(c *gin.Context) {
+func (cr *OrderHandler) OrderAll(c *gin.Context) {
+	paramsId := c.Param("id")
+	paymentTypeId, err := strconv.Atoi(paramsId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "bind faild",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+
 	cookie, err := c.Cookie("UserAuth")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
@@ -41,5 +54,20 @@ func (cr *OrderHandler) PlaceOrder(c *gin.Context) {
 		})
 		return
 	}
-	cr.orderUseCase.PlaceOrder(userId)
+	order, err := cr.orderUseCase.OrderAll(userId, paymentTypeId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "cant place order",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, response.Response{
+		StatusCode: 200,
+		Message:    "orderplaced",
+		Data:       order,
+		Errors:     nil,
+	})
 }

@@ -5,17 +5,16 @@ import (
 )
 
 type PaymentType struct {
-	Id        uint   `gorm:"primaryKey;unique;not null"`
-	Type      string `gorm:"unique;not null"`
-	IsDefault bool
+	Id   uint   `gorm:"primaryKey;unique;not null"`
+	Type string `gorm:"unique;not null"`
 }
 
-type Orderes struct {
+type Orders struct {
 	Id              uint `gorm:"primaryKey;unique;not null"`
 	UserId          uint
-	OrderDdate      time.Time
+	OrderDate       time.Time
 	PaymentTypeId   uint
-	PaymentType     PaymentType
+	PaymentType     PaymentType `gorm:"foreignKey:PaymentTypeId"`
 	ShippingAddress uint
 	OrderTotal      int
 	OrderStatus     string
@@ -23,8 +22,8 @@ type Orderes struct {
 
 type OrderItem struct {
 	Id            uint `gorm:"primaryKey;unique;not null"`
-	OrderId       uint
-	Orderes       Orderes `gorm:"foreignKey:OrderId"`
+	OrdersId      uint
+	Orders        Orders `gorm:"foreignKey:OrdersId"`
 	ProductItemId uint
 	ProductItem   ProductItem `gorm:"foreignKey:ProductItemId"`
 	Quantity      int
