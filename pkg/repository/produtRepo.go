@@ -19,14 +19,14 @@ func NewProductRepository(DB *gorm.DB) interfaces.ProductRepository {
 
 func (c *ProductDatabase) CreateCategory(category helperStruct.Category) (response.Category, error) {
 	var newCategoery response.Category
-	query := `INSERT INTO categories (name,created_at)VAlues($1,NOW())RETURNING id,name`
+	query := `INSERT INTO categories (category_name,created_at)VAlues($1,NOW())RETURNING id,category_name`
 	err := c.DB.Raw(query, category.Name).Scan(&newCategoery).Error
 	return newCategoery, err
 }
 
 func (c *ProductDatabase) UpdatCategory(category helperStruct.Category, id int) (response.Category, error) {
 	var updatedCategory response.Category
-	query := `UPDATE  categories SET name = $1 , updated_at =NOW() WHERE id=$2 RETURNING id,name `
+	query := `UPDATE  categories SET category_name = $1 , updated_at =NOW() WHERE id=$2 RETURNING id,category_name `
 	err := c.DB.Raw(query, category.Name, id).Scan(&updatedCategory).Error
 	return updatedCategory, err
 }
@@ -61,9 +61,9 @@ func (c *ProductDatabase) AddProduct(product helperStruct.Product) (response.Pro
 		return response.Product{}, fmt.Errorf("no category found")
 	}
 
-	query := `INSERT INTO products (name,description,brand,category_id,created_at)
+	query := `INSERT INTO products (product_name,description,brand,category_id,created_at)
 		VALUES ($1,$2,$3,$4,NOW())
-		RETURNING id,name,description,brand,category_id`
+		RETURNING id,product_name,description,brand,category_id`
 	err := c.DB.Raw(query, product.Name, product.Description, product.Brand, product.CategoryId).
 		Scan(&newProduct).Error
 	return newProduct, err
@@ -71,8 +71,8 @@ func (c *ProductDatabase) AddProduct(product helperStruct.Product) (response.Pro
 
 func (c *ProductDatabase) UpdateProduct(id int, product helperStruct.Product) (response.Product, error) {
 	var updatedProduct response.Product
-	query2 := `UPDATE products SET name=$1,description=$2,brand=$3,category_id=$4,updated_at=NOW() WHERE id=$5
-		RETURNING id,name,description,brand,category_id`
+	query2 := `UPDATE products SET product_name=$1,description=$2,brand=$3,category_id=$4,updated_at=NOW() WHERE id=$5
+		RETURNING id,product_name,description,brand,category_id`
 	err := c.DB.Raw(query2, product.Name, product.Description, product.Brand, product.CategoryId, id).
 		Scan(&updatedProduct).Error
 	return updatedProduct, err
@@ -206,14 +206,14 @@ func (c *ProductDatabase) DisaplyProductItem(id int) (response.ProductItem, erro
 
 func (c *ProductDatabase) ListAllProduct() ([]response.Product, error) {
 	var products []response.Product
-	query := `SELECT p.name,p.description,p.brand,c.name FROM products p JOIN categories c ON p.category_id=c.id `
+	query := `SELECT p.product_name,p.description,p.brand,c.category_name FROM products p JOIN categories c ON p.category_id=c.id `
 	err := c.DB.Raw(query).Scan(&products).Error
 	return products, err
 }
 
 func (c *ProductDatabase) ShowProduct(id int) (response.Product, error) {
 	var product response.Product
-	query := `SELECT p.name,p.description,p.brand,c.name FROM products p 
+	query := `SELECT p.product_name,p.description,p.brand,c.category_name FROM products p 
 		JOIN categories c ON p.category_id=c.id WHERE p.id=$1`
 	err := c.DB.Raw(query, id).Scan(&product).Error
 	return product, err

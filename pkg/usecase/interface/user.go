@@ -13,5 +13,5 @@ type UserUseCase interface {
 	OtpLogin(phno string) (string, error)
 	IsSignIn(phno string) (bool, error)
 	AddAddress(id int, address helperStruct.Address) error
-	// UpdateAddress(id int, address helperStruct.Address) error
+	UpdateAddress(id, addressId int, address helperStruct.Address) error
 }

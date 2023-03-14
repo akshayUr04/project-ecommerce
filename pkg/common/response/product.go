@@ -1,8 +1,8 @@
 package response
 
 type Category struct {
-	Id   int
-	Name string
+	Id           int
+	CategoryName string
 }
 
 type Product struct {
@@ -15,7 +15,7 @@ type Product struct {
 
 type ProductItem struct {
 	Id           uint
-	Name         string
+	ProductName  string
 	Description  string
 	Brand        string
 	CategoryName string

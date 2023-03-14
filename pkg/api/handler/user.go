@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 
@@ -190,53 +191,64 @@ func (cr *UserHandler) AddAddress(c *gin.Context) {
 	})
 }
 
-// func (cr *UserHandler) UpdateAddress(c *gin.Context) {
-// 	cookie, err := c.Cookie("UserAuth")
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, response.Response{
-// 			StatusCode: 400,
-// 			Message:    "Can't find Id",
-// 			Data:       nil,
-// 			Errors:     err.Error(),
-// 		})
-// 		return
-// 	}
-// 	Id, err := cr.findIdUseCase.FindId(cookie)
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, response.Response{
-// 			StatusCode: 400,
-// 			Message:    "Can't find Id",
-// 			Data:       nil,
-// 			Errors:     err.Error(),
-// 		})
-// 		return
-// 	}
-// 	var address helperStruct.Address
-// 	err = c.Bind(&address)
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, response.Response{
-// 			StatusCode: 400,
-// 			Message:    "Can't bind",
-// 			Data:       nil,
-// 			Errors:     err.Error(),
-// 		})
-// 		return
-// 	}
-// 	err = cr.userUseCase.UpdateAddress(Id, address)
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, response.Response{
-// 			StatusCode: 400,
-// 			Message:    "Can't update address",
-// 			Data:       nil,
-// 			Errors:     err.Error(),
-// 		})
-// 		return
-// 	}
+func (cr *UserHandler) UpdateAddress(c *gin.Context) {
+	paramsId := c.Param("id")
+	addressId, err := strconv.Atoi(paramsId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Can't find ProductId",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	cookie, err := c.Cookie("UserAuth")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Can't find Id",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	Id, err := cr.findIdUseCase.FindId(cookie)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Can't find Id",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	var address helperStruct.Address
+	err = c.Bind(&address)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Can't bind",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	err = cr.userUseCase.UpdateAddress(Id, addressId, address)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Can't update address",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
 
-// 	c.JSON(http.StatusOK, response.Response{
-// 		StatusCode: 200,
-// 		Message:    "address updated",
-// 		Data:       nil,
-// 		Errors:     nil,
-// 	})
-// }
+	c.JSON(http.StatusOK, response.Response{
+		StatusCode: 200,
+		Message:    "address updated",
+		Data:       nil,
+		Errors:     nil,
+	})
+}

@@ -53,9 +53,20 @@ func (c *userDatabase) OtpLogin(phno string) (int, error) {
 }
 
 func (c *userDatabase) AddAddress(id int, address helperStruct.Address) error {
-	query1 := `INSERT INTO addresses (users_id,house_number,street,city, district,landmark,pincode,is_default)
+
+	//Check if the new address is being set as default
+	if address.IsDefault { //Change the default address into false
+		changeDefault := `UPDATE addresses SET is_default = $1 WHERE users_id=$2 AND is_default=$3`
+		err := c.DB.Exec(changeDefault, false, id, true).Error
+
+		if err != nil {
+			return err
+		}
+	}
+	//Insert the new address
+	insert := `INSERT INTO addresses (users_id,house_number,street,city, district,landmark,pincode,is_default)
 		VALUES($1,$2,$3,$4,$5,$6,$7,$8)`
-	err := c.DB.Exec(query1, id, address.
+	err := c.DB.Exec(insert, id, address.
 		House_number,
 		address.Street,
 		address.City,
@@ -66,6 +77,28 @@ func (c *userDatabase) AddAddress(id int, address helperStruct.Address) error {
 	return err
 }
 
-// func (c *userDatabase) UpdateAddress(id int, address helperStruct.Address) error {
-// 	query:=``
-// }
+func (c *userDatabase) UpdateAddress(id, addressId int, address helperStruct.Address) error {
+	//Check if the new address is being set as default
+	if address.IsDefault { //Change the default address into false
+		changeDefault := `UPDATE addresses SET is_default = $1 WHERE users_id=$2 AND is_default=$3`
+		err := c.DB.Exec(changeDefault, false, id, true).Error
+
+		if err != nil {
+			return err
+		}
+	}
+	//Update the address
+	update := `UPDATE addresses SET 
+		house_number=$1,street=$2,city=$3, district=$4,landmark=$5,pincode=$6,is_default=$7 WHERE users_id=$8 AND id=$9`
+	err := c.DB.Exec(update,
+		address.House_number,
+		address.Street,
+		address.City,
+		address.District,
+		address.Landmark,
+		address.Pincode,
+		address.IsDefault,
+		id,
+		addressId).Error
+	return err
+}

@@ -98,7 +98,7 @@ func (c *userUseCase) AddAddress(id int, address helperStruct.Address) error {
 	return err
 }
 
-// func (c *userUseCase) UpdateAddress(id int, address helperStruct.Address) error {
-// 	err := c.userRepo.UpdateAddAddress(id, address)
-// 	return err
-// }
+func (c *userUseCase) UpdateAddress(id, addressId int, address helperStruct.Address) error {
+	err := c.userRepo.UpdateAddress(id, addressId, address)
+	return err
+}

@@ -27,8 +27,8 @@ func (c *adminDatabase) IsSuperAdmin(createrId int) (bool, error) {
 
 func (c *adminDatabase) CreateAdmin(admin helperStruct.CreateAdmin) (response.AdminData, error) {
 	var adminData response.AdminData
-	query := `INSERT INTO admins (name,email,password,is_super_admin)
-								  VALUES($1,$2,$3,$4)
+	query := `INSERT INTO admins (name,email,password,is_super_admin,created_at)
+								  VALUES($1,$2,$3,$4,NOW())
 								  RETURNING id,name,email,is_super_admin`
 
 	err := c.DB.Raw(query, admin.Name, admin.Email, admin.Password, admin.IsSuper).Scan(&adminData).Error

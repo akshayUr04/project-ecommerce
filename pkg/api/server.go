@@ -47,6 +47,7 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 			user.PATCH("removefromcart/:id", cartHandler.RemoveFromCart)
 			user.GET("listcart", cartHandler.ListCart)
 			user.POST("addaddress", userHandler.AddAddress)
+			user.PATCH("updateaddress/:id", userHandler.UpdateAddress)
 			user.POST("placeorder", orderHandler.PlaceOrder)
 		}
 

@@ -7,7 +7,9 @@ type CartItems struct {
 
 type Cart struct {
 	// Products []CartItems
-	ProductItemId int
-	Quantity      int
-	Tottal        int
+	Sku      string
+	Color    string
+	Price    int
+	Quantity int
+	Tottal   int
 }
