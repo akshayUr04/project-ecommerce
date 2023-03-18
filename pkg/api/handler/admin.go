@@ -243,3 +243,23 @@ func (cr *AdminHandler) FindAllUsers(c *gin.Context) {
 	})
 
 }
+
+func (cr *AdminHandler) AdminDashBoard(c *gin.Context) {
+	dashBoard, err := cr.adminUseCase.GetDashBoard()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "cant get dashboard",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, response.Response{
+		StatusCode: 200,
+		Message:    "Dash board",
+		Data:       dashBoard,
+		Errors:     nil,
+	})
+}

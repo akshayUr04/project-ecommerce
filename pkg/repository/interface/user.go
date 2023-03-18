@@ -15,4 +15,8 @@ type UserRepository interface {
 	OtpLogin(phno string) (int, error)
 	AddAddress(id int, address helperStruct.Address) error
 	UpdateAddress(id, addressId int, address helperStruct.Address) error
+	Viewprfile(id int) (response.UserData, error)
+	UserEditProfile(id int, updatingDetails helperStruct.UserReq) (response.UserData, error)
+	UpdatePassword(id int, newPassword string) error
+	FindPassword(id int) (string, error)
 }

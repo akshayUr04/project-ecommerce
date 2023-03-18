@@ -87,7 +87,7 @@ func (cr *UserHandler) UserSignUp(c *gin.Context) {
 // @ID user-login
 // @accept json
 // @Param user_details body  helperStruct.LoginReq true "User Data"
-// @Success 200 {object}
+// @Success 200
 // @Failure 400 {object} response.Response
 // @Router /userlogin [post]
 func (cr *UserHandler) UserLogin(c *gin.Context) {
@@ -123,7 +123,7 @@ func (cr *UserHandler) UserLogin(c *gin.Context) {
 // @Summary user logout
 // @ID user-logout
 // @Produce json
-// @Success 200 {object}
+// @Success 200
 // @Router /logout [get]
 func (cr *UserHandler) UserLogout(c *gin.Context) {
 	c.SetCookie("UserAuth", "", -1, "", "", false, true)
@@ -248,6 +248,146 @@ func (cr *UserHandler) UpdateAddress(c *gin.Context) {
 	c.JSON(http.StatusOK, response.Response{
 		StatusCode: 200,
 		Message:    "address updated",
+		Data:       nil,
+		Errors:     nil,
+	})
+}
+
+func (cr *UserHandler) Viewprfile(c *gin.Context) {
+	cookie, err := c.Cookie("UserAuth")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Can't find Id",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	Id, err := cr.findIdUseCase.FindId(cookie)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Can't find Id",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+
+	Profile, err := cr.userUseCase.Viewprfile(Id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Can't find userprofile",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, response.Response{
+		StatusCode: 200,
+		Message:    "Profile",
+		Data:       Profile,
+		Errors:     nil,
+	})
+}
+
+func (cr *UserHandler) UserEditProfile(c *gin.Context) {
+	cookie, err := c.Cookie("UserAuth")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Can't find Id",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	Id, err := cr.findIdUseCase.FindId(cookie)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Can't find Id",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	var updatingDetails helperStruct.UserReq
+	err = c.Bind(&updatingDetails)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Can't bind details",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+	}
+	updatedProfile, err := cr.userUseCase.UserEditProfile(Id, updatingDetails)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Can't find userprofile",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, response.Response{
+		StatusCode: 200,
+		Message:    "Profile updated",
+		Data:       updatedProfile,
+		Errors:     nil,
+	})
+}
+
+func (cr *UserHandler) UpdatePassword(c *gin.Context) {
+	cookie, err := c.Cookie("UserAuth")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Can't find Id",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	Id, err := cr.findIdUseCase.FindId(cookie)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Can't find Id",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	var Passwords helperStruct.UpdatePassword
+	err = c.Bind(&Passwords)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Can't bind",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	err = cr.userUseCase.UpdatePassword(Id, Passwords)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Can't update password",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, response.Response{
+		StatusCode: 200,
+		Message:    "Password updated",
 		Data:       nil,
 		Errors:     nil,
 	})

@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	_ "github.com/akshayur04/project-ecommerce/cmd/api/docs"
 	_ "github.com/akshayur04/project-ecommerce/pkg/common/helperStruct"
 	_ "github.com/akshayur04/project-ecommerce/pkg/common/response"
 

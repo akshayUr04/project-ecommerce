@@ -28,7 +28,9 @@ func (c *OrderDatabase) OrderAll(id, paymentTypeId int) (domain.Orders, error) {
 		tx.Rollback()
 		return domain.Orders{}, err
 	}
-
+	if cart.Tottal == 0 {
+		return domain.Orders{}, fmt.Errorf("no items in cart")
+	}
 	//Find the default address of the user
 	var addressId int
 	address := `SELECT id FROM addresses WHERE users_id=$1 AND is_default=true`
@@ -36,6 +38,9 @@ func (c *OrderDatabase) OrderAll(id, paymentTypeId int) (domain.Orders, error) {
 	if err != nil {
 		tx.Rollback()
 		return domain.Orders{}, err
+	}
+	if addressId == 0 {
+		return domain.Orders{}, fmt.Errorf("add address pls")
 	}
 
 	//Add the details to the orders and return the orderid
@@ -149,4 +154,19 @@ func (c *OrderDatabase) UserCancelOrder(orderId, userId int) error {
 		return err
 	}
 	return nil
+}
+
+func (c *OrderDatabase) ListOrder(userId, orderId int) (domain.Orders, error) {
+	var order domain.Orders
+	findOrder := `SELECT * FROM orders WHERE user_id=$1 AND id=$2`
+	err := c.DB.Raw(findOrder, userId, orderId).Scan(&order).Error
+	return order, err
+}
+
+func (c *OrderDatabase) ListAllOrders(userId int) ([]domain.Orders, error) {
+	var orders []domain.Orders
+
+	findOrders := `SELECT * FROM orders WHERE user_id=?`
+	err := c.DB.Raw(findOrders, userId).Scan(&orders).Error
+	return orders, err
 }

@@ -1,0 +1,149 @@
+definitions:
+  helperStruct.Address:
+    properties:
+      city:
+        type: string
+      district:
+        type: string
+      house_number:
+        type: string
+      id:
+        type: integer
+      isdefault:
+        type: boolean
+      landmark:
+        type: string
+      pincode:
+        type: integer
+      street:
+        type: string
+    required:
+    - city
+    - district
+    - house_number
+    - landmark
+    - pincode
+    - street
+    type: object
+  helperStruct.LoginReq:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  helperStruct.UserReq:
+    properties:
+      email:
+        type: string
+      mobile:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - mobile
+    - name
+    type: object
+  response.Response:
+    properties:
+      data: {}
+      error: {}
+      message:
+        type: string
+      stastuscode:
+        type: integer
+    type: object
+  response.UserData:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      mobile:
+        type: string
+      name:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /addaddress:
+    post:
+      consumes:
+      - application/json
+      operationId: user-add-address
+      parameters:
+      - description: User address
+        in: body
+        name: user_address
+        required: true
+        schema:
+          $ref: '#/definitions/helperStruct.Address'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: user add address
+  /logout:
+    get:
+      operationId: user-logout
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: user logout
+  /signup:
+    post:
+      consumes:
+      - application/json
+      operationId: user-signup
+      parameters:
+      - description: User Data
+        in: body
+        name: user_details
+        required: true
+        schema:
+          $ref: '#/definitions/helperStruct.UserReq'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.UserData'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: user signup
+  /userlogin:
+    post:
+      consumes:
+      - application/json
+      operationId: user-login
+      parameters:
+      - description: User Data
+        in: body
+        name: user_details
+        required: true
+        schema:
+          $ref: '#/definitions/helperStruct.LoginReq'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: user login
+swagger: "2.0"

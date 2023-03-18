@@ -43,6 +43,9 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 		user.GET("findcategories/:id", productHandler.DisplayCategory)
 		user.Use(middleware.UserAut)
 		{
+			user.GET("viewprfile", userHandler.Viewprfile)
+			user.PATCH("editprofile", userHandler.UserEditProfile)
+			user.PATCH("updatepassword", userHandler.UpdatePassword)
 			user.POST("addtocaart/:id", cartHandler.AddToCart)
 			user.PATCH("removefromcart/:id", cartHandler.RemoveFromCart)
 			user.GET("listcart", cartHandler.ListCart)
@@ -50,6 +53,8 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 			user.PATCH("updateaddress/:id", userHandler.UpdateAddress)
 			user.POST("orderall/:id", orderHandler.OrderAll)
 			user.PATCH("usercancelordrder/:id", orderHandler.UserCancelOrder)
+			user.GET("vieworder/:id", orderHandler.ListOrder)
+			user.GET("listallorder", orderHandler.ListAllOrders)
 		}
 
 	}
@@ -84,6 +89,8 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 			admin.DELETE("deleteproductitem/:id", productHandler.DeleteProductItem)
 			admin.GET("disaplyaallproductItems", productHandler.DisaplyaAllProductItems)
 			admin.GET("disaplyproductitem/:id", productHandler.DisaplyProductItem)
+
+			admin.GET("getdashboard", adminHandler.AdminDashBoard)
 
 		}
 

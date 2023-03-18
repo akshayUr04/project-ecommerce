@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/akshayur04/project-ecommerce/pkg/common/helperStruct"
 	"github.com/akshayur04/project-ecommerce/pkg/common/response"
@@ -100,5 +101,33 @@ func (c *userDatabase) UpdateAddress(id, addressId int, address helperStruct.Add
 		address.IsDefault,
 		id,
 		addressId).Error
+	return err
+}
+
+func (c *userDatabase) Viewprfile(id int) (response.UserData, error) {
+	var profile response.UserData
+	findProfile := `SELECT name,email,mobile FROM users WHERE id=?`
+	err := c.DB.Raw(findProfile, id).Scan(&profile).Error
+	fmt.Println(profile)
+	return profile, err
+
+}
+
+func (c *userDatabase) UserEditProfile(id int, updatingDetails helperStruct.UserReq) (response.UserData, error) {
+	var profile response.UserData
+	updateProfile := `UPDATE users SET name=$1,email=$2,mobile=$3 WHERE id=$4 RETURNING name,email,mobile`
+	err := c.DB.Raw(updateProfile, updatingDetails.Name, updatingDetails.Email, updatingDetails.Mobile, id).Scan(&profile).Error
+	return profile, err
+}
+
+func (c *userDatabase) FindPassword(id int) (string, error) {
+	var orginalPassword string
+	err := c.DB.Raw("SELECT password FROM users WHERE id=?", id).Scan(&orginalPassword).Error
+	return orginalPassword, err
+}
+
+func (c *userDatabase) UpdatePassword(id int, newPassword string) error {
+	updatePassword := `UPDATE users SET password=$1 WHERE id=$2`
+	err := c.DB.Exec(updatePassword, newPassword, id).Error
 	return err
 }

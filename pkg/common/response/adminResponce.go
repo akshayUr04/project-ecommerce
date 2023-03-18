@@ -6,3 +6,9 @@ type AdminData struct {
 	Email        string
 	IsSuperAdmin bool
 }
+type DashBoard struct {
+	TotalRevenue        int
+	TotalOrders         int
+	TotalProductsSelled int
+	TotalUsers          int
+}

@@ -31,3 +31,8 @@ type Address struct {
 	Pincode      int    `json:"pincode " binding:"required"`
 	IsDefault    bool   `json:"isdefault" `
 }
+
+type UpdatePassword struct {
+	OldPassword string `json:"oldpassword" `
+	NewPasswoed string `json:"newpassword" `
+}

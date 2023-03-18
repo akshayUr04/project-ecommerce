@@ -102,3 +102,35 @@ func (c *userUseCase) UpdateAddress(id, addressId int, address helperStruct.Addr
 	err := c.userRepo.UpdateAddress(id, addressId, address)
 	return err
 }
+
+func (c *userUseCase) Viewprfile(id int) (response.UserData, error) {
+	profile, err := c.userRepo.Viewprfile(id)
+	return profile, err
+}
+
+func (c *userUseCase) UserEditProfile(id int, updatingDetails helperStruct.UserReq) (response.UserData, error) {
+	updatedProfile, err := c.userRepo.UserEditProfile(id, updatingDetails)
+	return updatedProfile, err
+}
+
+func (c *userUseCase) UpdatePassword(id int, Passwords helperStruct.UpdatePassword) error {
+
+	orginalPassword, err := c.userRepo.FindPassword(id)
+	if err != nil {
+		return err
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(orginalPassword), []byte(Passwords.OldPassword))
+	if err != nil {
+		return err
+	}
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(Passwords.NewPasswoed), 10)
+	if err != nil {
+		return err
+	}
+	newPassword := string(hash)
+
+	err = c.userRepo.UpdatePassword(id, newPassword)
+	return err
+}

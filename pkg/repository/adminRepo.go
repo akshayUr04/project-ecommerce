@@ -1,8 +1,6 @@
 package repository
 
 import (
-	"fmt"
-
 	"github.com/akshayur04/project-ecommerce/pkg/common/helperStruct"
 	"github.com/akshayur04/project-ecommerce/pkg/common/response"
 	"github.com/akshayur04/project-ecommerce/pkg/domain"
@@ -66,7 +64,6 @@ func (c *adminDatabase) BlockUser(body helperStruct.BlockData, adminId int) erro
 
 func (c *adminDatabase) UnblockUser(id int) error {
 	tx := c.DB.Begin()
-	fmt.Println(id)
 	if err := tx.Exec("UPDATE users SET is_blocked = false WHERE id=$1", id).Error; err != nil {
 		tx.Rollback()
 		return err
@@ -111,4 +108,43 @@ func (c *adminDatabase) FindAll() ([]response.UserDetails, error) {
 			 FROM users as users FULL OUTER JOIN user_infos as infos ON users.id = infos.users_id`
 	err := c.DB.Raw(qury).Scan(&users).Error
 	return users, err
+}
+
+func (c *adminDatabase) GetDashBoard() (response.DashBoard, error) {
+	tx := c.DB.Begin()
+	var dashBoard response.DashBoard
+	getDasheBoard := `SELECT SUM(oi.quantity*oi.price)as Total_Revenue,
+			SUM (oi.quantity)as Total_Products_Selled,
+			COUNT(DISTINCT o.id)as Total_Orders FROM orders o
+			JOIN order_items oi on o.id=oi.orders_id
+			WHERE o.order_status_id=$1`
+	if err := tx.Raw(getDasheBoard, 1).Scan(&dashBoard).Error; err != nil {
+		tx.Rollback()
+		return response.DashBoard{}, err
+	}
+
+	// getDasheBoard := `SELECT SUM(quantity*price)as Total_Revenue,
+	// 		SUM (quantity)as Total_Products_Selled FROM order_items`
+	// if err := tx.Raw(getDasheBoard).Scan(&dashBoard).Error; err != nil {
+	// 	tx.Rollback()
+	// 	return response.DashBoard{}, err
+	// }
+
+	// getOrderNo := `SELECT COUNT(id)FROM orders WHERE order_status_id=$1`
+	// if err := tx.Raw(getOrderNo, 1).Scan(&dashBoard.TotalOrders).Error; err != nil {
+	// 	tx.Rollback()
+	// 	return response.DashBoard{}, err
+	// }
+
+	getTotalUsers := `SELECT COUNT(id)AS TotalUsers FROM users`
+	if err := tx.Raw(getTotalUsers).Scan(&dashBoard.TotalUsers).Error; err != nil {
+		tx.Rollback()
+		return response.DashBoard{}, err
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return response.DashBoard{}, err
+	}
+	return dashBoard, nil
 }

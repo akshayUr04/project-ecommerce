@@ -95,3 +95,8 @@ func (c *adminUseCase) FindAll() ([]response.UserDetails, error) {
 	users, err := c.adminRepo.FindAll()
 	return users, err
 }
+
+func (c *adminUseCase) GetDashBoard() (response.DashBoard, error) {
+	dashBoard, err := c.adminRepo.GetDashBoard()
+	return dashBoard, err
+}
