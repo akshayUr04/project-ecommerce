@@ -19,7 +19,8 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 	adminHandler *handler.AdminHandler,
 	productHandler *handler.ProductHandler,
 	cartHandler *handler.CartHandler,
-	orderHandler *handler.OrderHandler) *ServerHTTP {
+	orderHandler *handler.OrderHandler,
+	paymentHandler *handler.PaymentHandler) *ServerHTTP {
 
 	engine := gin.New()
 
@@ -55,6 +56,9 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 			user.PATCH("usercancelordrder/:id", orderHandler.UserCancelOrder)
 			user.GET("vieworder/:id", orderHandler.ListOrder)
 			user.GET("listallorder", orderHandler.ListAllOrders)
+
+			user.GET("/order/razorpay/:id", paymentHandler.CreateRazorpayPayment)
+			user.GET("/payment-handler", paymentHandler.PaymentSuccess)
 		}
 
 	}
@@ -100,5 +104,6 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 }
 
 func (sh *ServerHTTP) Start() {
+	sh.engine.LoadHTMLGlob("template/*.html")
 	sh.engine.Run(":3000")
 }

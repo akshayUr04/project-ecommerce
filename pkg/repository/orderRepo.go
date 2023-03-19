@@ -105,6 +105,19 @@ func (c *OrderDatabase) OrderAll(id, paymentTypeId int) (domain.Orders, error) {
 		}
 	}
 
+	//update the PaymentDetails table with OrdersID, OrderTotal, PaymentTypeID, PaymentStatusID
+	createPaymentDetails := `INSERT INTO payment_details
+			(orders_id,
+			order_total,
+			payment_type_id,
+			payment_status_id,
+			updated_at)
+			VALUES($1,$2,$3,$4,NOW())`
+	if err = tx.Exec(createPaymentDetails, order.Id, order.OrderTotal, paymentTypeId, 1).Error; err != nil {
+		tx.Rollback()
+		return domain.Orders{}, err
+	}
+
 	if err = tx.Commit().Error; err != nil {
 		tx.Rollback()
 		return domain.Orders{}, err

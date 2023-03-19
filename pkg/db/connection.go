@@ -30,6 +30,8 @@ func ConnectDatabase(cfg config.Config) (*gorm.DB, error) {
 		&domain.OrderStatus{},
 		&domain.Carts{},
 		&domain.CartItem{},
+		&domain.PaymentDetails{},
+		&domain.PaymentStatus{},
 	)
 
 	return db, dbErr
