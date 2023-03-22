@@ -141,6 +141,7 @@ func (c *ProductDatabase) UpdateProductItem(id int, productItem helperStruct.Pro
 	camera=$10,
 	price=$11,
 	updated_at=NOW()
+	WHERE id=$12
 	RETURNING
 		id,
 		product_id,
@@ -165,7 +166,8 @@ func (c *ProductDatabase) UpdateProductItem(id int, productItem helperStruct.Pro
 		productItem.Screen_size,
 		productItem.Storage,
 		productItem.Camera,
-		productItem.Price).Scan(&updatedItem).Error
+		productItem.Price,
+		id).Scan(&updatedItem).Error
 
 	return updatedItem, err
 }
@@ -178,10 +180,10 @@ func (c *ProductDatabase) DeleteProductItem(id int) error {
 
 func (c *ProductDatabase) DisaplyaAllProductItems() ([]response.ProductItem, error) {
 	var productItems []response.ProductItem
-	query := `SELECT p.name,
+	query := `SELECT p.product_name,
 		p.description,
 		p.brand,
-		c.name, 
+		c.category_name, 
 		pi.*
 		FROM products p 
 		JOIN categories c ON p.category_id=c.id 
@@ -192,10 +194,10 @@ func (c *ProductDatabase) DisaplyaAllProductItems() ([]response.ProductItem, err
 
 func (c *ProductDatabase) DisaplyProductItem(id int) (response.ProductItem, error) {
 	var productItem response.ProductItem
-	query := `SELECT p.name,
+	query := `SELECT p.product_name,
 	p.description,
 	p.brand,
-	c.name, 
+	c.category_name, 
 	pi.*
 	FROM products p 
 	JOIN categories c ON p.category_id=c.id 

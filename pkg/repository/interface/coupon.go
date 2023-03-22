@@ -1,0 +1,12 @@
+package interfaces
+
+import (
+	"github.com/akshayur04/project-ecommerce/pkg/common/helperStruct"
+	"github.com/akshayur04/project-ecommerce/pkg/domain"
+)
+
+type CouponRepository interface {
+	AddCoupon(coupon helperStruct.Coupons) error
+	UpdateCoupon(coupon helperStruct.Coupons, couponId int) (domain.Coupons, error)
+	DeleteCoupon(couponId int) error
+}

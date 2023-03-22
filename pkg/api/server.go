@@ -20,7 +20,8 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 	productHandler *handler.ProductHandler,
 	cartHandler *handler.CartHandler,
 	orderHandler *handler.OrderHandler,
-	paymentHandler *handler.PaymentHandler) *ServerHTTP {
+	paymentHandler *handler.PaymentHandler,
+	couponHandler *handler.CouponHandler) *ServerHTTP {
 
 	engine := gin.New()
 
@@ -42,7 +43,11 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 		user.GET("listallproduct", productHandler.ListAllProduct)
 		user.GET("listallcategories", productHandler.ListCategories)
 		user.GET("findcategories/:id", productHandler.DisplayCategory)
-		user.Use(middleware.UserAut)
+
+		user.GET("order/razorpay/:id", paymentHandler.CreateRazorpayPayment)
+		user.GET("payment-handler", paymentHandler.PaymentSuccess)
+
+		user.Use(middleware.UserAuth)
 		{
 			user.GET("viewprfile", userHandler.Viewprfile)
 			user.PATCH("editprofile", userHandler.UserEditProfile)
@@ -57,8 +62,14 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 			user.GET("vieworder/:id", orderHandler.ListOrder)
 			user.GET("listallorder", orderHandler.ListAllOrders)
 
-			user.GET("/order/razorpay/:id", paymentHandler.CreateRazorpayPayment)
-			user.GET("/payment-handler", paymentHandler.PaymentSuccess)
+			user.GET("userlistallcategories", productHandler.ListCategories)
+			user.GET("userfindcategories/:id", productHandler.DisplayCategory)
+
+			user.GET("userlistallproduct", productHandler.ListAllProduct)
+			user.GET("usershowproduct/:id", productHandler.ShowProduct)
+
+			user.GET("userdisaplayallproductItems", productHandler.DisaplyaAllProductItems)
+			user.GET("userdisaplayproductitem/:id", productHandler.DisaplyProductItem)
 		}
 
 	}
@@ -93,8 +104,12 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 			admin.DELETE("deleteproductitem/:id", productHandler.DeleteProductItem)
 			admin.GET("disaplyaallproductItems", productHandler.DisaplyaAllProductItems)
 			admin.GET("disaplyproductitem/:id", productHandler.DisaplyProductItem)
-
+			//Dashboard
 			admin.GET("getdashboard", adminHandler.AdminDashBoard)
+			//Coupons
+			admin.POST("createcoupon", couponHandler.AddCoupon)
+			admin.PATCH("updatecoupen/:couponId", couponHandler.UpdateCoupon)
+			admin.DELETE("deletecoupon/:couponId", couponHandler.DeleteCoupon)
 
 		}
 

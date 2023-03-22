@@ -22,6 +22,17 @@ func NewAdminHandler(adminUseCae services.AdminUsecase, findIdUseCase services.F
 	}
 }
 
+// CreateAdmin
+// @Summary Create a new admin from admin panel
+// @ID create-admin
+// @Description Super admin can create a new admin from admin panel.
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Param admin_details body helperStruct.CreateAdmin true "New Admin details"
+// @Success 201 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /adminPanel/create-admin [post]
 func (cr *AdminHandler) CreateAdmin(c *gin.Context) {
 	var adminData helperStruct.CreateAdmin
 	err := c.Bind(&adminData)
@@ -67,8 +78,8 @@ func (cr *AdminHandler) CreateAdmin(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, response.Response{
-		StatusCode: 200,
+	c.JSON(http.StatusCreated, response.Response{
+		StatusCode: 201,
 		Message:    "Admin created",
 		Data:       admin,
 		Errors:     nil,

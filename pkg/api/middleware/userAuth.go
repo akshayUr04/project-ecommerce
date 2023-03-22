@@ -9,7 +9,7 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-func UserAut(c *gin.Context) {
+func UserAuth(c *gin.Context) {
 	// s := c.Request.Header.Get("Authorization")
 	tokenString, err := c.Cookie("UserAuth")
 	if err != nil {
@@ -32,6 +32,14 @@ func ValidateToken(token string) error {
 
 		return []byte("secret"), nil
 	})
+
+	if err != nil {
+		return err
+	}
+
+	if Tokenvalue == nil || !Tokenvalue.Valid {
+		return fmt.Errorf("invalid token")
+	}
 
 	if claims, ok := Tokenvalue.Claims.(jwt.MapClaims); ok && Tokenvalue.Valid {
 		//Check the expir

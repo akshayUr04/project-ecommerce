@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	razorpayID     = "rzp_test_wAFoIc6yTPJXFm"
-	razorpaySecret = "vyexBgQrwgS7UhytIP9kwfKQ"
+	razorpayID     = "rzp_test_eyqZ1tRruc2fkz"
+	razorpaySecret = "OgWcECIh3uZvf7qBCgGf2Pz8"
 )
 
 type PaymentUseCase struct {
@@ -32,7 +32,7 @@ func (c *PaymentUseCase) CreateRazorpayPayment(userId, orderId int) (domain.Orde
 	if err != nil {
 		return domain.Orders{}, "", err
 	}
-	if paymentDetails.PaymentStatusID == 2 {
+	if paymentDetails.PaymentStatusID == 3 {
 		return domain.Orders{}, "", fmt.Errorf("payment already completed")
 	}
 	//fetch order details from the db

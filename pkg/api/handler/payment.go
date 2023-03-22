@@ -36,26 +36,33 @@ func (cr *PaymentHandler) CreateRazorpayPayment(c *gin.Context) {
 		})
 		return
 	}
-	cookie, err := c.Cookie("AdminAuth")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, response.Response{
-			StatusCode: 400,
-			Message:    "Can't find AdminId",
-			Data:       nil,
-			Errors:     err.Error(),
-		})
-		return
-	}
-	userId, err := cr.findIdUseCase.FindId(cookie)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, response.Response{
-			StatusCode: 400,
-			Message:    "Can't find AdminId",
-			Data:       nil,
-			Errors:     err.Error(),
-		})
-		return
-	}
+
+	fmt.Println(paramsId)
+
+	// cookie, err := c.Cookie("UserAuth")
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, response.Response{
+	// 		StatusCode: 400,
+	// 		Message:    "Can't find Id",
+	// 		Data:       nil,
+	// 		Errors:     err.Error(),
+	// 	})
+	// 	return
+	// }
+	// userId, err := cr.findIdUseCase.FindId(cookie)
+
+	// fmt.Println("1", userId)
+
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, response.Response{
+	// 		StatusCode: 400,
+	// 		Message:    "Can't find UserId",
+	// 		Data:       nil,
+	// 		Errors:     err.Error(),
+	// 	})
+	// 	return
+	// }
+	userId := 10
 	order, razorpayID, err := cr.paymentUseCase.CreateRazorpayPayment(userId, orderId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
@@ -67,7 +74,7 @@ func (cr *PaymentHandler) CreateRazorpayPayment(c *gin.Context) {
 		return
 	}
 	c.HTML(200, "app.html", gin.H{
-		"UserID":       order.UserId,
+		"UserID":       userId,
 		"total_price":  order.OrderTotal,
 		"total":        order.OrderTotal,
 		"orderData":    order.Id,
@@ -91,8 +98,26 @@ func (cr *PaymentHandler) PaymentSuccess(c *gin.Context) {
 	orderID, err := strconv.Atoi(idStr)
 	fmt.Println("_converted order  id from query :", orderID)
 
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Can't find orderId",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
 	uID := c.Query("user_id")
 	userID, err := strconv.Atoi(uID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Can't find UserId",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
 
 	t := c.Query("total")
 	fmt.Println("total from query :", t)
