@@ -9,4 +9,5 @@ type CouponUsecase interface {
 	AddCoupon(coupon helperStruct.Coupons) error
 	UpdateCoupon(coupon helperStruct.Coupons, couponId int) (domain.Coupons, error)
 	DeleteCoupon(couponId int) error
+	ApplayCoupon(userId, couponId int) (int, error)
 }

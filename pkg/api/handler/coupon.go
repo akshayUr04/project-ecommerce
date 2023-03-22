@@ -12,11 +12,13 @@ import (
 
 type CouponHandler struct {
 	couponusecase services.CouponUsecase
+	findIdUseCase services.FindIdUseCase
 }
 
-func NewCouponHandler(couponusecase services.CouponUsecase) *CouponHandler {
+func NewCouponHandler(couponusecase services.CouponUsecase, findIdUseCase services.FindIdUseCase) *CouponHandler {
 	return &CouponHandler{
 		couponusecase: couponusecase,
+		findIdUseCase: findIdUseCase,
 	}
 }
 
@@ -122,4 +124,57 @@ func (cr *CouponHandler) DeleteCoupon(c *gin.Context) {
 		Data:       nil,
 		Errors:     nil,
 	})
+}
+
+func (cr *CouponHandler) ApplayCoupen(c *gin.Context) {
+	cookie, err := c.Cookie("UserAuth")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Can't find Id",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	userId, err := cr.findIdUseCase.FindId(cookie)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Can't find Id",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	cId := c.Param("couponID")
+	couponId, err := strconv.Atoi(cId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "can't find coupon id",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	discountRate, err := cr.couponusecase.ApplayCoupon(userId, couponId)
+	if err != nil {
+		if err != nil {
+			c.JSON(http.StatusBadRequest, response.Response{
+				StatusCode: 400,
+				Message:    "can't applay coupen",
+				Data:       nil,
+				Errors:     err.Error(),
+			})
+		}
+		return
+	}
+	c.JSON(http.StatusOK, response.Response{
+		StatusCode: 200,
+		Message:    "coupen applayed",
+		Data:       []interface{}{"rate after coupen applaid is ", discountRate},
+		Errors:     nil,
+	})
+
 }
