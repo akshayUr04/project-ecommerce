@@ -21,7 +21,8 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 	cartHandler *handler.CartHandler,
 	orderHandler *handler.OrderHandler,
 	paymentHandler *handler.PaymentHandler,
-	couponHandler *handler.CouponHandler) *ServerHTTP {
+	couponHandler *handler.CouponHandler,
+	favourites *handler.FavouriteHandler) *ServerHTTP {
 
 	engine := gin.New()
 
@@ -72,6 +73,9 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 			user.GET("userdisaplayproductitem/:id", productHandler.DisaplyProductItem)
 
 			user.PATCH("addcoupontocart/", couponHandler.ApplyCoupon)
+
+			user.POST("addtofav/:productId", favourites.AddToFavourites)
+			user.DELETE("removefromfav/:productId", favourites.RemoveFromFav)
 		}
 
 	}

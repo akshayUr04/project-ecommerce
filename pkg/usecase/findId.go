@@ -14,7 +14,7 @@ func NewFindIdUseCase() services.FindIdUseCase {
 	return &FindIdUseCase{}
 }
 
-func (f *FindIdUseCase) FindId(cookie string) (int, error) {
+func (c *FindIdUseCase) FindId(cookie string) (int, error) {
 	Tokenvalue, err := jwt.Parse(cookie, func(t *jwt.Token) (interface{}, error) {
 
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
