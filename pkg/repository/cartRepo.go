@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"fmt"
+
 	"github.com/akshayur04/project-ecommerce/pkg/common/response"
 	"github.com/akshayur04/project-ecommerce/pkg/domain"
 	interfaces "github.com/akshayur04/project-ecommerce/pkg/repository/interface"
@@ -75,6 +77,8 @@ func (c *CartDatabase) AddToCart(productId, userId int) error {
 		tx.Rollback()
 		return err
 	}
+
+	fmt.Println(subtotal)
 	//check any coupon is present inside the cart
 	var couponId int
 	findCoupon := `SELECT coupon_id FROM carts WHERE user_id=$1`
@@ -104,6 +108,13 @@ func (c *CartDatabase) AddToCart(productId, userId int) error {
 			return err
 		}
 
+	} else {
+		updateTotal := `UPDATE carts SET total=$1 where id=$2`
+		err = tx.Exec(updateTotal, subtotal, cartId).Error
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
 	}
 	if err = tx.Commit().Error; err != nil {
 		tx.Rollback()
@@ -158,14 +169,56 @@ func (c *CartDatabase) RemoveFromCart(userId, productId int) error {
 		tx.Rollback()
 		return err
 	}
-
-	//Reduce the price of the cart total with price of the product
-	updateTotal := `UPDATE carts SET total=total-$1 WHERE user_id=$2`
-	err = tx.Exec(updateTotal, price, userId).Error
+	//Update the subtotal reduce the price of the cart total with price of the product
+	var subTotal int
+	updateSubTotal := `UPDATE carts SET sub_total=sub_total-$1 WHERE user_id=$2 RETURNING sub_total`
+	err = tx.Raw(updateSubTotal, price, userId).Scan(&subTotal).Error
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
+
+	//Check any coupon is added to the cart
+	var couponId int
+	findCoupon := `SELECT coupon_id from carts where id=$1`
+	err = tx.Raw(findCoupon, cartId).Scan(&couponId).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	//If coupon is added check the subtotal meet the minimum value to applay coupon
+	if couponId != 0 {
+		//Find the coupon details
+		var couponDetails domain.Coupons
+		findCouponDetails := `SELECT * FROM coupons WHERE id=$1`
+		err = tx.Raw(findCouponDetails, couponId).Scan(&couponDetails).Error
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+		if couponDetails.MinimumPurchaseAmount > float64(subTotal) {
+			//if sub total is less than the minimum value needed set remove the coupon from the cart and set the subtoal as total
+			updateTotal := `UPDATE carts SET total=$1 WHERE id=$2`
+			err = tx.Exec(updateTotal, subTotal, cartId).Error
+			if err != nil {
+				tx.Rollback()
+				return err
+			}
+		} else {
+			//applay the coupon to the total
+			discountAmount := (subTotal / 100) * int(couponDetails.DiscountPercent)
+			if discountAmount > int(couponDetails.DiscountMaximumAmount) {
+				discountAmount = int(couponDetails.DiscountMaximumAmount)
+			}
+			updateTotal := `UPDATE carts SET total=$1 WHERE id=$2`
+			err = tx.Exec(updateTotal, subTotal-discountAmount, cartId).Error
+			if err != nil {
+				tx.Rollback()
+				return err
+			}
+		}
+	}
+	//If yes applay the coupon to the subtotal and add it as total
 
 	if err = tx.Commit().Error; err != nil {
 		tx.Rollback()
