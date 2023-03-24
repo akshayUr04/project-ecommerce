@@ -21,14 +21,24 @@ func (c *OrderDatabase) OrderAll(id, paymentTypeId int) (domain.Orders, error) {
 	tx := c.DB.Begin()
 
 	//Find the cart id and tottal of the cart
-	var cart helperStruct.Cart
-	findCart := `SELECT id,tottal FROM carts WHERE user_id=? `
+	var cart domain.Carts
+	findCart := `SELECT * FROM carts WHERE user_id=? `
 	err := tx.Raw(findCart, id).Scan(&cart).Error
 	if err != nil {
 		tx.Rollback()
 		return domain.Orders{}, err
 	}
-	if cart.Tottal == 0 {
+	if cart.Total == 0 {
+		setTotal := `UPDATE carts SET total=carts.sub_total`
+		err = tx.Exec(setTotal).Error
+		if err != nil {
+			tx.Rollback()
+			return domain.Orders{}, err
+		}
+		cart.Total = cart.SubTotal
+	}
+	if cart.SubTotal == 0 {
+		tx.Rollback()
 		return domain.Orders{}, fmt.Errorf("no items in cart")
 	}
 	//Find the default address of the user
@@ -40,14 +50,15 @@ func (c *OrderDatabase) OrderAll(id, paymentTypeId int) (domain.Orders, error) {
 		return domain.Orders{}, err
 	}
 	if addressId == 0 {
+		tx.Rollback()
 		return domain.Orders{}, fmt.Errorf("add address pls")
 	}
 
 	//Add the details to the orders and return the orderid
 	var order domain.Orders
-	insetOrder := `INSERT INTO orders (user_id,order_date,payment_type_id,shipping_address,order_total,order_status_id)
-		VALUES($1,NOW(),$2,$3,$4,1) RETURNING *`
-	err = tx.Raw(insetOrder, id, paymentTypeId, addressId, cart.Tottal).Scan(&order).Error
+	insetOrder := `INSERT INTO orders (user_id,order_date,payment_type_id,shipping_address,order_total,order_status_id,coupon_id)
+		VALUES($1,NOW(),$2,$3,$4,1,$5) RETURNING *`
+	err = tx.Raw(insetOrder, id, paymentTypeId, addressId, cart.Total, cart.CouponId).Scan(&order).Error
 	if err != nil {
 		tx.Rollback()
 		return domain.Orders{}, err
@@ -78,7 +89,7 @@ func (c *OrderDatabase) OrderAll(id, paymentTypeId int) (domain.Orders, error) {
 	}
 
 	//Update the cart total
-	updateCart := `UPDATE carts SET tottal=0 WHERE user_id=?`
+	updateCart := `UPDATE carts SET total=0,sub_total=0,coupon_id=0 WHERE user_id=?`
 	err = tx.Exec(updateCart, id).Error
 	if err != nil {
 		tx.Rollback()

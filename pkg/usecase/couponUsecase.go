@@ -31,7 +31,16 @@ func (c *CouponUsecase) DeleteCoupon(couponId int) error {
 	return err
 }
 
-func (c *CouponUsecase) ApplayCoupon(userId, couponId int) (int, error) {
-	discountRate, err := c.couponRepository.ApplayCoupon(userId, couponId)
-	return discountRate, err
+func (c *CouponUsecase) ViewCoupons() ([]domain.Coupons, error) {
+	coupons, err := c.couponRepository.ViewCoupons()
+	return coupons, err
+}
+
+func (c *CouponUsecase) ViewCoupon(couponId int) (domain.Coupons, error) {
+	coupon, err := c.couponRepository.ViewCoupon(couponId)
+	return coupon, err
+}
+func (c *CouponUsecase) ApplayCoupon(userId int, couponCode string) (int, error) {
+	discountAmount, err := c.couponRepository.ApplayCoupon(userId, couponCode)
+	return discountAmount, err
 }

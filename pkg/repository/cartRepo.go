@@ -2,6 +2,7 @@ package repository
 
 import (
 	"github.com/akshayur04/project-ecommerce/pkg/common/response"
+	"github.com/akshayur04/project-ecommerce/pkg/domain"
 	interfaces "github.com/akshayur04/project-ecommerce/pkg/repository/interface"
 	"gorm.io/gorm"
 )
@@ -15,7 +16,7 @@ func NewCartRepository(DB *gorm.DB) interfaces.CartRepository {
 }
 
 func (c *CartDatabase) CreateCart(id int) error {
-	query := `INSERT INTO carts (user_id, tottal) VALUES($1,0)`
+	query := `INSERT INTO carts (user_id, sub_total,total,coupon_id) VALUES($1,0,0,0)`
 	err := c.DB.Exec(query, id).Error
 	return err
 }
@@ -66,14 +67,44 @@ func (c *CartDatabase) AddToCart(productId, userId int) error {
 		return err
 	}
 
-	//Updating the tottal in cart table
-	updateTottal := `UPDATE carts SET tottal=carts.tottal+$1 WHERE user_id=$2`
-	err = tx.Exec(updateTottal, price, userId).Error
+	//Updating the subtotal in cart table
+	var subtotal int
+	updateSubTotal := `UPDATE carts SET sub_total=carts.sub_total+$1 WHERE user_id=$2 RETURNING sub_total`
+	err = tx.Raw(updateSubTotal, price, userId).Scan(&subtotal).Error
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
+	//check any coupon is present inside the cart
+	var couponId int
+	findCoupon := `SELECT coupon_id FROM carts WHERE user_id=$1`
+	err = tx.Raw(findCoupon, userId).Scan(&couponId).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	if couponId != 0 {
+		//find the coupon details
+		var coupon domain.Coupons
+		getCouponDetails := `SELECT * FROM coupons WHERE id=$1`
+		err := tx.Raw(getCouponDetails, couponId).Scan(&coupon).Error
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+		//applay the coupon to the total
+		discountAmount := (subtotal / 100) * int(coupon.DiscountPercent)
+		if discountAmount > int(coupon.DiscountMaximumAmount) {
+			discountAmount = int(coupon.DiscountMaximumAmount)
+		}
+		updateTotal := `UPDATE carts SET total=$1 where id=$2`
+		err = tx.Exec(updateTotal, subtotal-discountAmount, cartId).Error
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
 
+	}
 	if err = tx.Commit().Error; err != nil {
 		tx.Rollback()
 		return err
@@ -104,8 +135,8 @@ func (c *CartDatabase) RemoveFromCart(userId, productId int) error {
 
 	//If the qty is 1 dlt the product from the cart
 	if qty == 1 {
-		dltItem := `DELET FROM cart_items WHERE carts_id=$1 AND product_item_id=$2`
-		err := tx.Exec(dltItem).Error
+		dltItem := `DELETE FROM cart_items WHERE carts_id=$1 AND product_item_id=$2`
+		err := tx.Exec(dltItem, cartId, productId).Error
 		if err != nil {
 			tx.Rollback()
 			return err
@@ -128,9 +159,9 @@ func (c *CartDatabase) RemoveFromCart(userId, productId int) error {
 		return err
 	}
 
-	//Reduce the price of the cart tottal with price of the product
-	updateTottal := `UPDATE carts SET tottal=tottal-$1 WHERE user_id=$2`
-	err = tx.Exec(updateTottal, price, userId).Error
+	//Reduce the price of the cart total with price of the product
+	updateTotal := `UPDATE carts SET total=total-$1 WHERE user_id=$2`
+	err = tx.Exec(updateTotal, price, userId).Error
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -158,7 +189,7 @@ func (c *CartDatabase) ListCart(userId int) ([]response.Cart, error) {
 	}
 
 	//Get the details of the items in the cart and theri total
-	cartItems := `SELECT pi.sku,pi.color,pi.price,ci.quantity,c.tottal FROM product_items pi JOIN 
+	cartItems := `SELECT pi.sku,pi.color,pi.price,ci.quantity,c.total FROM product_items pi JOIN 
 			cart_items ci ON pi.id=ci.product_item_id 
 			JOIN carts c ON ci.carts_id=c.id 
 			WHERE c.user_id= $1`

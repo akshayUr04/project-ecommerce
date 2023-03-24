@@ -1,10 +1,12 @@
 package domain
 
 type Carts struct {
-	Id      uint `gorm:"primaryKey;unique;not null"`
-	User_id uint
-	Users   Users `gorm:"foreignKey:User_id"`
-	Tottal  int
+	Id       uint `gorm:"primaryKey;unique;not null"`
+	User_id  uint
+	Users    Users `gorm:"foreignKey:User_id"`
+	CouponId uint
+	SubTotal int
+	Total    int
 }
 
 type CartItem struct {

@@ -20,6 +20,7 @@ type Orders struct {
 	OrderTotal      int
 	OrderStatusID   uint
 	OrderStatus     OrderStatus `gorm:"foreignKey:OrderStatusID"`
+	CouponCode      string
 }
 
 type OrderItem struct {

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -126,7 +127,61 @@ func (cr *CouponHandler) DeleteCoupon(c *gin.Context) {
 	})
 }
 
-func (cr *CouponHandler) ApplayCoupen(c *gin.Context) {
+func (cr *CouponHandler) ViewCoupons(c *gin.Context) {
+	coupons, err := cr.couponusecase.ViewCoupons()
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "can't finds coupon",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, response.Response{
+		StatusCode: 200,
+		Message:    "coupons are ",
+		Data:       coupons,
+		Errors:     nil,
+	})
+}
+
+func (cr *CouponHandler) ViewCoupon(c *gin.Context) {
+	id := c.Param("couponId")
+	couponId, err := strconv.Atoi(id)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "can't find couponid",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+
+	coupon, err := cr.couponusecase.ViewCoupon(couponId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "can't finds coupon",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, response.Response{
+		StatusCode: 200,
+		Message:    "coupons are ",
+		Data:       coupon,
+		Errors:     nil,
+	})
+}
+
+func (cr *CouponHandler) ApplyCoupon(c *gin.Context) {
 	cookie, err := c.Cookie("UserAuth")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
@@ -147,18 +202,9 @@ func (cr *CouponHandler) ApplayCoupen(c *gin.Context) {
 		})
 		return
 	}
-	cId := c.Param("couponID")
-	couponId, err := strconv.Atoi(cId)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, response.Response{
-			StatusCode: 400,
-			Message:    "can't find coupon id",
-			Data:       nil,
-			Errors:     err.Error(),
-		})
-		return
-	}
-	discountRate, err := cr.couponusecase.ApplayCoupon(userId, couponId)
+	couponCode := c.Query("c_id")
+	fmt.Println(couponCode)
+	discountRate, err := cr.couponusecase.ApplayCoupon(userId, couponCode)
 	if err != nil {
 		if err != nil {
 			c.JSON(http.StatusBadRequest, response.Response{

@@ -52,63 +52,91 @@ func (c *CouponDatabase) DeleteCoupon(couponId int) error {
 	return err
 }
 
-func (c *CouponDatabase) ApplayCoupon(userId, couponId int) (int, error) {
+func (c *CouponDatabase) ViewCoupons() ([]domain.Coupons, error) {
+	var coupens []domain.Coupons
+	fetchDetails := `SELECT * FROM coupons`
+	err := c.DB.Raw(fetchDetails).Scan(&coupens).Error
+	return coupens, err
+
+}
+
+func (c *CouponDatabase) ViewCoupon(couponId int) (domain.Coupons, error) {
+	var coupon domain.Coupons
+	fetchCoupenDetails := `SELECT * FORM coupons WHERE id=$1`
+	err := c.DB.Raw(fetchCoupenDetails, couponId).Scan(&coupon).Error
+	return coupon, err
+
+}
+
+func (c *CouponDatabase) ApplayCoupon(userId int, couponCode string) (int, error) {
 	tx := c.DB.Begin()
-	//find the details corespoding to the coupon
-	var coupenDetails domain.Coupons
-	getcoupenDetails := `SELECT * FROM coupons WHERE id=?`
-	err := tx.Raw(getcoupenDetails, couponId).Scan(&coupenDetails).Error
+	// find the coupon details
+	var couponDetails domain.Coupons
+	findCouponDetails := `SELECT * FROM coupons WHERE code=$1`
+	err := tx.Raw(findCouponDetails, couponCode).Scan(&couponDetails).Error
 	if err != nil {
 		tx.Rollback()
-		return 0, nil
+		return 0, err
 	}
-	if coupenDetails.Id == 0 {
+	if couponDetails.ExpirationDate.Before(time.Now()) {
 		tx.Rollback()
-		return 0, fmt.Errorf("no such coupon")
+		return 0, fmt.Errorf("coupon expired")
 	}
 
-	//find the details of the user cart
+	// check whether the coupen is alredy used by the user in any other previous orders
+	var isUsed bool
+	checkIsUsed := `SELECT EXISTS(SELECT 1 FROM orders WHERE coupon_id = $1 AND user_id = $2)`
+	err = tx.Raw(checkIsUsed, couponDetails.Id, userId).Scan(&isUsed).Error
+	if err != nil {
+		tx.Rollback()
+		return 0, err
+	}
+	if isUsed {
+		tx.Rollback()
+		return 0, fmt.Errorf("coupen is alredy used")
+	}
+	// check whether the coupen is alresy added to the cart
 	var cartDetails domain.Carts
-	getCartDetails := `SELECT * FROM carts WHERE users_id=$1`
+	getCartDetails := `SELECT * FROM carts WHERE user_id=?`
 	err = tx.Raw(getCartDetails, userId).Scan(&cartDetails).Error
 	if err != nil {
 		tx.Rollback()
-		return 0, nil
+		return 0, err
 	}
-
-	//check wether the coupon is valid
-	if coupenDetails.ExpirationDate.Before(time.Now()) {
+	if cartDetails.CouponId == couponDetails.Id {
 		tx.Rollback()
-		return 0, fmt.Errorf("token expiry has end")
+		return 0, fmt.Errorf("coupen is applied to cart")
 	}
 
-	//chech this coupen is alredy applied by the user
-
-	//check the tottal price meat the require ment to applay the coupen
-	if coupenDetails.MinimumPurchaseAmount < float64(cartDetails.Tottal) {
+	//check there is some thing inside the cart
+	if cartDetails.SubTotal == 0 {
 		tx.Rollback()
-		return 0, fmt.Errorf("need minimum %f to applay coupen", coupenDetails.MinimumPurchaseAmount)
+		return 0, fmt.Errorf("no product is in the cart to applay coupen")
 	}
-	//find the discount amount
-	discountAmount := (cartDetails.Tottal / 100) * int(coupenDetails.DiscountPercent)
+
+	// check whether the coupen minimum purchase value is greater than or equal to the order amount
+	if cartDetails.SubTotal <= int(couponDetails.MinimumPurchaseAmount) {
+		tx.Rollback()
+		return 0, fmt.Errorf("need minimum %v in cart", couponDetails.MinimumPurchaseAmount)
+	}
+
 	//check the discount amonunt is less than the maximum discount amount
-	if discountAmount > int(coupenDetails.DiscountMaximumAmount) {
-		discountAmount = int(coupenDetails.DiscountMaximumAmount)
+	discountAmount := (cartDetails.SubTotal / 100) * int(couponDetails.DiscountPercent)
+	if discountAmount > int(couponDetails.DiscountMaximumAmount) {
+		discountAmount = int(couponDetails.DiscountMaximumAmount)
 	}
 
-	//applay the discount amount to the cart tottal
-	var discountPrice int
-	updateTotal := `UPDATE carts SET tottal=carts.tottal-$1 WHERE users_id=$2 RETURNING tottal`
-	err = tx.Raw(updateTotal, discountAmount, userId).Scan(&discountPrice).Error
+	// update the cart total with the subtotal - discount amount if the cart alredy have anything in cart
+	updateCart := `UPDATE carts SET total=$1,coupon_id=$2 WHERE id=$3`
+	err = tx.Exec(updateCart, cartDetails.SubTotal-discountAmount, couponDetails.Id, cartDetails.Id).Error
 	if err != nil {
 		tx.Rollback()
-		return 0, fmt.Errorf("token expiry has end")
+		return 0, err
 	}
-
 	if err = tx.Commit().Error; err != nil {
 		tx.Rollback()
 		return 0, err
 	}
-	return discountPrice, nil
+	return cartDetails.Total, nil
 
 }

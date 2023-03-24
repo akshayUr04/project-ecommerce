@@ -70,6 +70,8 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 
 			user.GET("userdisaplayallproductItems", productHandler.DisaplyaAllProductItems)
 			user.GET("userdisaplayproductitem/:id", productHandler.DisaplyProductItem)
+
+			user.PATCH("addcoupontocart/", couponHandler.ApplyCoupon)
 		}
 
 	}
