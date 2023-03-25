@@ -100,3 +100,8 @@ func (c *adminUseCase) GetDashBoard() (response.DashBoard, error) {
 	dashBoard, err := c.adminRepo.GetDashBoard()
 	return dashBoard, err
 }
+
+func (c *adminUseCase) ViewSalesReport() ([]response.SalesReport, error) {
+	sales, err := c.adminRepo.ViewSalesReport()
+	return sales, err
+}

@@ -1,5 +1,7 @@
 package response
 
+import "time"
+
 type AdminData struct {
 	Id           int
 	Name         string
@@ -11,4 +13,11 @@ type DashBoard struct {
 	TotalOrders         int
 	TotalProductsSelled int
 	TotalUsers          int
+}
+
+type SalesReport struct {
+	Name        string
+	PaymentType string
+	OrderDate   time.Time
+	OrderTotal  int
 }

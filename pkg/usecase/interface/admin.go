@@ -15,4 +15,5 @@ type AdminUsecase interface {
 	FindUser(id int) (response.UserDetails, error)
 	FindAll() ([]response.UserDetails, error)
 	GetDashBoard() (response.DashBoard, error)
+	ViewSalesReport() ([]response.SalesReport, error)
 }

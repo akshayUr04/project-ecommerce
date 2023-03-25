@@ -148,3 +148,16 @@ func (c *adminDatabase) GetDashBoard() (response.DashBoard, error) {
 	}
 	return dashBoard, nil
 }
+
+func (c *adminDatabase) ViewSalesReport() ([]response.SalesReport, error) {
+	var sales []response.SalesReport
+	getReports := `SELECT u.name,
+		pt.type AS payment_type,
+		o.order_date,
+		o.order_total 
+		FROM orders o JOIN users u ON u.id=o.user_id 
+		JOIN payment_types pt ON o.payment_type_id= pt.id 
+		WHERE o.order_status_id=1`
+	err := c.DB.Raw(getReports).Scan(&sales).Error
+	return sales, err
+}
