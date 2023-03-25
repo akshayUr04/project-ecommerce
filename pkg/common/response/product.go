@@ -20,11 +20,11 @@ type ProductItem struct {
 	Brand        string
 	CategoryName string
 	Sku          string
-	Qty_in_stock int
+	QtyInStock   int
 	Color        string
 	Ram          int
 	Battery      int
-	Screen_size  float64
+	ScreenSize   float64
 	Storage      int
 	Camera       int
 	Price        int

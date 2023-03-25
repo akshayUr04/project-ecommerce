@@ -120,3 +120,42 @@ func (cr *FavouriteHandler) RemoveFromFav(c *gin.Context) {
 		Errors:     nil,
 	})
 }
+
+func (cr *FavouriteHandler) ViewFavourites(c *gin.Context) {
+	cookie, err := c.Cookie("UserAuth")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "cant find cookie",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	userId, err := cr.findIdUseCase.FindId(cookie)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "cant find userid",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	favourites, err := cr.favouritesUsecase.ViewFavourites(userId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "cant view favourites",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, response.Response{
+		StatusCode: 200,
+		Message:    "products in favourites are",
+		Data:       favourites,
+		Errors:     nil,
+	})
+}

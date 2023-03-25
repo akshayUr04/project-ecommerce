@@ -76,6 +76,8 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 
 			user.POST("addtofav/:productId", favourites.AddToFavourites)
 			user.DELETE("removefromfav/:productId", favourites.RemoveFromFav)
+			user.GET("viewfav", favourites.ViewFavourites)
+
 		}
 
 	}

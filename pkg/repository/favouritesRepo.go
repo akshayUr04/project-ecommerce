@@ -3,6 +3,7 @@ package repository
 import (
 	"fmt"
 
+	"github.com/akshayur04/project-ecommerce/pkg/common/response"
 	interfaces "github.com/akshayur04/project-ecommerce/pkg/repository/interface"
 	"gorm.io/gorm"
 )
@@ -67,4 +68,27 @@ func (c *FavouritesDatabase) RemoveFromFav(userId, productId int) error {
 		return err
 	}
 	return nil
+}
+
+func (c *FavouritesDatabase) ViewFavourites(userId int) ([]response.ProductItem, error) {
+	var favourites []response.ProductItem
+	viewWishlist := `SELECT pi.sku,
+	pi.qty_in_stock,
+	pi.color,
+	pi.ram,
+	pi.battery,
+	pi.screen_size,
+	pi.storage,
+	pi.camera,
+	pi.price,
+	pi.imag,
+	p.product_name,
+	p.description,
+	p.brand,
+	c.category_name 
+	FROM favourites f JOIN product_items pi ON f.item_id = pi.id 
+	JOIN products p ON pi.product_id = p.id 
+	JOIN categories c ON p.category_id = c.id WHERE f.user_id=$1`
+	err := c.DB.Raw(viewWishlist, userId).Scan(&favourites).Error
+	return favourites, err
 }

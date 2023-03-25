@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"github.com/akshayur04/project-ecommerce/pkg/common/response"
 	interfaces "github.com/akshayur04/project-ecommerce/pkg/repository/interface"
 	services "github.com/akshayur04/project-ecommerce/pkg/usecase/interface"
 )
@@ -23,4 +24,9 @@ func (c *FavouritesUsecase) AddToFavourites(productId, userId int) error {
 func (c *FavouritesUsecase) RemoveFromFav(userId, productId int) error {
 	err := c.favouritesRepository.RemoveFromFav(userId, productId)
 	return err
+}
+
+func (c *FavouritesUsecase) ViewFavourites(userId int) ([]response.ProductItem, error) {
+	favourites, err := c.favouritesRepository.ViewFavourites(userId)
+	return favourites, err
 }
