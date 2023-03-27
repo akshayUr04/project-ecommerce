@@ -37,3 +37,10 @@ type ProductItem struct {
 	Created_at   time.Time
 	Updated_at   time.Time
 }
+
+type Images struct {
+	Id            uint `gorm:"primaryKey;unique;not null"`
+	ProductItemId uint
+	ProductItem   ProductItem `gorm:"foreignKey:ProductItemId"`
+	FileName      string
+}

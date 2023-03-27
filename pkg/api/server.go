@@ -78,6 +78,7 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 			//Favourites
 			user.POST("addtofav/:productId", favourites.AddToFavourites)
 			user.DELETE("removefromfav/:productId", favourites.RemoveFromFav)
+
 			user.GET("viewfav", favourites.ViewFavourites)
 
 		}
@@ -87,6 +88,7 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 	admin := engine.Group("/admin")
 	{
 		admin.POST("/adminlogin", adminHandler.AdminLoging)
+
 		admin.Use(middleware.AdminAuth)
 		{
 			admin.POST("creatadmin", adminHandler.CreateAdmin)
@@ -113,6 +115,8 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 			admin.DELETE("deleteproductitem/:id", productHandler.DeleteProductItem)
 			admin.GET("disaplyaallproductItems", productHandler.DisaplyaAllProductItems)
 			admin.GET("disaplyproductitem/:id", productHandler.DisaplyProductItem)
+
+			admin.POST("uploadimage/:id", adminHandler.UploadImage)
 			//Dashboard
 			admin.GET("getdashboard", adminHandler.AdminDashBoard)
 			//Coupons

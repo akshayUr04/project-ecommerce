@@ -201,9 +201,18 @@ func (c *ProductDatabase) DisaplyProductItem(id int) (response.ProductItem, erro
 	pi.*
 	FROM products p 
 	JOIN categories c ON p.category_id=c.id 
-	JOIN product_items pi ON p.id=pi.product_id WHERE pi.id=$1`
+	JOIN product_items pi ON p.id=pi.product_id 
+	WHERE pi.id=$1`
 	err := c.DB.Raw(query, id).Scan(&productItem).Error
-	return productItem, err
+	if err != nil {
+		return response.ProductItem{}, err
+	}
+	getImages := `SELECT file_name FROM images WHERE product_item_id=$1`
+	err = c.DB.Raw(getImages, id).Scan(&productItem.Image).Error
+	if err != nil {
+		return response.ProductItem{}, err
+	}
+	return productItem, nil
 }
 
 func (c *ProductDatabase) ListAllProduct() ([]response.Product, error) {

@@ -28,5 +28,5 @@ type ProductItem struct {
 	Storage      int
 	Camera       int
 	Price        int
-	Imag         string
+	Image        []string
 }
