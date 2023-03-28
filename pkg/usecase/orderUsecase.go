@@ -35,3 +35,8 @@ func (c *OrderUseCase) ListAllOrders(userId int) ([]domain.Orders, error) {
 	orders, err := c.orderRepo.ListAllOrders(userId)
 	return orders, err
 }
+
+func (c *OrderUseCase) ReturnOrder(userId, orderId int) error {
+	err := c.orderRepo.ReturnOrder(userId, orderId)
+	return err
+}

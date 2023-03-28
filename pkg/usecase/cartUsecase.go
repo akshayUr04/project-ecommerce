@@ -31,7 +31,7 @@ func (c *CartUseCase) RemoveFromCart(userId, productId int) error {
 	return err
 }
 
-func (c *CartUseCase) ListCart(userId int) ([]response.Cart, error) {
+func (c *CartUseCase) ListCart(userId int) (response.ViewCart, error) {
 	items, err := c.cartRepo.ListCart(userId)
 	return items, err
 }

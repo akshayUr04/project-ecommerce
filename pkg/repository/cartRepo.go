@@ -144,6 +144,11 @@ func (c *CartDatabase) RemoveFromCart(userId, productId int) error {
 		return err
 	}
 
+	if qty == 0 {
+		tx.Rollback()
+		return fmt.Errorf("no items in cart to reomve")
+	}
+
 	//If the qty is 1 dlt the product from the cart
 	if qty == 1 {
 		dltItem := `DELETE FROM cart_items WHERE carts_id=$1 AND product_item_id=$2`
@@ -227,35 +232,66 @@ func (c *CartDatabase) RemoveFromCart(userId, productId int) error {
 	return nil
 }
 
-func (c *CartDatabase) ListCart(userId int) ([]response.Cart, error) {
-
+func (c *CartDatabase) ListCart(userId int) (response.ViewCart, error) {
 	tx := c.DB.Begin()
-	var items []response.Cart
+	//get cart details
+	type cartDetails struct {
+		Id         int
+		SubTotal   float64
+		Total      float64
+		Couponcode string
+	}
+	var cart cartDetails
+	getCartDetails := `SELECT
+		c.id,
+		c.sub_total,
+		c.total,
+		co.code AS couponcode
+		FROM carts c LEFT JOIN coupons co ON c.coupon_id=co.id WHERE c.user_id=$1`
+	err := tx.Raw(getCartDetails, userId).Scan(&cart).Error
 
-	//Find the cart id of the user
-	var cartId int
-	findCartId := `SELECT id FROM carts WHERE user_id=? `
-	err := tx.Raw(findCartId, userId).Scan(&cartId).Error
+	fmt.Println(cart)
+
 	if err != nil {
 		tx.Rollback()
-		return []response.Cart{}, err
+		return response.ViewCart{}, err
 	}
-
-	//Get the details of the items in the cart and theri total
-	cartItems := `SELECT pi.sku,pi.color,pi.price,ci.quantity,c.total FROM product_items pi JOIN 
-			cart_items ci ON pi.id=ci.product_item_id 
-			JOIN carts c ON ci.carts_id=c.id 
-			WHERE c.user_id= $1`
-	err = tx.Raw(cartItems, userId).Scan(&items).Error
+	//get cart_items details
+	var cartItems domain.CartItem
+	getCartItemsDetails := `SELECT * FROM cart_items WHERE carts_id=$1`
+	err = tx.Raw(getCartItemsDetails, cart.Id).Scan(&cartItems).Error
 	if err != nil {
 		tx.Rollback()
-		return []response.Cart{}, err
+		return response.ViewCart{}, err
+	}
+	//get the product details
+	var details []response.DisplayCart
+	getDetails := `SELECT p.brand, pi.sku AS productname, 
+		pi.color,
+		pi.ram,
+		pi.battery,
+		pi.storage,
+		pi.camera,
+		ci.quantity,
+		pi.price AS price_per_unit,
+		(pi.price*ci.quantity) AS total
+		FROM cart_items ci JOIN product_items pi  ON ci.product_item_id = pi.id
+		JOIN products p ON pi.product_id = p.id WHERE ci.carts_id=$1`
+	err = tx.Raw(getDetails, cart.Id).Scan(&details).Error
+	if err != nil {
+		tx.Rollback()
+		return response.ViewCart{}, err
 	}
 
+	var carts response.ViewCart
+	carts.Couponcode = cart.Couponcode
+	carts.CartTotal = cart.Total
+	carts.SubTotal = cart.SubTotal
+	carts.CartItems = details
+	carts.Discount = cart.SubTotal - cart.Total
 	if err = tx.Commit().Error; err != nil {
 		tx.Rollback()
-		return []response.Cart{}, err
+		return response.ViewCart{}, err
 	}
-	return items, nil
-
+	return carts, nil
 }

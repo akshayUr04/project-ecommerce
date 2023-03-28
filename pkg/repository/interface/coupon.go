@@ -12,4 +12,5 @@ type CouponRepository interface {
 	ViewCoupons() ([]domain.Coupons, error)
 	ViewCoupon(couponId int) (domain.Coupons, error)
 	ApplayCoupon(userId int, couponCode string) (int, error)
+	RemoveCoupon(userId int) error
 }

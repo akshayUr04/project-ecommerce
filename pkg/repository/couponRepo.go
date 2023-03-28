@@ -17,6 +17,7 @@ type CouponDatabase struct {
 func NewCouponRepository(DB *gorm.DB) interfaces.CouponRepository {
 	return &CouponDatabase{DB}
 }
+
 func (c *CouponDatabase) AddCoupon(coupon helperStruct.Coupons) error {
 	createCoupen := `INSERT INTO coupons (code, discount_percent,discount_maximum_amount,minimum_purchase_amount,expiration_date)
 		VALUES($1,$2,$3,$4,$5)`
@@ -139,4 +140,34 @@ func (c *CouponDatabase) ApplayCoupon(userId int, couponCode string) (int, error
 	}
 	return cartDetails.Total, nil
 
+}
+
+func (c *CouponDatabase) RemoveCoupon(userId int) error {
+	tx := c.DB.Begin()
+	//get the details of the cart
+	var cartDetails domain.Carts
+	getCartDetails := `SELECT * FROM carts WHERE user_id=$1`
+	err := tx.Raw(getCartDetails, userId).Scan(&cartDetails).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	//find any coupon is added
+	if cartDetails.CouponId == 0 {
+		tx.Rollback()
+		return fmt.Errorf("no coupon to remove")
+	}
+	//if added remove the coupon
+	removeCoupon := `UPDATE carts SET coupon_id=0, total = sub_total WHERE user_id=$1`
+	err = tx.Exec(removeCoupon, userId).Error
+	if cartDetails.CouponId == 0 {
+		tx.Rollback()
+		return err
+	}
+	if err = tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	return nil
 }

@@ -224,3 +224,42 @@ func (cr *CouponHandler) ApplyCoupon(c *gin.Context) {
 	})
 
 }
+
+func (cr *CouponHandler) RemoveCoupon(c *gin.Context) {
+	cookie, err := c.Cookie("UserAuth")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Can't find Id",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	userId, err := cr.findIdUseCase.FindId(cookie)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Can't find Id",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	err = cr.couponusecase.RemoveCoupon(userId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "Can't remove coupon",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, response.Response{
+		StatusCode: 200,
+		Message:    "Coupon removed",
+		Data:       nil,
+		Errors:     nil,
+	})
+}

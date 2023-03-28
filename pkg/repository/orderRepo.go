@@ -194,3 +194,22 @@ func (c *OrderDatabase) ListAllOrders(userId int) ([]domain.Orders, error) {
 	err := c.DB.Raw(findOrders, userId).Scan(&orders).Error
 	return orders, err
 }
+
+func (c *OrderDatabase) ReturnOrder(userId, orderId int) error {
+	var orders domain.Orders
+	getOrderDetails := `SELECT * FROM orders WHERE user_id=$1 AND id=$2`
+	err := c.DB.Raw(getOrderDetails, userId, orderId).Scan(&orders).Error
+	if err != nil {
+		return err
+	}
+	if orders.OrderStatusID != 3 {
+		return fmt.Errorf("the order is not deleverd")
+	}
+	returnOder := `UPDATE orders SET order_status_id=$1 WHERE id=$2`
+	err = c.DB.Exec(returnOder, 5, orderId).Error
+	if err != nil {
+		return err
+	}
+	return nil
+
+}

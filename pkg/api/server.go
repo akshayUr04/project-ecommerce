@@ -74,6 +74,7 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 
 			//Coupon
 			user.PATCH("addcoupontocart/", couponHandler.ApplyCoupon)
+			user.PATCH("removercoupon", couponHandler.RemoveCoupon)
 
 			//Favourites
 			user.POST("addtofav/:productId", favourites.AddToFavourites)
@@ -81,12 +82,14 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 
 			user.GET("viewfav", favourites.ViewFavourites)
 
+			user.PATCH("return/:id", orderHandler.ReturnOrder)
 		}
 
 	}
 
 	admin := engine.Group("/admin")
 	{
+		admin.GET("downloadsales", adminHandler.DownloadSalesReport)
 		admin.POST("/adminlogin", adminHandler.AdminLoging)
 
 		admin.Use(middleware.AdminAuth)
@@ -121,11 +124,11 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 			admin.GET("getdashboard", adminHandler.AdminDashBoard)
 			//Coupons
 			admin.POST("createcoupon", couponHandler.AddCoupon)
+
 			admin.PATCH("updatecoupen/:couponId", couponHandler.UpdateCoupon)
 			admin.DELETE("deletecoupon/:couponId", couponHandler.DeleteCoupon)
 			//Sales report
 			admin.GET("salesreport", adminHandler.ViewSalesReport)
-			admin.GET("downloadsales", adminHandler.DownloadSalesReport)
 
 		}
 

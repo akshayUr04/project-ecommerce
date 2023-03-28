@@ -44,3 +44,8 @@ func (c *CouponUsecase) ApplayCoupon(userId int, couponCode string) (int, error)
 	discountAmount, err := c.couponRepository.ApplayCoupon(userId, couponCode)
 	return discountAmount, err
 }
+
+func (c *CouponUsecase) RemoveCoupon(userId int) error {
+	err := c.couponRepository.RemoveCoupon(userId)
+	return err
+}
