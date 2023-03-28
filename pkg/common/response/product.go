@@ -6,7 +6,7 @@ type Category struct {
 }
 
 type Product struct {
-	Id           int
+	Id           int `json:",omitempty"`
 	Name         string
 	Description  string
 	Brand        string

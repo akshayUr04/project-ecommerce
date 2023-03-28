@@ -19,6 +19,6 @@ type ProductUsecase interface {
 	DeleteProductItem(id int) error
 	DisaplyaAllProductItems() ([]response.ProductItem, error)
 	DisaplyProductItem(id int) (response.ProductItem, error)
-	ListAllProduct() ([]response.Product, error)
+	ListAllProduct(viewProduct helperStruct.QueryParams) ([]response.Product, error)
 	ShowProduct(id int) (response.Product, error)
 }

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -287,7 +288,19 @@ func (cr *ProductHandler) DeleteProduct(c *gin.Context) {
 }
 
 func (cr *ProductHandler) ListAllProduct(c *gin.Context) {
-	products, err := cr.productUsecase.ListAllProduct()
+
+	var viewProduct helperStruct.QueryParams
+
+	viewProduct.Page, _ = strconv.Atoi(c.Query("page"))
+	viewProduct.Limit, _ = strconv.Atoi(c.Query("limit"))
+	viewProduct.Query = c.Query("query")
+	viewProduct.Filter = c.Query("filter")
+	viewProduct.SortBy = c.Query("sort_by")
+	viewProduct.SortDesc, _ = strconv.ParseBool(c.Query("sort_desc"))
+
+	fmt.Println(viewProduct)
+
+	products, err := cr.productUsecase.ListAllProduct(viewProduct)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
 			StatusCode: 400,

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/akshayur04/project-ecommerce/pkg/common/helperStruct"
 	"github.com/akshayur04/project-ecommerce/pkg/common/response"
@@ -215,11 +216,40 @@ func (c *ProductDatabase) DisaplyProductItem(id int) (response.ProductItem, erro
 	return productItem, nil
 }
 
-func (c *ProductDatabase) ListAllProduct() ([]response.Product, error) {
+func (c *ProductDatabase) ListAllProduct(queryParams helperStruct.QueryParams) ([]response.Product, error) {
 	var products []response.Product
-	query := `SELECT p.product_name,p.description,p.brand,c.category_name FROM products p JOIN categories c ON p.category_id=c.id `
-	err := c.DB.Raw(query).Scan(&products).Error
-	return products, err
+	getProductDetails := `SELECT p.product_name AS name,
+		p.description,
+		p.brand,
+		c.category_name
+		 FROM products p JOIN categories c ON p.category_id=c.id `
+	if queryParams.Query != "" && queryParams.Filter != "" {
+		getProductDetails = fmt.Sprintf("%s WHERE LOWER(%s) LIKE '%%%s%%'", getProductDetails, queryParams.Filter, strings.ToLower(queryParams.Query))
+	}
+
+	if queryParams.SortBy != "" {
+		if queryParams.SortDesc {
+			getProductDetails = fmt.Sprintf("%s ORDER BY %s DESC", getProductDetails, queryParams.SortBy)
+		} else {
+			getProductDetails = fmt.Sprintf("%s ORDER BY %s ASC", getProductDetails, queryParams.SortBy)
+		}
+	} else {
+		getProductDetails = fmt.Sprintf("%s ORDER BY p.created_at DESC", getProductDetails)
+	}
+	//to set the page number and the qty that need to display in a single responce
+	if queryParams.Limit != 0 && queryParams.Page != 0 {
+		getProductDetails = fmt.Sprintf("%s LIMIT %d OFFSET %d", getProductDetails, queryParams.Limit, (queryParams.Page-1)*queryParams.Limit)
+	}
+	if queryParams.Limit == 0 || queryParams.Page == 0 {
+		getProductDetails = fmt.Sprintf("%s LIMIT 10 OFFSET 0", getProductDetails)
+	}
+
+	fmt.Println(getProductDetails)
+	err := c.DB.Raw(getProductDetails).Scan(&products).Error
+	if err != nil {
+		return []response.Product{}, err
+	}
+	return products, nil
 }
 
 func (c *ProductDatabase) ShowProduct(id int) (response.Product, error) {

@@ -24,3 +24,11 @@ type ProductItem struct {
 	Price       int     `json:"price"`
 	Imag        string  `json:"image"`
 }
+type QueryParams struct {
+	Page     int    `json:"page"`
+	Limit    int    `json:"limit"`
+	Query    string `json:"query"`   //search key word
+	Filter   string `json:"filter"`  //to specify the column name
+	SortBy   string `json:"sort_by"` //to specify column to set the sorting
+	SortDesc bool   `json:"sort_desc"`
+}

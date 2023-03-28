@@ -82,8 +82,8 @@ func (c *ProductUsecase) DisaplyProductItem(id int) (response.ProductItem, error
 	return productItem, err
 }
 
-func (c *ProductUsecase) ListAllProduct() ([]response.Product, error) {
-	products, err := c.productRepo.ListAllProduct()
+func (c *ProductUsecase) ListAllProduct(viewProduct helperStruct.QueryParams) ([]response.Product, error) {
+	products, err := c.productRepo.ListAllProduct(viewProduct)
 	return products, err
 }
 
