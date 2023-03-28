@@ -4,20 +4,19 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/akshayur04/project-ecommerce/pkg/api/handlerUtil"
 	"github.com/akshayur04/project-ecommerce/pkg/common/response"
 	services "github.com/akshayur04/project-ecommerce/pkg/usecase/interface"
 	"github.com/gin-gonic/gin"
 )
 
 type OrderHandler struct {
-	orderUseCase  services.OrderUseCase
-	findIdUseCase services.FindIdUseCase
+	orderUseCase services.OrderUseCase
 }
 
-func NewOrderHandler(orderUseCase services.OrderUseCase, findIdUseCase services.FindIdUseCase) *OrderHandler {
+func NewOrderHandler(orderUseCase services.OrderUseCase) *OrderHandler {
 	return &OrderHandler{
-		orderUseCase:  orderUseCase,
-		findIdUseCase: findIdUseCase,
+		orderUseCase: orderUseCase,
 	}
 }
 
@@ -33,18 +32,7 @@ func (cr *OrderHandler) OrderAll(c *gin.Context) {
 		})
 		return
 	}
-
-	cookie, err := c.Cookie("UserAuth")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, response.Response{
-			StatusCode: 400,
-			Message:    "cant find cookie",
-			Data:       nil,
-			Errors:     err.Error(),
-		})
-		return
-	}
-	userId, err := cr.findIdUseCase.FindId(cookie)
+	userId, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
 			StatusCode: 400,
@@ -73,18 +61,7 @@ func (cr *OrderHandler) OrderAll(c *gin.Context) {
 }
 
 func (cr *OrderHandler) UserCancelOrder(c *gin.Context) {
-
-	cookie, err := c.Cookie("UserAuth")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, response.Response{
-			StatusCode: 400,
-			Message:    "cant find cookie",
-			Data:       nil,
-			Errors:     err.Error(),
-		})
-		return
-	}
-	userId, err := cr.findIdUseCase.FindId(cookie)
+	userId, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
 			StatusCode: 400,
@@ -124,17 +101,7 @@ func (cr *OrderHandler) UserCancelOrder(c *gin.Context) {
 }
 
 func (cr *OrderHandler) ListOrder(c *gin.Context) {
-	cookie, err := c.Cookie("UserAuth")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, response.Response{
-			StatusCode: 400,
-			Message:    "cant find cookie",
-			Data:       nil,
-			Errors:     err.Error(),
-		})
-		return
-	}
-	userId, err := cr.findIdUseCase.FindId(cookie)
+	userId, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
 			StatusCode: 400,
@@ -174,17 +141,7 @@ func (cr *OrderHandler) ListOrder(c *gin.Context) {
 }
 
 func (cr *OrderHandler) ListAllOrders(c *gin.Context) {
-	cookie, err := c.Cookie("UserAuth")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, response.Response{
-			StatusCode: 400,
-			Message:    "Can't find Id",
-			Data:       nil,
-			Errors:     err.Error(),
-		})
-		return
-	}
-	Id, err := cr.findIdUseCase.FindId(cookie)
+	Id, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
 			StatusCode: 400,
@@ -213,17 +170,7 @@ func (cr *OrderHandler) ListAllOrders(c *gin.Context) {
 }
 
 func (cr *OrderHandler) ReturnOrder(c *gin.Context) {
-	cookie, err := c.Cookie("UserAuth")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, response.Response{
-			StatusCode: 400,
-			Message:    "cant find cookie",
-			Data:       nil,
-			Errors:     err.Error(),
-		})
-		return
-	}
-	userId, err := cr.findIdUseCase.FindId(cookie)
+	userId, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
 			StatusCode: 400,

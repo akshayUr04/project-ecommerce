@@ -26,7 +26,6 @@ func InitializeAPI(cfg config.Config) (*http.ServerHTTP, error) {
 		usecase.NewUserUseCase,
 		usecase.NewOtpUseCase,
 		usecase.NewAdminUsecase,
-		usecase.NewFindIdUseCase,
 		usecase.NewProductUsecase,
 		usecase.NewOrderUseCase,
 		usecase.NewCartUsecase,

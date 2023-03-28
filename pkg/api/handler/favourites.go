@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/akshayur04/project-ecommerce/pkg/api/handlerUtil"
 	"github.com/akshayur04/project-ecommerce/pkg/common/response"
 	services "github.com/akshayur04/project-ecommerce/pkg/usecase/interface"
 	"github.com/gin-gonic/gin"
@@ -11,13 +12,11 @@ import (
 
 type FavouriteHandler struct {
 	favouritesUsecase services.FavouritesUsecase
-	findIdUseCase     services.FindIdUseCase
 }
 
-func NewFavouritesHandler(favouritesUsecase services.FavouritesUsecase, findIdUseCase services.FindIdUseCase) *FavouriteHandler {
+func NewFavouritesHandler(favouritesUsecase services.FavouritesUsecase) *FavouriteHandler {
 	return &FavouriteHandler{
 		favouritesUsecase: favouritesUsecase,
-		findIdUseCase:     findIdUseCase,
 	}
 }
 
@@ -33,17 +32,7 @@ func (cr *FavouriteHandler) AddToFavourites(c *gin.Context) {
 		})
 		return
 	}
-	cookie, err := c.Cookie("UserAuth")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, response.Response{
-			StatusCode: 400,
-			Message:    "cant find cookie",
-			Data:       nil,
-			Errors:     err.Error(),
-		})
-		return
-	}
-	userId, err := cr.findIdUseCase.FindId(cookie)
+	userId, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
 			StatusCode: 400,
@@ -83,17 +72,7 @@ func (cr *FavouriteHandler) RemoveFromFav(c *gin.Context) {
 		})
 		return
 	}
-	cookie, err := c.Cookie("UserAuth")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, response.Response{
-			StatusCode: 400,
-			Message:    "cant find cookie",
-			Data:       nil,
-			Errors:     err.Error(),
-		})
-		return
-	}
-	userId, err := cr.findIdUseCase.FindId(cookie)
+	userId, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
 			StatusCode: 400,
@@ -122,17 +101,7 @@ func (cr *FavouriteHandler) RemoveFromFav(c *gin.Context) {
 }
 
 func (cr *FavouriteHandler) ViewFavourites(c *gin.Context) {
-	cookie, err := c.Cookie("UserAuth")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, response.Response{
-			StatusCode: 400,
-			Message:    "cant find cookie",
-			Data:       nil,
-			Errors:     err.Error(),
-		})
-		return
-	}
-	userId, err := cr.findIdUseCase.FindId(cookie)
+	userId, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
 			StatusCode: 400,

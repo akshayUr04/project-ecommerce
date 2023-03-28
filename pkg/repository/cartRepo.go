@@ -78,7 +78,6 @@ func (c *CartDatabase) AddToCart(productId, userId int) error {
 		return err
 	}
 
-	fmt.Println(subtotal)
 	//check any coupon is present inside the cart
 	var couponId int
 	findCoupon := `SELECT coupon_id FROM carts WHERE user_id=$1`
@@ -249,8 +248,6 @@ func (c *CartDatabase) ListCart(userId int) (response.ViewCart, error) {
 		co.code AS couponcode
 		FROM carts c LEFT JOIN coupons co ON c.coupon_id=co.id WHERE c.user_id=$1`
 	err := tx.Raw(getCartDetails, userId).Scan(&cart).Error
-
-	fmt.Println(cart)
 
 	if err != nil {
 		tx.Rollback()

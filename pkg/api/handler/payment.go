@@ -13,13 +13,11 @@ import (
 )
 
 type PaymentHandler struct {
-	findIdUseCase  services.FindIdUseCase
 	paymentUseCase services.PaymentUseCase
 }
 
-func NewPaymentHandler(findIdUseCase services.FindIdUseCase, paymentUseCase services.PaymentUseCase) *PaymentHandler {
+func NewPaymentHandler(paymentUseCase services.PaymentUseCase) *PaymentHandler {
 	return &PaymentHandler{
-		findIdUseCase:  findIdUseCase,
 		paymentUseCase: paymentUseCase,
 	}
 }
@@ -38,18 +36,7 @@ func (cr *PaymentHandler) CreateRazorpayPayment(c *gin.Context) {
 	}
 
 	fmt.Println(paramsId)
-
-	// cookie, err := c.Cookie("UserAuth")
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, response.Response{
-	// 		StatusCode: 400,
-	// 		Message:    "Can't find Id",
-	// 		Data:       nil,
-	// 		Errors:     err.Error(),
-	// 	})
-	// 	return
-	// }
-	// userId, err := cr.findIdUseCase.FindId(cookie)
+	// userId, err := handlerUtil.GetUserIdFromContext(c)
 
 	// fmt.Println("1", userId)
 

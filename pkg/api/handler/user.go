@@ -7,22 +7,21 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/akshayur04/project-ecommerce/pkg/api/handlerUtil"
 	"github.com/akshayur04/project-ecommerce/pkg/common/helperStruct"
 	"github.com/akshayur04/project-ecommerce/pkg/common/response"
 	services "github.com/akshayur04/project-ecommerce/pkg/usecase/interface"
 )
 
 type UserHandler struct {
-	userUseCase   services.UserUseCase
-	cartUseCase   services.CartUsecase
-	findIdUseCase services.FindIdUseCase
+	userUseCase services.UserUseCase
+	cartUseCase services.CartUsecase
 }
 
-func NewUserHandler(usecase services.UserUseCase, cartUseCase services.CartUsecase, findIdUseCase services.FindIdUseCase) *UserHandler {
+func NewUserHandler(usecase services.UserUseCase, cartUseCase services.CartUsecase) *UserHandler {
 	return &UserHandler{
-		userUseCase:   usecase,
-		cartUseCase:   cartUseCase,
-		findIdUseCase: findIdUseCase,
+		userUseCase: usecase,
+		cartUseCase: cartUseCase,
 	}
 }
 
@@ -140,17 +139,7 @@ func (cr *UserHandler) UserLogout(c *gin.Context) {
 // @Failure 400 {object} response.Response
 // @Router /addaddress [post]
 func (cr *UserHandler) AddAddress(c *gin.Context) {
-	cookie, err := c.Cookie("UserAuth")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, response.Response{
-			StatusCode: 400,
-			Message:    "Can't find Id",
-			Data:       nil,
-			Errors:     err.Error(),
-		})
-		return
-	}
-	Id, err := cr.findIdUseCase.FindId(cookie)
+	Id, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
 			StatusCode: 400,
@@ -203,17 +192,7 @@ func (cr *UserHandler) UpdateAddress(c *gin.Context) {
 		})
 		return
 	}
-	cookie, err := c.Cookie("UserAuth")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, response.Response{
-			StatusCode: 400,
-			Message:    "Can't find Id",
-			Data:       nil,
-			Errors:     err.Error(),
-		})
-		return
-	}
-	Id, err := cr.findIdUseCase.FindId(cookie)
+	Id, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
 			StatusCode: 400,
@@ -254,17 +233,7 @@ func (cr *UserHandler) UpdateAddress(c *gin.Context) {
 }
 
 func (cr *UserHandler) Viewprfile(c *gin.Context) {
-	cookie, err := c.Cookie("UserAuth")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, response.Response{
-			StatusCode: 400,
-			Message:    "Can't find Id",
-			Data:       nil,
-			Errors:     err.Error(),
-		})
-		return
-	}
-	Id, err := cr.findIdUseCase.FindId(cookie)
+	Id, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
 			StatusCode: 400,
@@ -294,17 +263,7 @@ func (cr *UserHandler) Viewprfile(c *gin.Context) {
 }
 
 func (cr *UserHandler) UserEditProfile(c *gin.Context) {
-	cookie, err := c.Cookie("UserAuth")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, response.Response{
-			StatusCode: 400,
-			Message:    "Can't find Id",
-			Data:       nil,
-			Errors:     err.Error(),
-		})
-		return
-	}
-	Id, err := cr.findIdUseCase.FindId(cookie)
+	Id, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
 			StatusCode: 400,
@@ -343,17 +302,7 @@ func (cr *UserHandler) UserEditProfile(c *gin.Context) {
 }
 
 func (cr *UserHandler) UpdatePassword(c *gin.Context) {
-	cookie, err := c.Cookie("UserAuth")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, response.Response{
-			StatusCode: 400,
-			Message:    "Can't find Id",
-			Data:       nil,
-			Errors:     err.Error(),
-		})
-		return
-	}
-	Id, err := cr.findIdUseCase.FindId(cookie)
+	Id, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
 			StatusCode: 400,

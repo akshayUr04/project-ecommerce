@@ -4,35 +4,24 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/akshayur04/project-ecommerce/pkg/api/handlerUtil"
 	"github.com/akshayur04/project-ecommerce/pkg/common/response"
 	services "github.com/akshayur04/project-ecommerce/pkg/usecase/interface"
 	"github.com/gin-gonic/gin"
 )
 
 type CartHandler struct {
-	cartUsecase   services.CartUsecase
-	findIdUseCase services.FindIdUseCase
+	cartUsecase services.CartUsecase
 }
 
-func NewCartHandler(cartUsecase services.CartUsecase, findIdUseCase services.FindIdUseCase) *CartHandler {
+func NewCartHandler(cartUsecase services.CartUsecase) *CartHandler {
 	return &CartHandler{
-		cartUsecase:   cartUsecase,
-		findIdUseCase: findIdUseCase,
+		cartUsecase: cartUsecase,
 	}
 }
 
 func (cr *CartHandler) AddToCart(c *gin.Context) {
-	cookie, err := c.Cookie("UserAuth")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, response.Response{
-			StatusCode: 400,
-			Message:    "cant find cookie",
-			Data:       nil,
-			Errors:     err.Error(),
-		})
-		return
-	}
-	userId, err := cr.findIdUseCase.FindId(cookie)
+	userId, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
 			StatusCode: 400,
@@ -74,17 +63,7 @@ func (cr *CartHandler) AddToCart(c *gin.Context) {
 }
 
 func (cr *CartHandler) RemoveFromCart(c *gin.Context) {
-	cookie, err := c.Cookie("UserAuth")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, response.Response{
-			StatusCode: 400,
-			Message:    "cant find cookie",
-			Data:       nil,
-			Errors:     err.Error(),
-		})
-		return
-	}
-	userId, err := cr.findIdUseCase.FindId(cookie)
+	userId, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
 			StatusCode: 400,
@@ -125,17 +104,7 @@ func (cr *CartHandler) RemoveFromCart(c *gin.Context) {
 }
 
 func (cr *CartHandler) ListCart(c *gin.Context) {
-	cookie, err := c.Cookie("UserAuth")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, response.Response{
-			StatusCode: 400,
-			Message:    "cant find cookie",
-			Data:       nil,
-			Errors:     err.Error(),
-		})
-		return
-	}
-	userId, err := cr.findIdUseCase.FindId(cookie)
+	userId, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
 			StatusCode: 400,

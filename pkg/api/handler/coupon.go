@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/akshayur04/project-ecommerce/pkg/api/handlerUtil"
 	"github.com/akshayur04/project-ecommerce/pkg/common/helperStruct"
 	"github.com/akshayur04/project-ecommerce/pkg/common/response"
 	services "github.com/akshayur04/project-ecommerce/pkg/usecase/interface"
@@ -13,13 +14,11 @@ import (
 
 type CouponHandler struct {
 	couponusecase services.CouponUsecase
-	findIdUseCase services.FindIdUseCase
 }
 
-func NewCouponHandler(couponusecase services.CouponUsecase, findIdUseCase services.FindIdUseCase) *CouponHandler {
+func NewCouponHandler(couponusecase services.CouponUsecase) *CouponHandler {
 	return &CouponHandler{
 		couponusecase: couponusecase,
-		findIdUseCase: findIdUseCase,
 	}
 }
 
@@ -182,17 +181,7 @@ func (cr *CouponHandler) ViewCoupon(c *gin.Context) {
 }
 
 func (cr *CouponHandler) ApplyCoupon(c *gin.Context) {
-	cookie, err := c.Cookie("UserAuth")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, response.Response{
-			StatusCode: 400,
-			Message:    "Can't find Id",
-			Data:       nil,
-			Errors:     err.Error(),
-		})
-		return
-	}
-	userId, err := cr.findIdUseCase.FindId(cookie)
+	userId, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
 			StatusCode: 400,
@@ -226,17 +215,7 @@ func (cr *CouponHandler) ApplyCoupon(c *gin.Context) {
 }
 
 func (cr *CouponHandler) RemoveCoupon(c *gin.Context) {
-	cookie, err := c.Cookie("UserAuth")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, response.Response{
-			StatusCode: 400,
-			Message:    "Can't find Id",
-			Data:       nil,
-			Errors:     err.Error(),
-		})
-		return
-	}
-	userId, err := cr.findIdUseCase.FindId(cookie)
+	userId, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
 			StatusCode: 400,

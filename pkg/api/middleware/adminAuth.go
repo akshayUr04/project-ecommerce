@@ -13,8 +13,11 @@ func AdminAuth(c *gin.Context) {
 		return
 	}
 
-	if err := ValidateToken(tokenString); err != nil {
+	adminId, err := ValidateToken(tokenString)
+	if err != nil {
 		c.AbortWithStatus(http.StatusUnauthorized)
 		return
 	}
+	c.Set("adminId", adminId)
+	c.Next()
 }

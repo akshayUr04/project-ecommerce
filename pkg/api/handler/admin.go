@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/akshayur04/project-ecommerce/pkg/api/handlerUtil"
 	"github.com/akshayur04/project-ecommerce/pkg/common/helperStruct"
 	"github.com/akshayur04/project-ecommerce/pkg/common/response"
 	services "github.com/akshayur04/project-ecommerce/pkg/usecase/interface"
@@ -13,14 +14,12 @@ import (
 )
 
 type AdminHandler struct {
-	adminUseCase  services.AdminUsecase
-	findIdUseCase services.FindIdUseCase
+	adminUseCase services.AdminUsecase
 }
 
-func NewAdminHandler(adminUseCae services.AdminUsecase, findIdUseCase services.FindIdUseCase) *AdminHandler {
+func NewAdminHandler(adminUseCae services.AdminUsecase) *AdminHandler {
 	return &AdminHandler{
-		adminUseCase:  adminUseCae,
-		findIdUseCase: findIdUseCase,
+		adminUseCase: adminUseCae,
 	}
 }
 
@@ -47,17 +46,7 @@ func (cr *AdminHandler) CreateAdmin(c *gin.Context) {
 		})
 		return
 	}
-	cookie, err := c.Cookie("AdminAuth")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, response.Response{
-			StatusCode: 400,
-			Message:    "Can't find AdminId",
-			Data:       nil,
-			Errors:     err.Error(),
-		})
-		return
-	}
-	createrId, err := cr.findIdUseCase.FindId(cookie)
+	createrId, err := handlerUtil.GetAdminIdFromContext(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
 			StatusCode: 400,
@@ -86,7 +75,6 @@ func (cr *AdminHandler) CreateAdmin(c *gin.Context) {
 		Data:       admin,
 		Errors:     nil,
 	})
-
 }
 
 func (cr *AdminHandler) AdminLoging(c *gin.Context) {
@@ -136,17 +124,7 @@ func (cr *AdminHandler) BlockUser(c *gin.Context) {
 		})
 		return
 	}
-	cookie, err := c.Cookie("AdminAuth")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, response.Response{
-			StatusCode: 400,
-			Message:    "Can't find AdminId",
-			Data:       nil,
-			Errors:     err.Error(),
-		})
-		return
-	}
-	adminId, err := cr.findIdUseCase.FindId(cookie)
+	adminId, err := handlerUtil.GetAdminIdFromContext(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
 			StatusCode: 400,
