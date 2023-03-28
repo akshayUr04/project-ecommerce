@@ -245,7 +245,7 @@ func (cr *OrderHandler) ReturnOrder(c *gin.Context) {
 		return
 	}
 
-	err = cr.orderUseCase.ReturnOrder(userId, orderId)
+	returnAmount, err := cr.orderUseCase.ReturnOrder(userId, orderId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
 			StatusCode: 400,
@@ -257,8 +257,8 @@ func (cr *OrderHandler) ReturnOrder(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, response.Response{
 		StatusCode: 200,
-		Message:    "order returnd",
-		Data:       nil,
+		Message:    "order returnd ",
+		Data:       returnAmount,
 		Errors:     nil,
 	})
 }

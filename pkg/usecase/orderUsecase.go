@@ -36,7 +36,7 @@ func (c *OrderUseCase) ListAllOrders(userId int) ([]domain.Orders, error) {
 	return orders, err
 }
 
-func (c *OrderUseCase) ReturnOrder(userId, orderId int) error {
-	err := c.orderRepo.ReturnOrder(userId, orderId)
-	return err
+func (c *OrderUseCase) ReturnOrder(userId, orderId int) (int, error) {
+	returnAmount, err := c.orderRepo.ReturnOrder(userId, orderId)
+	return returnAmount, err
 }
