@@ -27,10 +27,10 @@ func NewOrderHandler(orderUseCase services.OrderUseCase) *OrderHandler {
 // @Tags Order
 // @Accept json
 // @Produce json
-// @Param payment_type_id path string true "payment_type_id"
+// @Param payment_id path string true "payment_id"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /orderall/{paymentId}[post]
+// @Router /orderall/{paymentId} [post]
 func (cr *OrderHandler) OrderAll(c *gin.Context) {
 	paramsId := c.Param("paymentId")
 	paymentTypeId, err := strconv.Atoi(paramsId)
@@ -182,7 +182,7 @@ func (cr *OrderHandler) ListOrder(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router  /listallorder/ [get]
+// @Router /listallorder [get]
 func (cr *OrderHandler) ListAllOrders(c *gin.Context) {
 	Id, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {

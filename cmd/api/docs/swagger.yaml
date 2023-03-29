@@ -25,6 +25,13 @@ definitions:
     - pincode
     - street
     type: object
+  helperStruct.Category:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
   helperStruct.Coupons:
     properties:
       code:
@@ -64,6 +71,61 @@ definitions:
     - email
     - password
     type: object
+  helperStruct.OTPData:
+    properties:
+      phoneNumber:
+        type: string
+    required:
+    - phoneNumber
+    type: object
+  helperStruct.Product:
+    properties:
+      brand:
+        type: string
+      categoryid:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+    required:
+    - brand
+    - categoryid
+    - description
+    - name
+    type: object
+  helperStruct.ProductItem:
+    properties:
+      battery:
+        type: integer
+      camera:
+        type: integer
+      colour:
+        type: string
+      image:
+        type: string
+      price:
+        type: integer
+      productid:
+        type: integer
+      quantity:
+        type: integer
+      ram:
+        type: integer
+      screensize:
+        type: number
+      sku:
+        type: string
+      storage:
+        type: integer
+    type: object
+  helperStruct.UpdatePassword:
+    properties:
+      newpassword:
+        type: string
+      oldpassword:
+        type: string
+    type: object
   helperStruct.UserReq:
     properties:
       email:
@@ -79,6 +141,16 @@ definitions:
     - mobile
     - name
     type: object
+  helperStruct.VerifyOtp:
+    properties:
+      code:
+        type: string
+      user:
+        $ref: '#/definitions/helperStruct.OTPData'
+    required:
+    - code
+    - user
+    type: object
   response.Response:
     properties:
       data: {}
@@ -88,25 +160,15 @@ definitions:
       stastuscode:
         type: integer
     type: object
-  response.UserData:
-    properties:
-      email:
-        type: string
-      id:
-        type: integer
-      mobile:
-        type: string
-      name:
-        type: string
-    type: object
 info:
   contact: {}
 paths:
-  /addaddress:
+  /addaddress/:
     post:
       consumes:
       - application/json
-      operationId: user-add-address
+      description: Add address
+      operationId: add-address
       parameters:
       - description: User address
         in: body
@@ -114,6 +176,8 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/helperStruct.Address'
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
@@ -123,7 +187,9 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/response.Response'
-      summary: user add address
+      summary: User can add address
+      tags:
+      - Users
   /addcoupontocart/{coupon_id}:
     patch:
       consumes:
@@ -202,6 +268,87 @@ paths:
       summary: User can add product item to favourites
       tags:
       - Favourites
+  /admin/addcatergory/:
+    post:
+      consumes:
+      - application/json
+      description: Admin can create new category from admin panel
+      operationId: create-category
+      parameters:
+      - description: New category name
+        in: body
+        name: category_name
+        required: true
+        schema:
+          $ref: '#/definitions/helperStruct.Category'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Create new product category
+      tags:
+      - Product Category
+  /admin/addproduct/:
+    post:
+      consumes:
+      - application/json
+      description: Admins can create new product listings
+      operationId: create-product
+      parameters:
+      - description: new product details
+        in: body
+        name: new_product_details
+        required: true
+        schema:
+          $ref: '#/definitions/helperStruct.Product'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Admin can create new product listings
+      tags:
+      - Product
+  /admin/addproductitem/:
+    post:
+      consumes:
+      - application/json
+      description: This endpoint allows an admin user to create a new product item.
+      operationId: create-product-item
+      parameters:
+      - description: Product item details
+        in: body
+        name: product_item
+        required: true
+        schema:
+          $ref: '#/definitions/helperStruct.ProductItem'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully added new product item
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Failed to add new product item
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Creates a new product item
+      tags:
+      - Product Item
   /admin/adminlogin:
     post:
       consumes:
@@ -353,6 +500,58 @@ paths:
       summary: Admin can delete existing coupon
       tags:
       - Coupon
+  /admin/deleteproduct/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: This endpoint allows an admin user to delete a product by ID.
+      operationId: delete-product
+      parameters:
+      - description: Product ID to delete
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully deleted product
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Invalid product ID
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Deletes a product by ID
+      tags:
+      - Product
+  /admin/deleteproductitem/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a product item from the system
+      operationId: delete-product-item
+      parameters:
+      - description: ID of the product item to be deleted
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Deletes a product item from the system
+      tags:
+      - Product Item
   /admin/downloadsales/:
     get:
       consumes:
@@ -418,6 +617,37 @@ paths:
       summary: Admin can find all registered users
       tags:
       - Admin
+  /admin/findcategories/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Users and admins can fetch details of a specific category using
+        id
+      operationId: find-category-by-id
+      parameters:
+      - description: category id
+        in: path
+        name: category_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Fetch details of a specific category using category id
+      tags:
+      - Product Category
   /admin/finduser/{id}:
     get:
       consumes:
@@ -465,6 +695,26 @@ paths:
       summary: Admin Dashboard
       tags:
       - Admin
+  /admin/listallcategories/:
+    get:
+      consumes:
+      - application/json
+      description: Admin, users and unregistered users can see all the available categories
+      operationId: view-all-categories
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: View all available categories
+      tags:
+      - Product Category
   /admin/salesreport/:
     get:
       consumes:
@@ -543,6 +793,128 @@ paths:
       summary: Admin can update existing coupon
       tags:
       - Coupon
+  /admin/updatedcategory/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Admin can update category details
+      operationId: update-category
+      parameters:
+      - description: ID of the Category to be updated
+        in: path
+        name: Id
+        required: true
+        type: string
+      - description: category info
+        in: body
+        name: category_details
+        required: true
+        schema:
+          $ref: '#/definitions/helperStruct.Category'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Admin can update category details
+      tags:
+      - Product Category
+  /admin/updatedproductitem/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Update an existing product item with new information.
+      operationId: update-product-item
+      parameters:
+      - description: ID of the productitem to be updated
+        in: path
+        name: Id
+        required: true
+        type: string
+      - description: Product item information to update
+        in: body
+        name: product_item
+        required: true
+        schema:
+          $ref: '#/definitions/helperStruct.ProductItem'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Update a product item
+      tags:
+      - Product Item
+  /admin/updateproduct/{id}:
+    put:
+      consumes:
+      - application/json
+      description: This endpoint allows an admin user to update a product's details.
+      operationId: update-product
+      parameters:
+      - description: ID of the product to be updated
+        in: path
+        name: Id
+        required: true
+        type: string
+      - description: Updated product details
+        in: body
+        name: updated_product_details
+        required: true
+        schema:
+          $ref: '#/definitions/helperStruct.Product'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Successfully updated product
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Unable to update product
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Admin can update product details
+      tags:
+      - Product
+  /admin/userdisaplayproductitem/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a product item by its ID
+      operationId: find-product-item-by-id
+      parameters:
+      - description: Product item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Retrieve a product item by ID
+      tags:
+      - Product Item
   /admin/viewcoupon/{couponId}:
     get:
       consumes:
@@ -589,6 +961,94 @@ paths:
       summary: Admins and users can see all available coupons
       tags:
       - Coupon
+  /editprofile:
+    patch:
+      consumes:
+      - application/json
+      description: Users can update their profile
+      operationId: update-user-profile
+      parameters:
+      - description: User profile
+        in: body
+        name: user_profile
+        required: true
+        schema:
+          $ref: '#/definitions/helperStruct.UserReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: User can update their profile
+      tags:
+      - Users
+  /listallorder:
+    get:
+      consumes:
+      - application/json
+      description: Endpoint for getting all orders associated with a user
+      operationId: view-all-orders
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Retrieves all orders of currently logged in user
+      tags:
+      - Order
+  /listallproduct/:
+    get:
+      consumes:
+      - application/json
+      description: Admins and users can ses all available products
+      operationId: user-view-all-products
+      parameters:
+      - description: Page number for pagination
+        in: query
+        name: page
+        type: integer
+      - description: Number of items to retrieve per page
+        in: query
+        name: limit
+        type: integer
+      - description: Search query string
+        in: query
+        name: query
+        type: string
+      - description: Filter criteria for the product items
+        in: query
+        name: filter
+        type: string
+      - description: Sorting criteria for the product items
+        in: query
+        name: sort_by
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Admins and users can see all available products
+      tags:
+      - Product
   /listcart:
     get:
       consumes:
@@ -610,14 +1070,126 @@ paths:
       tags:
       - Cart
   /logout:
-    get:
+    post:
+      consumes:
+      - application/json
+      description: Logs out a logged-in user from the E-commerce web api
       operationId: user-logout
       produces:
       - application/json
       responses:
         "200":
           description: OK
-      summary: user logout
+        "400":
+          description: Bad Request
+      summary: User Logout
+      tags:
+      - Users
+  /orderall/{paymentId}:
+    post:
+      consumes:
+      - application/json
+      description: This endpoint allows a user to purchase all items in their cart
+      operationId: buyAll
+      parameters:
+      - description: payment_id
+        in: path
+        name: payment_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Buy all items from the user's cart
+      tags:
+      - Order
+  /orders/cancel/{orderId}:
+    patch:
+      consumes:
+      - application/json
+      description: Endpoint for cancelling an order associated with a user
+      operationId: cancel-order
+      parameters:
+      - description: ID of the order to be cancelled
+        in: path
+        name: order_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Cancels a specific order for the currently logged in user
+      tags:
+      - Order
+  /payments/razorpay/{orderId}:
+    get:
+      consumes:
+      - application/json
+      description: Users can make payment via Razorpay after placing orders
+      operationId: create-razorpay-payment
+      parameters:
+      - description: Orderid
+        in: path
+        name: orderId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Users can make payment
+      tags:
+      - Payment
+  /payments/success/:
+    get:
+      consumes:
+      - application/json
+      description: Handler for automatically updating payment details upon successful
+        payment
+      operationId: payment-success
+      parameters:
+      - description: Payment details
+        in: query
+        name: c
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated payment details
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Failed to update payment details
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Handling successful payment
+      tags:
+      - Payment
   /removecoupon:
     patch:
       consumes:
@@ -690,48 +1262,248 @@ paths:
       summary: User can remove product item from favourites
       tags:
       - Favourites
+  /return/{orderId}:
+    patch:
+      consumes:
+      - application/json
+      description: Endpoint for Returning an order associated with a user
+      operationId: return-order
+      parameters:
+      - description: ID of the order to be cancelled
+        in: path
+        name: order_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Return a specific order for the currently logged in user
+      tags:
+      - Order
+  /sendotp:
+    post:
+      consumes:
+      - application/json
+      description: Send OTP to use's mobile
+      operationId: send-otp
+      parameters:
+      - description: User mobile number
+        in: body
+        name: user_mobile
+        required: true
+        schema:
+          $ref: '#/definitions/helperStruct.OTPData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Send OTP to user's mobile
+      tags:
+      - Otp
   /signup:
     post:
       consumes:
       - application/json
+      description: Create a new user with the specified details.
       operationId: user-signup
       parameters:
-      - description: User Data
+      - description: User details
         in: body
         name: user_details
         required: true
         schema:
           $ref: '#/definitions/helperStruct.UserReq'
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.UserData'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
             $ref: '#/definitions/response.Response'
-      summary: user signup
+      summary: UserSignUp
+      tags:
+      - Users
+  /updateaddress/{addressId}:
+    patch:
+      consumes:
+      - application/json
+      description: Update address
+      operationId: update-address
+      parameters:
+      - description: addressId
+        in: path
+        name: addressId
+        required: true
+        type: string
+      - description: User address
+        in: body
+        name: user_address
+        required: true
+        schema:
+          $ref: '#/definitions/helperStruct.Address'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: User can update existing address
+      tags:
+      - Users
+  /updatepassword:
+    patch:
+      consumes:
+      - application/json
+      description: Users can update their Password
+      operationId: update-user-Password
+      parameters:
+      - description: User password
+        in: body
+        name: user_profile
+        required: true
+        schema:
+          $ref: '#/definitions/helperStruct.UpdatePassword'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: User can update their Password
+      tags:
+      - Users
+  /userdisaplayallproductItems/:
+    get:
+      consumes:
+      - application/json
+      description: view all product items for user
+      operationId: user-view-all-product-items
+      parameters:
+      - description: Page number for pagination
+        in: query
+        name: page
+        type: integer
+      - description: Number of items to retrieve per page
+        in: query
+        name: limit
+        type: integer
+      - description: Search query string
+        in: query
+        name: query
+        type: string
+      - description: Filter criteria for the product items
+        in: query
+        name: filter
+        type: string
+      - description: Sorting criteria for the product items
+        in: query
+        name: sort_by
+        type: string
+      - description: Sorting in descending order
+        in: query
+        name: sort_desc
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Handler function to view all product items
+      tags:
+      - Product Item
   /userlogin:
     post:
       consumes:
       - application/json
-      operationId: user-login
+      description: Login as a user to access the ecommerce site
+      operationId: user-login-email
       parameters:
-      - description: User Data
+      - description: User details
         in: body
         name: user_details
         required: true
         schema:
           $ref: '#/definitions/helperStruct.LoginReq'
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
             $ref: '#/definitions/response.Response'
-      summary: user login
+      summary: User Login
+      tags:
+      - Users
+  /verifyotp:
+    post:
+      consumes:
+      - application/json
+      description: Validate the  OTP sent to use's mobile
+      operationId: validate-otp
+      parameters:
+      - description: OTP sent to user's mobile number
+        in: body
+        name: otp
+        required: true
+        schema:
+          $ref: '#/definitions/helperStruct.VerifyOtp'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Validate the OTP to user's mobile
+      tags:
+      - Otp
   /viewfav/:
     get:
       consumes:
@@ -751,5 +1523,52 @@ paths:
             $ref: '#/definitions/response.Response'
       summary: User can view items in favourites
       tags:
-      - favourites
+      - Favourites
+  /vieworder/{orderId}:
+    get:
+      consumes:
+      - application/json
+      description: This function handles requests for retrieving the details of a
+        specific order identified by its order ID.
+      operationId: view-order-by-id
+      parameters:
+      - description: Order ID
+        in: path
+        name: order_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully fetched order details
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Failed to fetch order details
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Retrieves order details for a given order ID, if authorized.
+      tags:
+      - Order
+  /viewprfile:
+    get:
+      consumes:
+      - application/json
+      description: Users can visit their profile
+      operationId: user-profile
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: User can view their profile
+      tags:
+      - Users
 swagger: "2.0"

@@ -205,7 +205,7 @@ func (cr *UserHandler) AddAddress(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param addressId path string true "addressId"
-// @Param user_address body model.AddressInput true "User address"
+// @Param user_address body helperStruct.Address true "User address"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
 // @Router /updateaddress/{addressId} [patch]

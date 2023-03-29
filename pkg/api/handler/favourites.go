@@ -126,7 +126,7 @@ func (cr *FavouriteHandler) RemoveFromFav(c *gin.Context) {
 // @Summary User can view items in favourites
 // @ID view-favourites
 // @Description User view product items in favourites
-// @Tags favourites
+// @Tags Favourites
 // @Accept json
 // @Produce json
 // @Success 200 {object} response.Response

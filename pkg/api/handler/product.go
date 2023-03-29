@@ -21,6 +21,17 @@ func NewProductHandler(productUsecase services.ProductUsecase) *ProductHandler {
 	}
 }
 
+// CreateCategory
+// @Summary Create new product category
+// @ID create-category
+// @Description Admin can create new category from admin panel
+// @Tags Product Category
+// @Accept json
+// @Produce json
+// @Param category_name body helperStruct.Category true "New category name"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /admin/addcatergory/ [post]
 func (cr *ProductHandler) CreateCategory(c *gin.Context) {
 	var category helperStruct.Category
 	err := c.Bind(&category)
@@ -52,6 +63,18 @@ func (cr *ProductHandler) CreateCategory(c *gin.Context) {
 	})
 }
 
+// UpdateCategory
+// @Summary Admin can update category details
+// @ID update-category
+// @Description Admin can update category details
+// @Tags Product Category
+// @Accept json
+// @Produce json
+// @Param Id path string true "ID of the Category to be updated"
+// @Param category_details body helperStruct.Category true "category info"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /admin/updatedcategory/{id} [put]
 func (cr *ProductHandler) UpdatCategory(c *gin.Context) {
 	var category helperStruct.Category
 	err := c.Bind(&category)
@@ -95,6 +118,17 @@ func (cr *ProductHandler) UpdatCategory(c *gin.Context) {
 	})
 }
 
+// DeleteCategory
+// @Summary Admin can delete a category
+// @ID delete-category
+// @Description Admin can delete a category
+// @Tags Product Category
+// @Accept json
+// @Produce json
+// @Param category_id path string true "category_id"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @ Router /admin/deletecategory/{id} [delete]
 func (cr *ProductHandler) DeleteCategory(c *gin.Context) {
 	parmasId := c.Param("id")
 	id, err := strconv.Atoi(parmasId)
@@ -128,6 +162,16 @@ func (cr *ProductHandler) DeleteCategory(c *gin.Context) {
 
 }
 
+// ListAllCategories
+// @Summary View all available categories
+// @ID view-all-categories
+// @Description Admin, users and unregistered users can see all the available categories
+// @Tags Product Category
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /admin/listallcategories/ [get]
 func (cr *ProductHandler) ListCategories(c *gin.Context) {
 	categories, err := cr.productUsecase.ListCategories()
 	if err != nil {
@@ -148,6 +192,18 @@ func (cr *ProductHandler) ListCategories(c *gin.Context) {
 	})
 }
 
+// FindCategoryByID
+// @Summary Fetch details of a specific category using category id
+// @ID find-category-by-id
+// @Description Users and admins can fetch details of a specific category using id
+// @Tags Product Category
+// @Accept json
+// @Produce json
+// @Param category_id path string true "category id"
+// @Success 200 {object} response.Response
+// @Failure 422 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Router /admin/findcategories/{id} [get]
 func (cr *ProductHandler) DisplayCategory(c *gin.Context) {
 	paramsId := c.Param("id")
 	id, err := strconv.Atoi(paramsId)
@@ -179,6 +235,17 @@ func (cr *ProductHandler) DisplayCategory(c *gin.Context) {
 	})
 }
 
+// CreateProduct
+// @Summary Admin can create new product listings
+// @ID create-product
+// @Description Admins can create new product listings
+// @Tags Product
+// @Accept json
+// @Produce json
+// @Param new_product_details body helperStruct.Product true "new product details"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /admin/addproduct/ [post]
 func (cr *ProductHandler) AddProduct(c *gin.Context) {
 	var product helperStruct.Product
 	err := c.Bind(&product)
@@ -212,6 +279,18 @@ func (cr *ProductHandler) AddProduct(c *gin.Context) {
 
 }
 
+// UpdateProduct
+// @Summary Admin can update product details
+// @ID update-product
+// @Description This endpoint allows an admin user to update a product's details.
+// @Tags Product
+// @Accept json
+// @Produce json
+// @Param Id path string true "ID of the product to be updated"
+// @Param updated_product_details body  helperStruct.Product true "Updated product details"
+// @Success 202 {object} response.Response "Successfully updated product"
+// @Failure 400 {object} response.Response "Unable to update product"
+// @Router /admin/updateproduct/{id} [put]
 func (cr *ProductHandler) UpdateProduct(c *gin.Context) {
 	var product helperStruct.Product
 	paramsId := c.Param("id")
@@ -254,6 +333,17 @@ func (cr *ProductHandler) UpdateProduct(c *gin.Context) {
 
 }
 
+// DeleteProduct
+// @Summary Deletes a product by ID
+// @ID delete-product
+// @Description This endpoint allows an admin user to delete a product by ID.
+// @Tags Product
+// @Accept json
+// @Produce json
+// @Param id path int true "Product ID to delete"
+// @Success 200 {object} response.Response "Successfully deleted product"
+// @Failure 400 {object} response.Response "Invalid product ID"
+// @Router /admin/deleteproduct/{id} [delete]
 func (cr *ProductHandler) DeleteProduct(c *gin.Context) {
 
 	paramsId := c.Param("id")
@@ -287,6 +377,37 @@ func (cr *ProductHandler) DeleteProduct(c *gin.Context) {
 	})
 }
 
+// ViewAllProducts
+// @Summary Admins and users can see all available products
+// @ID admin-view-all-products
+// @Description Admins and users can ses all available products
+// @Tags Product
+// @Accept json
+// @Produce json
+// @Param page query int false "Page number for pagination"
+// @Param limit query int false "Number of items to retrieve per page"
+// @Param query query string false "Search query string"
+// @Param filter query string false "Filter criteria for the products"
+// @Param sort_by query string false "Sorting criteria for the products"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /admin/products/ [get]
+
+// ViewAllProducts
+// @Summary Admins and users can see all available products
+// @ID user-view-all-products
+// @Description Admins and users can ses all available products
+// @Tags Product
+// @Accept json
+// @Produce json
+// @Param page query int false "Page number for pagination"
+// @Param limit query int false "Number of items to retrieve per page"
+// @Param query query string false "Search query string"
+// @Param filter query string false "Filter criteria for the product items"
+// @Param sort_by query string false "Sorting criteria for the product items"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /listallproduct/ [get]
 func (cr *ProductHandler) ListAllProduct(c *gin.Context) {
 
 	var viewProduct helperStruct.QueryParams
@@ -318,6 +439,18 @@ func (cr *ProductHandler) ListAllProduct(c *gin.Context) {
 	})
 }
 
+// FindProductByID
+// @Summary Admins and users can see products with product id
+// @ID find-product-by-id
+// @Description Admins and users can see products with product id
+// @Tags Product
+// @Accept json
+// @Produce json
+// @Param product_id path string true "product id"
+// @Success 200 {object} response.Response
+// @Failure 422 {object} response.Response
+// @Failure 500 {object} response.Response
+// @ Router /admin/showproduct/{id} [get]
 func (cr *ProductHandler) ShowProduct(c *gin.Context) {
 
 	paramsId := c.Param("id")
@@ -349,6 +482,17 @@ func (cr *ProductHandler) ShowProduct(c *gin.Context) {
 	})
 }
 
+// CreateProductItem
+// @Summary Creates a new product item
+// @ID create-product-item
+// @Description This endpoint allows an admin user to create a new product item.
+// @Tags Product Item
+// @Accept json
+// @Produce json
+// @Param product_item body helperStruct.ProductItem true "Product item details"
+// @Success 200 {object} response.Response "Successfully added new product item"
+// @Failure 400 {object} response.Response "Failed to add new product item"
+// @Router /admin/addproductitem/ [post]
 func (cr *ProductHandler) AddProductItem(c *gin.Context) {
 	var productItem helperStruct.ProductItem
 	err := c.Bind(&productItem)
@@ -379,6 +523,18 @@ func (cr *ProductHandler) AddProductItem(c *gin.Context) {
 	})
 }
 
+// UpdateProductItem updates a product item in the database.
+// @Summary Update a product item
+// @ID update-product-item
+// @Description Update an existing product item with new information.
+// @Tags Product Item
+// @Accept json
+// @Produce json
+// @Param Id path string true "ID of the productitem to be updated"
+// @Param product_item body helperStruct.ProductItem true "Product item information to update"
+// @Success 202 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /admin/updatedproductitem/{id} [patch]
 func (cr *ProductHandler) UpdateProductItem(c *gin.Context) {
 	var productItem helperStruct.ProductItem
 	err := c.Bind(&productItem)
@@ -422,6 +578,17 @@ func (cr *ProductHandler) UpdateProductItem(c *gin.Context) {
 	})
 }
 
+// DeleteProductItem
+// @Summary Deletes a product item from the system
+// @ID delete-product-item
+// @Description Deletes a product item from the system
+// @Tags Product Item
+// @Accept json
+// @Produce json
+// @Param id path string true "ID of the product item to be deleted"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /admin/deleteproductitem/{id} [delete]
 func (cr *ProductHandler) DeleteProductItem(c *gin.Context) {
 	paramsId := c.Param("id")
 	id, err := strconv.Atoi(paramsId)
@@ -452,6 +619,38 @@ func (cr *ProductHandler) DeleteProductItem(c *gin.Context) {
 	})
 }
 
+// ViewAllProductItems
+// @Summary Handler function to view all product items
+// @ID admin-view-all-product-items
+// @Description view all product items
+// @Tags Product Item
+// @Accept json
+// @Produce json
+// @Param page query int false "Page number for pagination"
+// @Param limit query int false "Number of items to retrieve per page"
+// @Param query query string false "Search query string"
+// @Param filter query string false "Filter criteria for the product items"
+// @Param sort_by query string false "Sorting criteria for the product items"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /admin/disaplyaallproductItems/ [get]
+
+// ViewAllProductItems for user
+// @Summary Handler function to view all product items
+// @ID user-view-all-product-items
+// @Description view all product items for user
+// @Tags Product Item
+// @Accept json
+// @Produce json
+// @Param page query int false "Page number for pagination"
+// @Param limit query int false "Number of items to retrieve per page"
+// @Param query query string false "Search query string"
+// @Param filter query string false "Filter criteria for the product items"
+// @Param sort_by query string false "Sorting criteria for the product items"
+// @Param sort_desc query bool false "Sorting in descending order"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /userdisaplayallproductItems/ [get]
 func (cr *ProductHandler) DisaplyaAllProductItems(c *gin.Context) {
 	productItems, err := cr.productUsecase.DisaplyaAllProductItems()
 
@@ -473,6 +672,17 @@ func (cr *ProductHandler) DisaplyaAllProductItems(c *gin.Context) {
 	})
 }
 
+// FindProductItemByID
+// @Summary Retrieve a product item by ID
+// @ID find-product-item-by-id
+// @Description Retrieve a product item by its ID
+// @Tags Product Item
+// @Accept json
+// @Produce json
+// @Param id path string true "Product item ID"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /admin/userdisaplayproductitem/{id} [get]
 func (cr *ProductHandler) DisaplyProductItem(c *gin.Context) {
 	paramsId := c.Param("id")
 	id, err := strconv.Atoi(paramsId)
