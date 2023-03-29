@@ -28,8 +28,18 @@ func NewOtpHandler(cfg config.Config, otpUseCase services.OtpUseCase, userUseCas
 	}
 }
 
+// SendOtp
+// @Summary Send OTP to user's mobile
+// @ID send-otp
+// @Description Send OTP to use's mobile
+// @Tags Otp
+// @Accept json
+// @Produce json
+// @Param user_mobile body  helperStruct.OTPData true "User mobile number"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /sendotp [post]
 func (cr *OtpHandler) SendOtp(c *gin.Context) {
-
 	var phno helperStruct.OTPData
 	err := c.Bind(&phno)
 	if err != nil {
@@ -89,8 +99,18 @@ func (cr *OtpHandler) SendOtp(c *gin.Context) {
 	})
 }
 
+// ValidateOtp
+// @Summary Validate the OTP to user's mobile
+// @ID validate-otp
+// @Description Validate the  OTP sent to use's mobile
+// @Tags Otp
+// @Accept json
+// @Produce json
+// @Param otp body helperStruct.VerifyOtp true "OTP sent to user's mobile number"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /verifyotp [post]
 func (cr *OtpHandler) ValidateOtp(c *gin.Context) {
-
 	var otpDetails helperStruct.VerifyOtp
 	err := c.Bind(&otpDetails)
 

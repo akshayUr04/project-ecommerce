@@ -20,6 +20,17 @@ func NewFavouritesHandler(favouritesUsecase services.FavouritesUsecase) *Favouri
 	}
 }
 
+// AddToFavourites
+// @Summary User can add product item to favourites
+// @ID add-to-favourites
+// @Description User can add product item to favourites
+// @Tags Favourites
+// @Accept json
+// @Produce json
+// @Param productId path string true "ID of the product item to be added to wishlist"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /addtofav/{productId} [post]
 func (cr *FavouriteHandler) AddToFavourites(c *gin.Context) {
 	id := c.Param("productId")
 	productId, err := strconv.Atoi(id)
@@ -60,6 +71,17 @@ func (cr *FavouriteHandler) AddToFavourites(c *gin.Context) {
 	})
 }
 
+// ReomveFavourites
+// @Summary User can remove product item from favourites
+// @ID remove-from-favourites
+// @Description User can remove product item from favourites
+// @Tags Favourites
+// @Accept json
+// @Produce json
+// @Param productId path string true "ID of the product item to be added to wishlist"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /removefromfav/{productId} [delete]
 func (cr *FavouriteHandler) RemoveFromFav(c *gin.Context) {
 	id := c.Param("productId")
 	productId, err := strconv.Atoi(id)
@@ -100,6 +122,16 @@ func (cr *FavouriteHandler) RemoveFromFav(c *gin.Context) {
 	})
 }
 
+// ViewFavourites
+// @Summary User can view items in favourites
+// @ID view-favourites
+// @Description User view product items in favourites
+// @Tags favourites
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /viewfav/ [get]
 func (cr *FavouriteHandler) ViewFavourites(c *gin.Context) {
 	userId, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {

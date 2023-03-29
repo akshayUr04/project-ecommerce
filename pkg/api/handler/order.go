@@ -20,8 +20,19 @@ func NewOrderHandler(orderUseCase services.OrderUseCase) *OrderHandler {
 	}
 }
 
+// OrderAll
+// @Summary Buy all items from the user's cart
+// @ID buyAll
+// @Description This endpoint allows a user to purchase all items in their cart
+// @Tags Order
+// @Accept json
+// @Produce json
+// @Param payment_type_id path string true "payment_type_id"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /orderall/{paymentId}[post]
 func (cr *OrderHandler) OrderAll(c *gin.Context) {
-	paramsId := c.Param("id")
+	paramsId := c.Param("paymentId")
 	paymentTypeId, err := strconv.Atoi(paramsId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
@@ -60,6 +71,17 @@ func (cr *OrderHandler) OrderAll(c *gin.Context) {
 	})
 }
 
+// CancelOrder
+// @Summary Cancels a specific order for the currently logged in user
+// @ID cancel-order
+// @Description Endpoint for cancelling an order associated with a user
+// @Tags Order
+// @Accept json
+// @Produce json
+// @Param order_id path int true "ID of the order to be cancelled"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /orders/cancel/{orderId} [patch]
 func (cr *OrderHandler) UserCancelOrder(c *gin.Context) {
 	userId, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
@@ -71,7 +93,7 @@ func (cr *OrderHandler) UserCancelOrder(c *gin.Context) {
 		})
 		return
 	}
-	paramsId := c.Param("id")
+	paramsId := c.Param("orderId")
 	orderId, err := strconv.Atoi(paramsId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
@@ -100,6 +122,17 @@ func (cr *OrderHandler) UserCancelOrder(c *gin.Context) {
 	})
 }
 
+// ViewOrderByID function retrieves order details for a given order ID, if authorized.
+// @Summary Retrieves order details for a given order ID, if authorized.
+// @ID view-order-by-id
+// @Description This function handles requests for retrieving the details of a specific order identified by its order ID.
+// @Tags Order
+// @Accept json
+// @Produce json
+// @Param order_id path int true "Order ID"
+// @Success 200 {object} response.Response "Successfully fetched order details"
+// @Failure 400 {object} response.Response "Failed to fetch order details"
+// @Router /vieworder/{orderId} [get]
 func (cr *OrderHandler) ListOrder(c *gin.Context) {
 	userId, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
@@ -111,7 +144,7 @@ func (cr *OrderHandler) ListOrder(c *gin.Context) {
 		})
 		return
 	}
-	paramsId := c.Param("id")
+	paramsId := c.Param("orderId")
 	orderId, err := strconv.Atoi(paramsId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
@@ -140,6 +173,16 @@ func (cr *OrderHandler) ListOrder(c *gin.Context) {
 	})
 }
 
+// ViewAllOrders
+// @Summary Retrieves all orders of currently logged in user
+// @ID view-all-orders
+// @Description Endpoint for getting all orders associated with a user
+// @Tags Order
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router  /listallorder/ [get]
 func (cr *OrderHandler) ListAllOrders(c *gin.Context) {
 	Id, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
@@ -169,6 +212,18 @@ func (cr *OrderHandler) ListAllOrders(c *gin.Context) {
 	})
 }
 
+// ReturnOrder
+// @Summary Return a specific order for the currently logged in user
+// @ID return-order
+// @Description Endpoint for Returning an order associated with a user
+// @Tags Order
+// @Accept json
+// @Produce json
+// @Param order_id path int true "ID of the order to be cancelled"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Failure 401 {object} response.Response
+// @Router /return/{orderId} [patch]
 func (cr *OrderHandler) ReturnOrder(c *gin.Context) {
 	userId, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
@@ -180,7 +235,7 @@ func (cr *OrderHandler) ReturnOrder(c *gin.Context) {
 		})
 		return
 	}
-	paramsId := c.Param("id")
+	paramsId := c.Param("orderId")
 	orderId, err := strconv.Atoi(paramsId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{

@@ -25,6 +25,19 @@ definitions:
     - pincode
     - street
     type: object
+  helperStruct.Coupons:
+    properties:
+      code:
+        type: string
+      discountmaximumamount:
+        type: number
+      discountpercent:
+        type: number
+      expirationdate:
+        type: string
+      minimumpurchaseamount:
+        type: number
+    type: object
   helperStruct.CreateAdmin:
     properties:
       email:
@@ -111,6 +124,84 @@ paths:
           schema:
             $ref: '#/definitions/response.Response'
       summary: user add address
+  /addcoupontocart/{coupon_id}:
+    patch:
+      consumes:
+      - application/json
+      description: User can add coupon to the cart
+      operationId: applay-coupon-to-cart
+      parameters:
+      - description: coupon_id
+        in: path
+        name: coupon_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: User can add a coupon to the cart
+      tags:
+      - Cart
+  /addtocart/{product_item_id}:
+    post:
+      consumes:
+      - application/json
+      description: User can add product item to the cart
+      operationId: add-to-cart
+      parameters:
+      - description: product_item_id
+        in: path
+        name: product_item_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: User can add a product item to the cart
+      tags:
+      - Cart
+  /addtofav/{productId}:
+    post:
+      consumes:
+      - application/json
+      description: User can add product item to favourites
+      operationId: add-to-favourites
+      parameters:
+      - description: ID of the product item to be added to wishlist
+        in: path
+        name: productId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: User can add product item to favourites
+      tags:
+      - Favourites
   /admin/adminlogin:
     post:
       consumes:
@@ -209,6 +300,59 @@ paths:
       summary: Create a new admin from admin panel
       tags:
       - Admin
+  /admin/createcoupon/:
+    post:
+      consumes:
+      - application/json
+      description: Admin can create new coupons
+      operationId: create-coupon
+      parameters:
+      - description: details of new coupon to be created
+        in: body
+        name: new_coupon_details
+        required: true
+        schema:
+          $ref: '#/definitions/helperStruct.Coupons'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Admin can create new coupon
+      tags:
+      - Coupon
+  /admin/deletecoupon/{couponId}:
+    delete:
+      consumes:
+      - application/json
+      description: Admin can delete existing coupon
+      operationId: delete-coupon
+      parameters:
+      - description: details of coupon to be updated
+        in: path
+        name: coupon_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Admin can delete existing coupon
+      tags:
+      - Coupon
   /admin/downloadsales/:
     get:
       consumes:
@@ -367,6 +511,104 @@ paths:
       summary: Admin can unbolock a blocked user
       tags:
       - Admin
+  /admin/updatecoupen/{couponId}:
+    patch:
+      consumes:
+      - application/json
+      description: Admin can update existing coupon
+      operationId: update-coupon
+      parameters:
+      - description: Coupon ID
+        in: path
+        name: couponId
+        required: true
+        type: string
+      - description: details of coupon to be updated
+        in: body
+        name: coupon_details
+        required: true
+        schema:
+          $ref: '#/definitions/helperStruct.Coupons'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Admin can update existing coupon
+      tags:
+      - Coupon
+  /admin/viewcoupon/{couponId}:
+    get:
+      consumes:
+      - application/json
+      description: Admins and users can see coupon with id
+      operationId: view-coupon-by-id
+      parameters:
+      - description: coupon_id
+        in: path
+        name: coupon_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Admins and users can see coupon with coupon id
+      tags:
+      - Coupon
+  /admin/viewcoupons/:
+    get:
+      consumes:
+      - application/json
+      description: Admins and users can see all available coupons
+      operationId: view-coupons
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Admins and users can see all available coupons
+      tags:
+      - Coupon
+  /listcart:
+    get:
+      consumes:
+      - application/json
+      description: User can view cart and cart items
+      operationId: view-cart
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: User can view cart items and total
+      tags:
+      - Cart
   /logout:
     get:
       operationId: user-logout
@@ -376,6 +618,78 @@ paths:
         "200":
           description: OK
       summary: user logout
+  /removecoupon:
+    patch:
+      consumes:
+      - application/json
+      description: User can add coupon to the cart
+      operationId: remove-coupon-to-cart
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: User can remove the coupon that added to the cart
+      tags:
+      - Cart
+  /removefromcart/{product_item_id}:
+    delete:
+      consumes:
+      - application/json
+      description: User can remove product from cart
+      operationId: remove-from-cart
+      parameters:
+      - description: product_item_id
+        in: path
+        name: product_item_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Remove a product from the cart
+      tags:
+      - Cart
+  /removefromfav/{productId}:
+    delete:
+      consumes:
+      - application/json
+      description: User can remove product item from favourites
+      operationId: remove-from-favourites
+      parameters:
+      - description: ID of the product item to be added to wishlist
+        in: path
+        name: productId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: User can remove product item from favourites
+      tags:
+      - Favourites
   /signup:
     post:
       consumes:
@@ -418,4 +732,24 @@ paths:
           schema:
             $ref: '#/definitions/response.Response'
       summary: user login
+  /viewfav/:
+    get:
+      consumes:
+      - application/json
+      description: User view product items in favourites
+      operationId: view-favourites
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: User can view items in favourites
+      tags:
+      - favourites
 swagger: "2.0"

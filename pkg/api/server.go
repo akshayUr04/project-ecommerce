@@ -45,7 +45,7 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 		user.GET("listallcategories", productHandler.ListCategories)
 		user.GET("findcategories/:id", productHandler.DisplayCategory)
 
-		user.GET("order/razorpay/:id", paymentHandler.CreateRazorpayPayment)
+		user.GET("order/razorpay/:orderId", paymentHandler.CreateRazorpayPayment)
 		user.GET("payment-handler", paymentHandler.PaymentSuccess)
 
 		user.Use(middleware.UserAuth)
@@ -57,10 +57,11 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 			user.PATCH("removefromcart/:product_item_id", cartHandler.RemoveFromCart)
 			user.GET("listcart", cartHandler.ListCart)
 			user.POST("addaddress", userHandler.AddAddress)
-			user.PATCH("updateaddress/:id", userHandler.UpdateAddress)
-			user.POST("orderall/:id", orderHandler.OrderAll)
-			user.PATCH("usercancelordrder/:id", orderHandler.UserCancelOrder)
-			user.GET("vieworder/:id", orderHandler.ListOrder)
+			user.PATCH("updateaddress/:addressId", userHandler.UpdateAddress)
+
+			user.POST("orderall/:paymentId", orderHandler.OrderAll)
+			user.PATCH("usercancelordrder/:orderId", orderHandler.UserCancelOrder)
+			user.GET("vieworder/:orderId", orderHandler.ListOrder)
 			user.GET("listallorder", orderHandler.ListAllOrders)
 
 			user.GET("userlistallcategories", productHandler.ListCategories)
@@ -79,10 +80,9 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 			//Favourites
 			user.POST("addtofav/:productId", favourites.AddToFavourites)
 			user.DELETE("removefromfav/:productId", favourites.RemoveFromFav)
-
 			user.GET("viewfav", favourites.ViewFavourites)
 
-			user.PATCH("return/:id", orderHandler.ReturnOrder)
+			user.PATCH("return/:orderId", orderHandler.ReturnOrder)
 		}
 
 	}

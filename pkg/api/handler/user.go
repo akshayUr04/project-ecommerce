@@ -27,11 +27,14 @@ func NewUserHandler(usecase services.UserUseCase, cartUseCase services.CartUseca
 
 // --------------------------------------------------UserSignUp------------------------------------------------------------
 
-// @Summary user signup
+// @Summary UserSignUp
 // @ID user-signup
-// @accept json
-// @Param user_details body helperStruct.UserReq true "User Data"
-// @Success 200 {object} response.UserData
+// @Description Create a new user with the specified details.
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param user_details body  helperStruct.UserReq true "User details"
+// @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
 // @Router /signup [post]
 func (cr *UserHandler) UserSignUp(c *gin.Context) {
@@ -82,11 +85,16 @@ func (cr *UserHandler) UserSignUp(c *gin.Context) {
 }
 
 // --------------------------------------------------UserLogin------------------------------------------------------------
-// @Summary user login
-// @ID user-login
-// @accept json
-// @Param user_details body  helperStruct.LoginReq true "User Data"
-// @Success 200
+
+// LoginWithEmail
+// @Summary User Login
+// @ID user-login-email
+// @Description Login as a user to access the ecommerce site
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param user_details body helperStruct.LoginReq true "User details"
+// @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
 // @Router /userlogin [post]
 func (cr *UserHandler) UserLogin(c *gin.Context) {
@@ -119,11 +127,16 @@ func (cr *UserHandler) UserLogin(c *gin.Context) {
 	c.SetCookie("UserAuth", ss, 3600*24*30, "", "", false, true)
 }
 
-// @Summary user logout
+// UserLogout
+// @Summary User Logout
 // @ID user-logout
+// @Description Logs out a logged-in user from the E-commerce web api
+// @Tags Users
+// @Accept json
 // @Produce json
 // @Success 200
-// @Router /logout [get]
+// @Failure 400
+// @Router /logout [post]
 func (cr *UserHandler) UserLogout(c *gin.Context) {
 	c.SetCookie("UserAuth", "", -1, "", "", false, true)
 	c.JSON(http.StatusOK, gin.H{
@@ -131,13 +144,17 @@ func (cr *UserHandler) UserLogout(c *gin.Context) {
 	})
 }
 
-// @Summary user add address
-// @ID user-add-address
-// @accept json
-// @Param user_address body  helperStruct.Address true "User address"
+// AddAddress
+// @Summary User can add address
+// @ID add-address
+// @Description Add address
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param user_address body helperStruct.Address true "User address"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /addaddress [post]
+// @Router /addaddress/ [post]
 func (cr *UserHandler) AddAddress(c *gin.Context) {
 	Id, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
@@ -180,8 +197,20 @@ func (cr *UserHandler) AddAddress(c *gin.Context) {
 	})
 }
 
+// UpdateAddress
+// @Summary User can update existing address
+// @ID update-address
+// @Description Update address
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param addressId path string true "addressId"
+// @Param user_address body model.AddressInput true "User address"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /updateaddress/{addressId} [patch]
 func (cr *UserHandler) UpdateAddress(c *gin.Context) {
-	paramsId := c.Param("id")
+	paramsId := c.Param("addressId")
 	addressId, err := strconv.Atoi(paramsId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
@@ -232,6 +261,16 @@ func (cr *UserHandler) UpdateAddress(c *gin.Context) {
 	})
 }
 
+// UserProfile
+// @Summary User can view their profile
+// @ID user-profile
+// @Description Users can visit their profile
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /viewprfile [get]
 func (cr *UserHandler) Viewprfile(c *gin.Context) {
 	Id, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
@@ -262,6 +301,17 @@ func (cr *UserHandler) Viewprfile(c *gin.Context) {
 	})
 }
 
+// UpdateUserProfile
+// @Summary User can update their profile
+// @ID update-user-profile
+// @Description Users can update their profile
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param user_profile body helperStruct.UserReq true "User profile"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /editprofile [patch]
 func (cr *UserHandler) UserEditProfile(c *gin.Context) {
 	Id, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
@@ -301,6 +351,17 @@ func (cr *UserHandler) UserEditProfile(c *gin.Context) {
 	})
 }
 
+// UpdateUserPassword
+// @Summary User can update their Password
+// @ID update-user-Password
+// @Description Users can update their Password
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param user_profile body helperStruct.UpdatePassword true "User password"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /updatepassword [patch]
 func (cr *UserHandler) UpdatePassword(c *gin.Context) {
 	Id, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
