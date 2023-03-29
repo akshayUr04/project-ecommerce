@@ -91,3 +91,7 @@ func (c *ProductUsecase) ShowProduct(id int) (response.Product, error) {
 	product, err := c.productRepo.ShowProduct(id)
 	return product, err
 }
+func (c *ProductUsecase) UploadImage(filepath string, productId int) error {
+	err := c.productRepo.UploadImage(filepath, productId)
+	return err
+}

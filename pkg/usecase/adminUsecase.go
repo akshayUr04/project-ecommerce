@@ -105,8 +105,3 @@ func (c *adminUseCase) ViewSalesReport() ([]response.SalesReport, error) {
 	sales, err := c.adminRepo.ViewSalesReport()
 	return sales, err
 }
-
-func (c *adminUseCase) UploadImage(filepath string, productId int) error {
-	err := c.adminRepo.UploadImage(filepath, productId)
-	return err
-}

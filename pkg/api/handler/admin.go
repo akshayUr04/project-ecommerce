@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/csv"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -33,7 +32,7 @@ func NewAdminHandler(adminUseCae services.AdminUsecase) *AdminHandler {
 // @Param admin_details body helperStruct.CreateAdmin true "New Admin details"
 // @Success 201 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /adminPanel/create-admin [post]
+// @Router /admin/createadmin [post]
 func (cr *AdminHandler) CreateAdmin(c *gin.Context) {
 	var adminData helperStruct.CreateAdmin
 	err := c.Bind(&adminData)
@@ -77,6 +76,17 @@ func (cr *AdminHandler) CreateAdmin(c *gin.Context) {
 	})
 }
 
+// AdminLogin
+// @Summary Admin Login
+// @ID admin-login
+// @Description Admin login
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Param admin_credentials body helperStruct.LoginReq true "Admin login credentials"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /admin/adminlogin [post]
 func (cr *AdminHandler) AdminLoging(c *gin.Context) {
 	var admin helperStruct.LoginReq
 	err := c.Bind(&admin)
@@ -105,13 +115,38 @@ func (cr *AdminHandler) AdminLoging(c *gin.Context) {
 	c.SetCookie("AdminAuth", ss, 3600*24*30, "", "", false, true)
 }
 
+// AdminLogout
+// @Summary Admin Logout
+// @ID admin-logout
+// @Description Logs out a logged-in admin from the E-commerce web api admin panel
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response
+// @Failure 400
+// @Router /admin/adminlogout [post]
 func (cr *AdminHandler) AdminLogout(c *gin.Context) {
 	c.SetCookie("AdminAuth", "", -1, "", "", false, true)
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Logout succesfully",
+	c.JSON(http.StatusOK, response.Response{
+		StatusCode: 200,
+		Message:    "admin logouted",
+		Data:       nil,
+		Errors:     nil,
 	})
+
 }
 
+// BlockUser
+// @Summary Admin can bolock users
+// @ID block-users
+// @Description Admins can block users
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Param user_id path string true "ID of the user to be blocked"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /admin/blockuser/{id} [patch]
 func (cr *AdminHandler) BlockUser(c *gin.Context) {
 	var body helperStruct.BlockData
 	err := c.Bind(&body)
@@ -152,6 +187,17 @@ func (cr *AdminHandler) BlockUser(c *gin.Context) {
 	})
 }
 
+// UnBlockUser
+// @Summary Admin can unbolock a blocked user
+// @ID unblock-users
+// @Description Admins can block users
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Param user_id path string true "ID of the user to be blocked"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /admin/unblockuser/{id} [patch]
 func (cr *AdminHandler) UnblockUser(c *gin.Context) {
 	paramsId := c.Param("id")
 	id, err := strconv.Atoi(paramsId)
@@ -183,6 +229,17 @@ func (cr *AdminHandler) UnblockUser(c *gin.Context) {
 	})
 }
 
+// FindUser
+// @Summary Admin can find a user
+// @ID find-users
+// @Description Admins can find users with id
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Param user_id path string true "ID of the user to be found"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /admin/finduser/{id} [get]
 func (cr *AdminHandler) FindUser(c *gin.Context) {
 	paramsId := c.Param("id")
 	id, err := strconv.Atoi(paramsId)
@@ -214,6 +271,22 @@ func (cr *AdminHandler) FindUser(c *gin.Context) {
 	})
 }
 
+// FindAllUsers
+// @Summary Admin can find all registered users
+// @ID find-all-users
+// @Description Admin can find all registered users
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Param page query int false "Page number for pagination"
+// @Param limit query int false "Number of items to retrieve per page"
+// @Param query query string false "Search query string"
+// @Param filter query string false "Filter criteria for the users"
+// @Param sort_by query string false "Sorting criteria for the users"
+// @Param sort_desc query bool false "Sorting in descending order"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /admin/findall [get]
 func (cr *AdminHandler) FindAllUsers(c *gin.Context) {
 	users, err := cr.adminUseCase.FindAll()
 	if err != nil {
@@ -235,6 +308,16 @@ func (cr *AdminHandler) FindAllUsers(c *gin.Context) {
 
 }
 
+// AdminDashboard
+// @Summary Admin Dashboard
+// @ID admin-dashboard
+// @Description Admin can access dashboard and view details regarding orders, products, etc.
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /admin/getdashboard [get]
 func (cr *AdminHandler) AdminDashBoard(c *gin.Context) {
 	dashBoard, err := cr.adminUseCase.GetDashBoard()
 	if err != nil {
@@ -255,6 +338,16 @@ func (cr *AdminHandler) AdminDashBoard(c *gin.Context) {
 	})
 }
 
+// ViewSalesReport
+// @Summary Admin can view sales report
+// @ID view-sales-report
+// @Description Admin can view the sales report
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /admin/salesreport/ [get]
 func (cr *AdminHandler) ViewSalesReport(c *gin.Context) {
 	sales, err := cr.adminUseCase.ViewSalesReport()
 	if err != nil {
@@ -276,6 +369,16 @@ func (cr *AdminHandler) ViewSalesReport(c *gin.Context) {
 
 }
 
+// DownloadSalesReport
+// @Summary Admin can download sales report
+// @ID download-sales-report
+// @Description Admin can download sales report in .csv format
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /admin/downloadsales/ [get]
 func (cr *AdminHandler) DownloadSalesReport(c *gin.Context) {
 	sales, err := cr.adminUseCase.ViewSalesReport()
 	if err != nil {
@@ -317,44 +420,4 @@ func (cr *AdminHandler) DownloadSalesReport(c *gin.Context) {
 		return
 	}
 
-}
-
-func (cr *AdminHandler) UploadImage(c *gin.Context) {
-
-	id := c.Param("id")
-	productId, err := strconv.Atoi(id)
-
-	if err != nil {
-		c.JSON(http.StatusBadRequest, response.Response{
-			StatusCode: 400,
-			Message:    "cant find product id",
-			Data:       nil,
-			Errors:     err.Error(),
-		})
-		return
-	}
-
-	// Multipart form
-	form, _ := c.MultipartForm()
-	fmt.Println(form)
-
-	files := form.File["images"]
-
-	fmt.Println(files)
-
-	for _, file := range files {
-		// Upload the file to specific dst.
-		c.SaveUploadedFile(file, "asset/uploads/"+file.Filename)
-
-		err := cr.adminUseCase.UploadImage(file.Filename, productId)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, response.Response{
-				StatusCode: 400,
-				Message:    "cant upload images",
-				Data:       nil,
-				Errors:     err.Error(),
-			})
-			return
-		}
-	}
 }

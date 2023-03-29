@@ -25,6 +25,22 @@ definitions:
     - pincode
     - street
     type: object
+  helperStruct.CreateAdmin:
+    properties:
+      email:
+        type: string
+      isSuper:
+        type: boolean
+      name:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - isSuper
+    - name
+    - password
+    type: object
   helperStruct.LoginReq:
     properties:
       email:
@@ -95,6 +111,262 @@ paths:
           schema:
             $ref: '#/definitions/response.Response'
       summary: user add address
+  /admin/adminlogin:
+    post:
+      consumes:
+      - application/json
+      description: Admin login
+      operationId: admin-login
+      parameters:
+      - description: Admin login credentials
+        in: body
+        name: admin_credentials
+        required: true
+        schema:
+          $ref: '#/definitions/helperStruct.LoginReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Admin Login
+      tags:
+      - Admin
+  /admin/adminlogout:
+    post:
+      consumes:
+      - application/json
+      description: Logs out a logged-in admin from the E-commerce web api admin panel
+      operationId: admin-logout
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+      summary: Admin Logout
+      tags:
+      - Admin
+  /admin/blockuser/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Admins can block users
+      operationId: block-users
+      parameters:
+      - description: ID of the user to be blocked
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Admin can bolock users
+      tags:
+      - Admin
+  /admin/createadmin:
+    post:
+      consumes:
+      - application/json
+      description: Super admin can create a new admin from admin panel.
+      operationId: create-admin
+      parameters:
+      - description: New Admin details
+        in: body
+        name: admin_details
+        required: true
+        schema:
+          $ref: '#/definitions/helperStruct.CreateAdmin'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Create a new admin from admin panel
+      tags:
+      - Admin
+  /admin/downloadsales/:
+    get:
+      consumes:
+      - application/json
+      description: Admin can download sales report in .csv format
+      operationId: download-sales-report
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Admin can download sales report
+      tags:
+      - Admin
+  /admin/findall:
+    get:
+      consumes:
+      - application/json
+      description: Admin can find all registered users
+      operationId: find-all-users
+      parameters:
+      - description: Page number for pagination
+        in: query
+        name: page
+        type: integer
+      - description: Number of items to retrieve per page
+        in: query
+        name: limit
+        type: integer
+      - description: Search query string
+        in: query
+        name: query
+        type: string
+      - description: Filter criteria for the users
+        in: query
+        name: filter
+        type: string
+      - description: Sorting criteria for the users
+        in: query
+        name: sort_by
+        type: string
+      - description: Sorting in descending order
+        in: query
+        name: sort_desc
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Admin can find all registered users
+      tags:
+      - Admin
+  /admin/finduser/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Admins can find users with id
+      operationId: find-users
+      parameters:
+      - description: ID of the user to be found
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Admin can find a user
+      tags:
+      - Admin
+  /admin/getdashboard:
+    get:
+      consumes:
+      - application/json
+      description: Admin can access dashboard and view details regarding orders, products,
+        etc.
+      operationId: admin-dashboard
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Admin Dashboard
+      tags:
+      - Admin
+  /admin/salesreport/:
+    get:
+      consumes:
+      - application/json
+      description: Admin can view the sales report
+      operationId: view-sales-report
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Admin can view sales report
+      tags:
+      - Admin
+  /admin/unblockuser/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Admins can block users
+      operationId: unblock-users
+      parameters:
+      - description: ID of the user to be blocked
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Admin can unbolock a blocked user
+      tags:
+      - Admin
   /logout:
     get:
       operationId: user-logout

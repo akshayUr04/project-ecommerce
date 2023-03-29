@@ -504,3 +504,42 @@ func (cr *ProductHandler) DisaplyProductItem(c *gin.Context) {
 	})
 
 }
+func (cr *ProductHandler) UploadImage(c *gin.Context) {
+
+	id := c.Param("id")
+	productId, err := strconv.Atoi(id)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "cant find product id",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+
+	// Multipart form
+	form, _ := c.MultipartForm()
+	fmt.Println(form)
+
+	files := form.File["images"]
+
+	fmt.Println(files)
+
+	for _, file := range files {
+		// Upload the file to specific dst.
+		c.SaveUploadedFile(file, "asset/uploads/"+file.Filename)
+
+		err := cr.productUsecase.UploadImage(file.Filename, productId)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, response.Response{
+				StatusCode: 400,
+				Message:    "cant upload images",
+				Data:       nil,
+				Errors:     err.Error(),
+			})
+			return
+		}
+	}
+}

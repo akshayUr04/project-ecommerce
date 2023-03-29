@@ -259,3 +259,9 @@ func (c *ProductDatabase) ShowProduct(id int) (response.Product, error) {
 	err := c.DB.Raw(query, id).Scan(&product).Error
 	return product, err
 }
+
+func (c *ProductDatabase) UploadImage(filepath string, productId int) error {
+	uploadImage := `INSERT INTO images (product_item_id,file_name)VALUES($1,$2)`
+	err := c.DB.Exec(uploadImage, productId, filepath).Error
+	return err
+}

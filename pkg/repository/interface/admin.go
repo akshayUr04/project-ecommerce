@@ -16,5 +16,4 @@ type AdminRepository interface {
 	FindAll() ([]response.UserDetails, error)
 	GetDashBoard() (response.DashBoard, error)
 	ViewSalesReport() ([]response.SalesReport, error)
-	UploadImage(filepath string, productId int) error
 }

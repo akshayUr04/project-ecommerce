@@ -21,4 +21,5 @@ type ProductUsecase interface {
 	DisaplyProductItem(id int) (response.ProductItem, error)
 	ListAllProduct(viewProduct helperStruct.QueryParams) ([]response.Product, error)
 	ShowProduct(id int) (response.Product, error)
+	UploadImage(filepath string, productId int) error
 }

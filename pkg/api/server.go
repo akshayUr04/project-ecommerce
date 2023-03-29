@@ -96,7 +96,7 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 		{
 			admin.POST("creatadmin", adminHandler.CreateAdmin)
 			admin.POST("adminlogout", adminHandler.AdminLogout)
-			admin.POST("blockuser", adminHandler.BlockUser)
+			admin.PATCH("blockuser/:id", adminHandler.BlockUser)
 			admin.PATCH("unblockuser/:id", adminHandler.UnblockUser)
 			admin.GET("finduser/:id", adminHandler.FindUser)
 			admin.GET("findall", adminHandler.FindAllUsers)
@@ -119,7 +119,7 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 			admin.GET("disaplyaallproductItems", productHandler.DisaplyaAllProductItems)
 			admin.GET("disaplyproductitem/:id", productHandler.DisaplyProductItem)
 
-			admin.POST("uploadimage/:id", adminHandler.UploadImage)
+			admin.POST("uploadimage/:id", productHandler.UploadImage)
 			//Dashboard
 			admin.GET("getdashboard", adminHandler.AdminDashBoard)
 			//Coupons
