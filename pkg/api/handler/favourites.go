@@ -30,7 +30,7 @@ func NewFavouritesHandler(favouritesUsecase services.FavouritesUsecase) *Favouri
 // @Param productId path string true "ID of the product item to be added to wishlist"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /addtofav/{productId} [post]
+// @Router /user/favourites/add/{productId} [post]
 func (cr *FavouriteHandler) AddToFavourites(c *gin.Context) {
 	id := c.Param("productId")
 	productId, err := strconv.Atoi(id)
@@ -81,7 +81,7 @@ func (cr *FavouriteHandler) AddToFavourites(c *gin.Context) {
 // @Param productId path string true "ID of the product item to be added to wishlist"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /removefromfav/{productId} [delete]
+// @Router /user/favourites/remove/{productId} [delete]
 func (cr *FavouriteHandler) RemoveFromFav(c *gin.Context) {
 	id := c.Param("productId")
 	productId, err := strconv.Atoi(id)
@@ -131,7 +131,7 @@ func (cr *FavouriteHandler) RemoveFromFav(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /viewfav/ [get]
+// @Router /user/favourites/view/ [get]
 func (cr *FavouriteHandler) ViewFavourites(c *gin.Context) {
 	userId, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {

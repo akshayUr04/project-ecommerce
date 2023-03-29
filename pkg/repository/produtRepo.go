@@ -62,9 +62,16 @@ func (c *ProductDatabase) AddProduct(product helperStruct.Product) (response.Pro
 		return response.Product{}, fmt.Errorf("no category found")
 	}
 
+	// query := `INSERT INTO products (product_name, description, brand, category_id, created_at)
+	// 	VALUES ($1, $2, $3, $4, NOW())
+	// 	RETURNING p.id, p.product_name AS name, p.description, p.brand, c.category_name AS category
+	// 	FROM products p
+	// 	JOIN categories c
+	// 	ON p.category_id = c.id`
+
 	query := `INSERT INTO products (product_name,description,brand,category_id,created_at)
 		VALUES ($1,$2,$3,$4,NOW())
-		RETURNING id,product_name,description,brand,category_id`
+		RETURNING id,product_name AS name,description,brand,category_id`
 	err := c.DB.Raw(query, product.Name, product.Description, product.Brand, product.CategoryId).
 		Scan(&newProduct).Error
 	return newProduct, err
@@ -179,9 +186,9 @@ func (c *ProductDatabase) DeleteProductItem(id int) error {
 	return err
 }
 
-func (c *ProductDatabase) DisaplyaAllProductItems() ([]response.ProductItem, error) {
+func (c *ProductDatabase) DisaplyaAllProductItems(queryParams helperStruct.QueryParams) ([]response.ProductItem, error) {
 	var productItems []response.ProductItem
-	query := `SELECT p.product_name,
+	getProductItemDetails := `SELECT p.product_name,
 		p.description,
 		p.brand,
 		c.category_name, 
@@ -189,7 +196,29 @@ func (c *ProductDatabase) DisaplyaAllProductItems() ([]response.ProductItem, err
 		FROM products p 
 		JOIN categories c ON p.category_id=c.id 
 		JOIN product_items pi ON p.id=pi.product_id;`
-	err := c.DB.Raw(query).Scan(&productItems).Error
+
+	if queryParams.Query != "" && queryParams.Filter != "" {
+		getProductItemDetails = fmt.Sprintf("%s WHERE LOWER(%s) LIKE '%%%s%%'", getProductItemDetails, queryParams.Filter, strings.ToLower(queryParams.Query))
+	}
+
+	if queryParams.SortBy != "" {
+		if queryParams.SortDesc {
+			getProductItemDetails = fmt.Sprintf("%s ORDER BY %s DESC", getProductItemDetails, queryParams.SortBy)
+		} else {
+			getProductItemDetails = fmt.Sprintf("%s ORDER BY %s ASC", getProductItemDetails, queryParams.SortBy)
+		}
+	} else {
+		getProductItemDetails = fmt.Sprintf("%s ORDER BY p.created_at DESC", getProductItemDetails)
+	}
+	//to set the page number and the qty that need to display in a single responce
+	if queryParams.Limit != 0 && queryParams.Page != 0 {
+		getProductItemDetails = fmt.Sprintf("%s LIMIT %d OFFSET %d", getProductItemDetails, queryParams.Limit, (queryParams.Page-1)*queryParams.Limit)
+	}
+	if queryParams.Limit == 0 || queryParams.Page == 0 {
+		getProductItemDetails = fmt.Sprintf("%s LIMIT 10 OFFSET 0", getProductItemDetails)
+	}
+
+	err := c.DB.Raw(getProductItemDetails).Scan(&productItems).Error
 	return productItems, err
 }
 

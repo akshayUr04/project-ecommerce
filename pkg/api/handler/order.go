@@ -30,7 +30,7 @@ func NewOrderHandler(orderUseCase services.OrderUseCase) *OrderHandler {
 // @Param payment_id path string true "payment_id"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /orderall/{paymentId} [post]
+// @Router /user/order/orderall/{paymentId} [post]
 func (cr *OrderHandler) OrderAll(c *gin.Context) {
 	paramsId := c.Param("paymentId")
 	paymentTypeId, err := strconv.Atoi(paramsId)
@@ -81,7 +81,7 @@ func (cr *OrderHandler) OrderAll(c *gin.Context) {
 // @Param order_id path int true "ID of the order to be cancelled"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /orders/cancel/{orderId} [patch]
+// @Router user/order/cancel/{orderId} [patch]
 func (cr *OrderHandler) UserCancelOrder(c *gin.Context) {
 	userId, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
@@ -132,7 +132,7 @@ func (cr *OrderHandler) UserCancelOrder(c *gin.Context) {
 // @Param order_id path int true "Order ID"
 // @Success 200 {object} response.Response "Successfully fetched order details"
 // @Failure 400 {object} response.Response "Failed to fetch order details"
-// @Router /vieworder/{orderId} [get]
+// @Router /user/order/view/{orderId} [get]
 func (cr *OrderHandler) ListOrder(c *gin.Context) {
 	userId, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
@@ -182,7 +182,7 @@ func (cr *OrderHandler) ListOrder(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /listallorder [get]
+// @Router user/order/listall [get]
 func (cr *OrderHandler) ListAllOrders(c *gin.Context) {
 	Id, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
@@ -223,7 +223,7 @@ func (cr *OrderHandler) ListAllOrders(c *gin.Context) {
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
 // @Failure 401 {object} response.Response
-// @Router /return/{orderId} [patch]
+// @Router /user/order/return/{orderId} [patch]
 func (cr *OrderHandler) ReturnOrder(c *gin.Context) {
 	userId, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {

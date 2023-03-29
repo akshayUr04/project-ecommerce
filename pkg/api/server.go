@@ -32,57 +32,86 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 	// Swagger docs
 	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
-	user := engine.Group("/")
+	user := engine.Group("/user")
 	{
 		user.POST("signup", userHandler.UserSignUp)
 		user.POST("userlogin", userHandler.UserLogin)
-		user.POST("sendotp", otpHandler.SendOtp)
-		user.POST("verifyotp", otpHandler.ValidateOtp)
 		user.POST("logout", userHandler.UserLogout)
-		user.GET("disaplyaallproductItems", productHandler.DisaplyaAllProductItems)
-		user.GET("disaplyproductItem/:id", productHandler.DisaplyProductItem)
-		user.GET("listallproduct", productHandler.ListAllProduct)
-		user.GET("listallcategories", productHandler.ListCategories)
-		user.GET("findcategories/:id", productHandler.DisplayCategory)
 
-		user.GET("order/razorpay/:orderId", paymentHandler.CreateRazorpayPayment)
-		user.GET("payment-handler", paymentHandler.PaymentSuccess)
+		//Otp
+		otp := user.Group("/otp")
+		{
+			otp.POST("sendotp", otpHandler.SendOtp)
+			otp.POST("verifyotp", otpHandler.ValidateOtp)
+		}
+
+		products := user.Group("/products")
+		{
+			products.GET("listallproductItems", productHandler.DisaplyaAllProductItems)
+			products.GET("disaplyproductItem/:id", productHandler.DisaplyProductItem)
+
+			products.GET("listallproduct", productHandler.ListAllProduct)
+			products.GET("showproduct/:id", productHandler.ShowProduct)
+
+			products.GET("listallcategories", productHandler.ListCategories)
+			products.GET("findcategories/:id", productHandler.DisplayCategory)
+		}
 
 		user.Use(middleware.UserAuth)
 		{
-			user.GET("viewprfile", userHandler.Viewprfile)
-			user.PATCH("editprofile", userHandler.UserEditProfile)
-			user.PATCH("updatepassword", userHandler.UpdatePassword)
-			user.POST("addtocart/:product_item_id", cartHandler.AddToCart)
-			user.PATCH("removefromcart/:product_item_id", cartHandler.RemoveFromCart)
-			user.GET("listcart", cartHandler.ListCart)
-			user.POST("addaddress", userHandler.AddAddress)
-			user.PATCH("updateaddress/:addressId", userHandler.UpdateAddress)
+			//Profile
+			profile := user.Group("/profile")
+			{
+				profile.GET("view", userHandler.Viewprfile)
+				profile.PATCH("edite", userHandler.UserEditProfile)
+				profile.PATCH("updatepassword", userHandler.UpdatePassword)
+			}
 
-			user.POST("orderall/:paymentId", orderHandler.OrderAll)
-			user.PATCH("usercancelordrder/:orderId", orderHandler.UserCancelOrder)
-			user.GET("vieworder/:orderId", orderHandler.ListOrder)
-			user.GET("listallorder", orderHandler.ListAllOrders)
+			//Address
+			address := user.Group("/address")
+			{
+				address.POST("add", userHandler.AddAddress)
+				address.PATCH("update/:addressId", userHandler.UpdateAddress)
+			}
 
-			user.GET("userlistallcategories", productHandler.ListCategories)
-			user.GET("userfindcategories/:id", productHandler.DisplayCategory)
+			//Cart
+			cart := user.Group("/cart")
+			{
+				cart.POST("add/:product_item_id", cartHandler.AddToCart)
+				cart.PATCH("remove/:product_item_id", cartHandler.RemoveFromCart)
+				cart.GET("list", cartHandler.ListCart)
+			}
 
-			user.GET("userlistallproduct", productHandler.ListAllProduct)
-			user.GET("usershowproduct/:id", productHandler.ShowProduct)
-
-			user.GET("userdisaplayallproductItems", productHandler.DisaplyaAllProductItems)
-			user.GET("userdisaplayproductitem/:id", productHandler.DisaplyProductItem)
+			//Orders
+			order := user.Group("/order")
+			{
+				order.POST("orderall/:paymentId", orderHandler.OrderAll)
+				order.PATCH("cancel/:orderId", orderHandler.UserCancelOrder)
+				order.GET("view/:orderId", orderHandler.ListOrder)
+				order.GET("listall", orderHandler.ListAllOrders)
+				order.PATCH("return/:orderId", orderHandler.ReturnOrder)
+			}
 
 			//Coupon
-			user.PATCH("addcoupontocart/:coupon_id", couponHandler.ApplyCoupon)
-			user.PATCH("removecoupon", couponHandler.RemoveCoupon)
+			coupon := user.Group("coupon")
+			{
+				coupon.PATCH("applay/:coupon_id", couponHandler.ApplayCoupon)
+				coupon.PATCH("remove", couponHandler.RemoveCoupon)
+			}
 
 			//Favourites
-			user.POST("addtofav/:productId", favourites.AddToFavourites)
-			user.DELETE("removefromfav/:productId", favourites.RemoveFromFav)
-			user.GET("viewfav", favourites.ViewFavourites)
+			favourite := user.Group("/favourites")
+			{
 
-			user.PATCH("return/:orderId", orderHandler.ReturnOrder)
+				favourite.POST("add/:productId", favourites.AddToFavourites)
+				favourite.DELETE("remove/:productId", favourites.RemoveFromFav)
+				favourite.GET("view", favourites.ViewFavourites)
+
+			}
+
+			//Payment
+			user.GET("order/razorpay/:orderId", paymentHandler.CreateRazorpayPayment)
+			user.GET("payment-handler", paymentHandler.PaymentSuccess)
 		}
 
 	}
@@ -105,7 +134,7 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 			}
 
 			//categorys
-			category := admin.Group("/categorys")
+			category := admin.Group("/category")
 			{
 				category.POST("add", productHandler.CreateCategory)
 				category.PATCH("update/:id", productHandler.UpdatCategory)
@@ -115,30 +144,48 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 			}
 
 			//product
-			admin.POST("addproduct", productHandler.AddProduct)
-			admin.PATCH("updateproduct/:id", productHandler.UpdateProduct)
-			admin.DELETE("deleteproduct/:id", productHandler.DeleteProduct)
-			admin.GET("listallproduct", productHandler.ListAllProduct)
-			admin.GET("showproduct/:id", productHandler.ShowProduct)
-			//product item
-			admin.POST("addproductitem", productHandler.AddProductItem)
-			admin.PATCH("updatedproductitem/:id", productHandler.UpdateProductItem)
-			admin.DELETE("deleteproductitem/:id", productHandler.DeleteProductItem)
-			admin.GET("disaplyaallproductItems", productHandler.DisaplyaAllProductItems)
-			admin.GET("disaplyproductitem/:id", productHandler.DisaplyProductItem)
+			product := admin.Group("/product")
+			{
+				product.POST("add", productHandler.AddProduct)
+				product.PATCH("update/:id", productHandler.UpdateProduct)
+				product.DELETE("delete/:id", productHandler.DeleteProduct)
+				product.GET("listall", productHandler.ListAllProduct)
+				product.GET("show/:id", productHandler.ShowProduct)
+			}
 
-			admin.POST("uploadimage/:id", productHandler.UploadImage)
+			//product item
+			productItem := admin.Group("/product-item")
+			{
+				productItem.POST("add", productHandler.AddProductItem)
+				productItem.PATCH("update/:id", productHandler.UpdateProductItem)
+				productItem.DELETE("delete/:id", productHandler.DeleteProductItem)
+				productItem.GET("listall", productHandler.DisaplyaAllProductItems)
+				productItem.GET("show/:id", productHandler.DisaplyProductItem)
+				productItem.POST("uploadimage/:id", productHandler.UploadImage)
+			}
+
 			//Dashboard
-			admin.GET("getdashboard", adminHandler.AdminDashBoard)
+			dashboard := admin.Group("/dashboard")
+			{
+				dashboard.GET("get", adminHandler.AdminDashBoard)
+			}
+
 			//Coupons
-			admin.POST("createcoupon", couponHandler.CreateCoupon)
-			admin.PATCH("updatecoupen/:couponId", couponHandler.UpdateCoupon)
-			admin.DELETE("deletecoupon/:couponId", couponHandler.DeleteCoupon)
-			admin.GET("viewcoupon/:couponId", couponHandler.ViewCoupon)
-			admin.GET("viewcoupons", couponHandler.ViewCoupons)
+			coupon := admin.Group("/coupon")
+			{
+				coupon.POST("create", couponHandler.CreateCoupon)
+				coupon.PATCH("update/:couponId", couponHandler.UpdateCoupon)
+				coupon.DELETE("delete/:couponId", couponHandler.DeleteCoupon)
+				coupon.GET("view/:couponId", couponHandler.ViewCoupon)
+				coupon.GET("viewall", couponHandler.ViewCoupons)
+			}
+
 			//Sales report
-			admin.GET("salesreport", adminHandler.ViewSalesReport)
-			admin.GET("downloadsales", adminHandler.DownloadSalesReport)
+			sales := admin.Group("/sales")
+			{
+				sales.GET("get", adminHandler.ViewSalesReport)
+				sales.GET("download", adminHandler.DownloadSalesReport)
+			}
 
 		}
 

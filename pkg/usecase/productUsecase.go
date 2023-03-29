@@ -72,8 +72,8 @@ func (c *ProductUsecase) DeleteProductItem(id int) error {
 	return err
 }
 
-func (c *ProductUsecase) DisaplyaAllProductItems() ([]response.ProductItem, error) {
-	productItems, err := c.productRepo.DisaplyaAllProductItems()
+func (c *ProductUsecase) DisaplyaAllProductItems(queryParams helperStruct.QueryParams) ([]response.ProductItem, error) {
+	productItems, err := c.productRepo.DisaplyaAllProductItems(queryParams)
 	return productItems, err
 }
 

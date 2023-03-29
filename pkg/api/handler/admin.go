@@ -323,7 +323,7 @@ func (cr *AdminHandler) FindAllUsers(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /admin/getdashboard [get]
+// @Router /admin/dashboard/get [get]
 func (cr *AdminHandler) AdminDashBoard(c *gin.Context) {
 	dashBoard, err := cr.adminUseCase.GetDashBoard()
 	if err != nil {
@@ -353,7 +353,7 @@ func (cr *AdminHandler) AdminDashBoard(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /admin/salesreport/ [get]
+// @Router /admin/sales/get [get]
 func (cr *AdminHandler) ViewSalesReport(c *gin.Context) {
 	sales, err := cr.adminUseCase.ViewSalesReport()
 	if err != nil {
@@ -384,7 +384,7 @@ func (cr *AdminHandler) ViewSalesReport(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /admin/downloadsales/ [get]
+// @Router /admin/sales/download [get]
 func (cr *AdminHandler) DownloadSalesReport(c *gin.Context) {
 	sales, err := cr.adminUseCase.ViewSalesReport()
 	if err != nil {

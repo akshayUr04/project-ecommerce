@@ -31,7 +31,7 @@ func NewProductHandler(productUsecase services.ProductUsecase) *ProductHandler {
 // @Param category_name body helperStruct.Category true "New category name"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /admin/addcatergory/ [post]
+// @Router /admin/category/add [post]
 func (cr *ProductHandler) CreateCategory(c *gin.Context) {
 	var category helperStruct.Category
 	err := c.Bind(&category)
@@ -70,11 +70,11 @@ func (cr *ProductHandler) CreateCategory(c *gin.Context) {
 // @Tags Product Category
 // @Accept json
 // @Produce json
-// @Param Id path string true "ID of the Category to be updated"
+// @Param id path string true "ID of the Category to be updated"
 // @Param category_details body helperStruct.Category true "category info"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /admin/updatedcategory/{id} [put]
+// @Router /admin/category/update/{id} [patch]
 func (cr *ProductHandler) UpdatCategory(c *gin.Context) {
 	var category helperStruct.Category
 	err := c.Bind(&category)
@@ -122,13 +122,12 @@ func (cr *ProductHandler) UpdatCategory(c *gin.Context) {
 // @Summary Admin can delete a category
 // @ID delete-category
 // @Description Admin can delete a category
-// @Tags Product Category
 // @Accept json
 // @Produce json
 // @Param category_id path string true "category_id"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @ Router /admin/deletecategory/{id} [delete]
+// @ Router /admin/category/delete/{id} [delete]
 func (cr *ProductHandler) DeleteCategory(c *gin.Context) {
 	parmasId := c.Param("id")
 	id, err := strconv.Atoi(parmasId)
@@ -171,7 +170,7 @@ func (cr *ProductHandler) DeleteCategory(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /admin/listallcategories/ [get]
+// @Router /admin/category/listall [get]
 func (cr *ProductHandler) ListCategories(c *gin.Context) {
 	categories, err := cr.productUsecase.ListCategories()
 	if err != nil {
@@ -199,11 +198,11 @@ func (cr *ProductHandler) ListCategories(c *gin.Context) {
 // @Tags Product Category
 // @Accept json
 // @Produce json
-// @Param category_id path string true "category id"
+// @Param id path string true "category id"
 // @Success 200 {object} response.Response
 // @Failure 422 {object} response.Response
 // @Failure 500 {object} response.Response
-// @Router /admin/findcategories/{id} [get]
+// @Router /admin/category/find/{id} [get]
 func (cr *ProductHandler) DisplayCategory(c *gin.Context) {
 	paramsId := c.Param("id")
 	id, err := strconv.Atoi(paramsId)
@@ -235,6 +234,8 @@ func (cr *ProductHandler) DisplayCategory(c *gin.Context) {
 	})
 }
 
+//-----------------------------product-----------------
+
 // CreateProduct
 // @Summary Admin can create new product listings
 // @ID create-product
@@ -245,7 +246,7 @@ func (cr *ProductHandler) DisplayCategory(c *gin.Context) {
 // @Param new_product_details body helperStruct.Product true "new product details"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /admin/addproduct/ [post]
+// @Router /admin/product/add [post]
 func (cr *ProductHandler) AddProduct(c *gin.Context) {
 	var product helperStruct.Product
 	err := c.Bind(&product)
@@ -290,7 +291,7 @@ func (cr *ProductHandler) AddProduct(c *gin.Context) {
 // @Param updated_product_details body  helperStruct.Product true "Updated product details"
 // @Success 202 {object} response.Response "Successfully updated product"
 // @Failure 400 {object} response.Response "Unable to update product"
-// @Router /admin/updateproduct/{id} [put]
+// @Router /admin/product/update/{id} [put]
 func (cr *ProductHandler) UpdateProduct(c *gin.Context) {
 	var product helperStruct.Product
 	paramsId := c.Param("id")
@@ -336,14 +337,14 @@ func (cr *ProductHandler) UpdateProduct(c *gin.Context) {
 // DeleteProduct
 // @Summary Deletes a product by ID
 // @ID delete-product
-// @Description This endpoint allows an admin user to delete a product by ID.
+// @Description This endpoint allows an admin  to delete a product by ID.
 // @Tags Product
 // @Accept json
 // @Produce json
 // @Param id path int true "Product ID to delete"
 // @Success 200 {object} response.Response "Successfully deleted product"
 // @Failure 400 {object} response.Response "Invalid product ID"
-// @Router /admin/deleteproduct/{id} [delete]
+// @Router /admin/product/delete/{id} [delete]
 func (cr *ProductHandler) DeleteProduct(c *gin.Context) {
 
 	paramsId := c.Param("id")
@@ -391,7 +392,7 @@ func (cr *ProductHandler) DeleteProduct(c *gin.Context) {
 // @Param sort_by query string false "Sorting criteria for the products"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /admin/products/ [get]
+// @Router /admin/product/listall [get]
 
 // ViewAllProducts
 // @Summary Admins and users can see all available products
@@ -407,7 +408,7 @@ func (cr *ProductHandler) DeleteProduct(c *gin.Context) {
 // @Param sort_by query string false "Sorting criteria for the product items"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /listallproduct/ [get]
+// @Router /user/products/listallproduct/ [get]
 func (cr *ProductHandler) ListAllProduct(c *gin.Context) {
 
 	var viewProduct helperStruct.QueryParams
@@ -446,11 +447,10 @@ func (cr *ProductHandler) ListAllProduct(c *gin.Context) {
 // @Tags Product
 // @Accept json
 // @Produce json
-// @Param product_id path string true "product id"
+// @Param id path string true "product id"
 // @Success 200 {object} response.Response
-// @Failure 422 {object} response.Response
-// @Failure 500 {object} response.Response
-// @ Router /admin/showproduct/{id} [get]
+// @Failure 400 {object} response.Response
+// @ Router /admin/product/show/{id} [get]
 func (cr *ProductHandler) ShowProduct(c *gin.Context) {
 
 	paramsId := c.Param("id")
@@ -482,6 +482,8 @@ func (cr *ProductHandler) ShowProduct(c *gin.Context) {
 	})
 }
 
+//----------ProductItem--------
+
 // CreateProductItem
 // @Summary Creates a new product item
 // @ID create-product-item
@@ -492,7 +494,7 @@ func (cr *ProductHandler) ShowProduct(c *gin.Context) {
 // @Param product_item body helperStruct.ProductItem true "Product item details"
 // @Success 200 {object} response.Response "Successfully added new product item"
 // @Failure 400 {object} response.Response "Failed to add new product item"
-// @Router /admin/addproductitem/ [post]
+// @Router /admin/product-item/add/ [post]
 func (cr *ProductHandler) AddProductItem(c *gin.Context) {
 	var productItem helperStruct.ProductItem
 	err := c.Bind(&productItem)
@@ -534,7 +536,7 @@ func (cr *ProductHandler) AddProductItem(c *gin.Context) {
 // @Param product_item body helperStruct.ProductItem true "Product item information to update"
 // @Success 202 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /admin/updatedproductitem/{id} [patch]
+// @Router /admin/product-item/update/{id} [patch]
 func (cr *ProductHandler) UpdateProductItem(c *gin.Context) {
 	var productItem helperStruct.ProductItem
 	err := c.Bind(&productItem)
@@ -588,7 +590,7 @@ func (cr *ProductHandler) UpdateProductItem(c *gin.Context) {
 // @Param id path string true "ID of the product item to be deleted"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /admin/deleteproductitem/{id} [delete]
+// @Router /admin/product-item/delete/{id} [delete]
 func (cr *ProductHandler) DeleteProductItem(c *gin.Context) {
 	paramsId := c.Param("id")
 	id, err := strconv.Atoi(paramsId)
@@ -633,7 +635,7 @@ func (cr *ProductHandler) DeleteProductItem(c *gin.Context) {
 // @Param sort_by query string false "Sorting criteria for the product items"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /admin/disaplyaallproductItems/ [get]
+// @Router /admin/product-item/listall [get]
 
 // ViewAllProductItems for user
 // @Summary Handler function to view all product items
@@ -650,9 +652,18 @@ func (cr *ProductHandler) DeleteProductItem(c *gin.Context) {
 // @Param sort_desc query bool false "Sorting in descending order"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /userdisaplayallproductItems/ [get]
+// @Router /user/products/listallproductItems/ [get]
 func (cr *ProductHandler) DisaplyaAllProductItems(c *gin.Context) {
-	productItems, err := cr.productUsecase.DisaplyaAllProductItems()
+	var viewProductaItem helperStruct.QueryParams
+
+	viewProductaItem.Page, _ = strconv.Atoi(c.Query("page"))
+	viewProductaItem.Limit, _ = strconv.Atoi(c.Query("limit"))
+	viewProductaItem.Query = c.Query("query")
+	viewProductaItem.Filter = c.Query("filter")
+	viewProductaItem.SortBy = c.Query("sort_by")
+	viewProductaItem.SortDesc, _ = strconv.ParseBool(c.Query("sort_desc"))
+
+	productItems, err := cr.productUsecase.DisaplyaAllProductItems(viewProductaItem)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
@@ -682,7 +693,7 @@ func (cr *ProductHandler) DisaplyaAllProductItems(c *gin.Context) {
 // @Param id path string true "Product item ID"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /admin/userdisaplayproductitem/{id} [get]
+// @Router /admin/product-item/show/{id} [get]
 func (cr *ProductHandler) DisaplyProductItem(c *gin.Context) {
 	paramsId := c.Param("id")
 	id, err := strconv.Atoi(paramsId)
@@ -714,6 +725,18 @@ func (cr *ProductHandler) DisaplyProductItem(c *gin.Context) {
 	})
 
 }
+
+// UploadImage
+// @Summary Handles the uploading of images for a given product ID
+// @ID upload-image
+// @Description Upload one or more images for a given product ID
+// @Tags Product Item
+// @Accept multipart/form-data
+// @Param id path int true "Product ID"
+// @Param images formData file true "Product image(s)"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /product-item/uploadimage/{id} [post]
 func (cr *ProductHandler) UploadImage(c *gin.Context) {
 
 	id := c.Param("id")

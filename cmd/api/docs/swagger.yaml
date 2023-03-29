@@ -25,6 +25,16 @@ definitions:
     - pincode
     - street
     type: object
+  helperStruct.BlockData:
+    properties:
+      reason:
+        type: string
+      userid:
+        type: integer
+    required:
+    - reason
+    - userid
+    type: object
   helperStruct.Category:
     properties:
       name:
@@ -268,87 +278,6 @@ paths:
       summary: User can add product item to favourites
       tags:
       - Favourites
-  /admin/addcatergory/:
-    post:
-      consumes:
-      - application/json
-      description: Admin can create new category from admin panel
-      operationId: create-category
-      parameters:
-      - description: New category name
-        in: body
-        name: category_name
-        required: true
-        schema:
-          $ref: '#/definitions/helperStruct.Category'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: Create new product category
-      tags:
-      - Product Category
-  /admin/addproduct/:
-    post:
-      consumes:
-      - application/json
-      description: Admins can create new product listings
-      operationId: create-product
-      parameters:
-      - description: new product details
-        in: body
-        name: new_product_details
-        required: true
-        schema:
-          $ref: '#/definitions/helperStruct.Product'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: Admin can create new product listings
-      tags:
-      - Product
-  /admin/addproductitem/:
-    post:
-      consumes:
-      - application/json
-      description: This endpoint allows an admin user to create a new product item.
-      operationId: create-product-item
-      parameters:
-      - description: Product item details
-        in: body
-        name: product_item
-        required: true
-        schema:
-          $ref: '#/definitions/helperStruct.ProductItem'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully added new product item
-          schema:
-            $ref: '#/definitions/response.Response'
-        "400":
-          description: Failed to add new product item
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: Creates a new product item
-      tags:
-      - Product Item
   /admin/adminlogin:
     post:
       consumes:
@@ -401,11 +330,12 @@ paths:
       description: Admins can block users
       operationId: block-users
       parameters:
-      - description: ID of the user to be blocked
-        in: path
-        name: user_id
+      - description: User bolocking details
+        in: body
+        name: blocking_details
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/helperStruct.BlockData'
       produces:
       - application/json
       responses:
@@ -420,6 +350,116 @@ paths:
       summary: Admin can bolock users
       tags:
       - Admin
+  /admin/category/add:
+    post:
+      consumes:
+      - application/json
+      description: Admin can create new category from admin panel
+      operationId: create-category
+      parameters:
+      - description: New category name
+        in: body
+        name: category_name
+        required: true
+        schema:
+          $ref: '#/definitions/helperStruct.Category'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Create new product category
+      tags:
+      - Product Category
+  /admin/category/find/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Users and admins can fetch details of a specific category using
+        id
+      operationId: find-category-by-id
+      parameters:
+      - description: category id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Fetch details of a specific category using category id
+      tags:
+      - Product Category
+  /admin/category/listall:
+    get:
+      consumes:
+      - application/json
+      description: Admin, users and unregistered users can see all the available categories
+      operationId: view-all-categories
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: View all available categories
+      tags:
+      - Product Category
+  /admin/category/update/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Admin can update category details
+      operationId: update-category
+      parameters:
+      - description: ID of the Category to be updated
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: category info
+        in: body
+        name: category_details
+        required: true
+        schema:
+          $ref: '#/definitions/helperStruct.Category'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Admin can update category details
+      tags:
+      - Product Category
   /admin/createadmin:
     post:
       consumes:
@@ -500,58 +540,6 @@ paths:
       summary: Admin can delete existing coupon
       tags:
       - Coupon
-  /admin/deleteproduct/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: This endpoint allows an admin user to delete a product by ID.
-      operationId: delete-product
-      parameters:
-      - description: Product ID to delete
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully deleted product
-          schema:
-            $ref: '#/definitions/response.Response'
-        "400":
-          description: Invalid product ID
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: Deletes a product by ID
-      tags:
-      - Product
-  /admin/deleteproductitem/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Deletes a product item from the system
-      operationId: delete-product-item
-      parameters:
-      - description: ID of the product item to be deleted
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: Deletes a product item from the system
-      tags:
-      - Product Item
   /admin/downloadsales/:
     get:
       consumes:
@@ -617,37 +605,6 @@ paths:
       summary: Admin can find all registered users
       tags:
       - Admin
-  /admin/findcategories/{id}:
-    get:
-      consumes:
-      - application/json
-      description: Users and admins can fetch details of a specific category using
-        id
-      operationId: find-category-by-id
-      parameters:
-      - description: category id
-        in: path
-        name: category_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "422":
-          description: Unprocessable Entity
-          schema:
-            $ref: '#/definitions/response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: Fetch details of a specific category using category id
-      tags:
-      - Product Category
   /admin/finduser/{id}:
     get:
       consumes:
@@ -695,12 +652,45 @@ paths:
       summary: Admin Dashboard
       tags:
       - Admin
-  /admin/listallcategories/:
-    get:
+  /admin/product-item/add/:
+    post:
       consumes:
       - application/json
-      description: Admin, users and unregistered users can see all the available categories
-      operationId: view-all-categories
+      description: This endpoint allows an admin user to create a new product item.
+      operationId: create-product-item
+      parameters:
+      - description: Product item details
+        in: body
+        name: product_item
+        required: true
+        schema:
+          $ref: '#/definitions/helperStruct.ProductItem'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully added new product item
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Failed to add new product item
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Creates a new product item
+      tags:
+      - Product Item
+  /admin/product-item/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a product item from the system
+      operationId: delete-product-item
+      parameters:
+      - description: ID of the product item to be deleted
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -712,9 +702,152 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/response.Response'
-      summary: View all available categories
+      summary: Deletes a product item from the system
       tags:
-      - Product Category
+      - Product Item
+  /admin/product-item/show/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a product item by its ID
+      operationId: find-product-item-by-id
+      parameters:
+      - description: Product item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Retrieve a product item by ID
+      tags:
+      - Product Item
+  /admin/product-item/update/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Update an existing product item with new information.
+      operationId: update-product-item
+      parameters:
+      - description: ID of the productitem to be updated
+        in: path
+        name: Id
+        required: true
+        type: string
+      - description: Product item information to update
+        in: body
+        name: product_item
+        required: true
+        schema:
+          $ref: '#/definitions/helperStruct.ProductItem'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Update a product item
+      tags:
+      - Product Item
+  /admin/product/add:
+    post:
+      consumes:
+      - application/json
+      description: Admins can create new product listings
+      operationId: create-product
+      parameters:
+      - description: new product details
+        in: body
+        name: new_product_details
+        required: true
+        schema:
+          $ref: '#/definitions/helperStruct.Product'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Admin can create new product listings
+      tags:
+      - Product
+  /admin/product/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: This endpoint allows an admin  to delete a product by ID.
+      operationId: delete-product
+      parameters:
+      - description: Product ID to delete
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully deleted product
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Invalid product ID
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Deletes a product by ID
+      tags:
+      - Product
+  /admin/product/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: This endpoint allows an admin user to update a product's details.
+      operationId: update-product
+      parameters:
+      - description: ID of the product to be updated
+        in: path
+        name: Id
+        required: true
+        type: string
+      - description: Updated product details
+        in: body
+        name: updated_product_details
+        required: true
+        schema:
+          $ref: '#/definitions/helperStruct.Product'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Successfully updated product
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Unable to update product
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Admin can update product details
+      tags:
+      - Product
   /admin/salesreport/:
     get:
       consumes:
@@ -793,128 +926,6 @@ paths:
       summary: Admin can update existing coupon
       tags:
       - Coupon
-  /admin/updatedcategory/{id}:
-    put:
-      consumes:
-      - application/json
-      description: Admin can update category details
-      operationId: update-category
-      parameters:
-      - description: ID of the Category to be updated
-        in: path
-        name: Id
-        required: true
-        type: string
-      - description: category info
-        in: body
-        name: category_details
-        required: true
-        schema:
-          $ref: '#/definitions/helperStruct.Category'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: Admin can update category details
-      tags:
-      - Product Category
-  /admin/updatedproductitem/{id}:
-    patch:
-      consumes:
-      - application/json
-      description: Update an existing product item with new information.
-      operationId: update-product-item
-      parameters:
-      - description: ID of the productitem to be updated
-        in: path
-        name: Id
-        required: true
-        type: string
-      - description: Product item information to update
-        in: body
-        name: product_item
-        required: true
-        schema:
-          $ref: '#/definitions/helperStruct.ProductItem'
-      produces:
-      - application/json
-      responses:
-        "202":
-          description: Accepted
-          schema:
-            $ref: '#/definitions/response.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: Update a product item
-      tags:
-      - Product Item
-  /admin/updateproduct/{id}:
-    put:
-      consumes:
-      - application/json
-      description: This endpoint allows an admin user to update a product's details.
-      operationId: update-product
-      parameters:
-      - description: ID of the product to be updated
-        in: path
-        name: Id
-        required: true
-        type: string
-      - description: Updated product details
-        in: body
-        name: updated_product_details
-        required: true
-        schema:
-          $ref: '#/definitions/helperStruct.Product'
-      produces:
-      - application/json
-      responses:
-        "202":
-          description: Successfully updated product
-          schema:
-            $ref: '#/definitions/response.Response'
-        "400":
-          description: Unable to update product
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: Admin can update product details
-      tags:
-      - Product
-  /admin/userdisaplayproductitem/{id}:
-    get:
-      consumes:
-      - application/json
-      description: Retrieve a product item by its ID
-      operationId: find-product-item-by-id
-      parameters:
-      - description: Product item ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: Retrieve a product item by ID
-      tags:
-      - Product Item
   /admin/viewcoupon/{couponId}:
     get:
       consumes:
@@ -1190,6 +1201,35 @@ paths:
       summary: Handling successful payment
       tags:
       - Payment
+  /product-item/uploadimage/{id}:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload one or more images for a given product ID
+      operationId: upload-image
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Product image(s)
+        in: formData
+        name: images
+        required: true
+        type: file
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Handles the uploading of images for a given product ID
+      tags:
+      - Product Item
   /removecoupon:
     patch:
       consumes:

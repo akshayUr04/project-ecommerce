@@ -154,7 +154,7 @@ func (cr *UserHandler) UserLogout(c *gin.Context) {
 // @Param user_address body helperStruct.Address true "User address"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /addaddress/ [post]
+// @Router /user/addaddress/add [post]
 func (cr *UserHandler) AddAddress(c *gin.Context) {
 	Id, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
@@ -208,7 +208,7 @@ func (cr *UserHandler) AddAddress(c *gin.Context) {
 // @Param user_address body helperStruct.Address true "User address"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /updateaddress/{addressId} [patch]
+// @Router /user/address/update/{addressId} [patch]
 func (cr *UserHandler) UpdateAddress(c *gin.Context) {
 	paramsId := c.Param("addressId")
 	addressId, err := strconv.Atoi(paramsId)
@@ -270,7 +270,7 @@ func (cr *UserHandler) UpdateAddress(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /viewprfile [get]
+// @Router /user/profile/view [get]
 func (cr *UserHandler) Viewprfile(c *gin.Context) {
 	Id, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
@@ -311,7 +311,7 @@ func (cr *UserHandler) Viewprfile(c *gin.Context) {
 // @Param user_profile body helperStruct.UserReq true "User profile"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /editprofile [patch]
+// @Router /user/profile/edite [patch]
 func (cr *UserHandler) UserEditProfile(c *gin.Context) {
 	Id, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
@@ -361,7 +361,7 @@ func (cr *UserHandler) UserEditProfile(c *gin.Context) {
 // @Param user_profile body helperStruct.UpdatePassword true "User password"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /updatepassword [patch]
+// @Router /user/profile/updatepassword [patch]
 func (cr *UserHandler) UpdatePassword(c *gin.Context) {
 	Id, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
