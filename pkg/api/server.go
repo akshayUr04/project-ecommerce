@@ -89,23 +89,31 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 
 	admin := engine.Group("/admin")
 	{
-		admin.GET("downloadsales", adminHandler.DownloadSalesReport)
 		admin.POST("/adminlogin", adminHandler.AdminLoging)
 
 		admin.Use(middleware.AdminAuth)
 		{
 			admin.POST("creatadmin", adminHandler.CreateAdmin)
-			admin.POST("adminlogout", adminHandler.AdminLogout)
-			admin.PATCH("blockuser/:id", adminHandler.BlockUser)
-			admin.PATCH("unblockuser/:id", adminHandler.UnblockUser)
-			admin.GET("finduser/:id", adminHandler.FindUser)
-			admin.GET("findall", adminHandler.FindAllUsers)
+			admin.POST("logout", adminHandler.AdminLogout)
+
+			adminUsers := admin.Group("/user")
+			{
+				adminUsers.PATCH("/block", adminHandler.BlockUser)
+				adminUsers.PATCH("/unblock/:id", adminHandler.UnblockUser)
+				adminUsers.GET("find/:id", adminHandler.FindUser)
+				adminUsers.GET("findall", adminHandler.FindAllUsers)
+			}
+
 			//categorys
-			admin.POST("addcatergory", productHandler.CreateCategory)
-			admin.PATCH("updatedcategory/:id", productHandler.UpdatCategory)
-			admin.DELETE("deletecategory/:id", productHandler.DeleteCategory)
-			admin.GET("listallcategories", productHandler.ListCategories)
-			admin.GET("findcategories/:id", productHandler.DisplayCategory)
+			category := admin.Group("/categorys")
+			{
+				category.POST("add", productHandler.CreateCategory)
+				category.PATCH("update/:id", productHandler.UpdatCategory)
+				category.DELETE("delete/:id", productHandler.DeleteCategory)
+				category.GET("listall", productHandler.ListCategories)
+				category.GET("find/:id", productHandler.DisplayCategory)
+			}
+
 			//product
 			admin.POST("addproduct", productHandler.AddProduct)
 			admin.PATCH("updateproduct/:id", productHandler.UpdateProduct)
@@ -130,6 +138,7 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 			admin.GET("viewcoupons", couponHandler.ViewCoupons)
 			//Sales report
 			admin.GET("salesreport", adminHandler.ViewSalesReport)
+			admin.GET("downloadsales", adminHandler.DownloadSalesReport)
 
 		}
 

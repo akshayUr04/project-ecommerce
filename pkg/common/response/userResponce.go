@@ -12,7 +12,7 @@ type UserDetails struct {
 	Email             string
 	Mobile            string
 	IsBlocked         bool
-	BlockedAt         string
-	BlockedBy         uint
-	ReasonForBlocking string
+	BlockedAt         string `json:",omitempty"`
+	BlockedBy         uint   `json:",omitempty"`
+	ReasonForBlocking string `json:",omitempty"`
 }

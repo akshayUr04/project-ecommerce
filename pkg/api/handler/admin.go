@@ -113,6 +113,12 @@ func (cr *AdminHandler) AdminLoging(c *gin.Context) {
 
 	c.SetSameSite(http.SameSiteLaxMode)
 	c.SetCookie("AdminAuth", ss, 3600*24*30, "", "", false, true)
+	c.JSON(http.StatusOK, response.Response{
+		StatusCode: 200,
+		Message:    "logined success fully",
+		Data:       nil,
+		Errors:     nil,
+	})
 }
 
 // AdminLogout
@@ -143,7 +149,7 @@ func (cr *AdminHandler) AdminLogout(c *gin.Context) {
 // @Tags Admin
 // @Accept json
 // @Produce json
-// @Param user_id path string true "ID of the user to be blocked"
+// @Param blocking_details body helperStruct.BlockData true "User bolocking details"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
 // @Router /admin/blockuser/{id} [patch]

@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"fmt"
+
 	"github.com/akshayur04/project-ecommerce/pkg/common/helperStruct"
 	"github.com/akshayur04/project-ecommerce/pkg/common/response"
 	"github.com/akshayur04/project-ecommerce/pkg/domain"
@@ -42,6 +44,17 @@ func (c *adminDatabase) AdminLogin(email string) (domain.Admins, error) {
 func (c *adminDatabase) BlockUser(body helperStruct.BlockData, adminId int) error {
 	// Start a transaction
 	tx := c.DB.Begin()
+	//Check if the user is there
+	var isExists bool
+	if err := tx.Raw("SELECT EXISTS(SELECT 1 FROM users WHERE id = $1)", body.UserId).Scan(&isExists).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	if !isExists {
+		tx.Rollback()
+		return fmt.Errorf("no such user")
+	}
+
 	// Execute the first SQL command (UPDATE)
 	if err := tx.Exec("UPDATE users SET is_blocked = true WHERE id = ?", body.UserId).Error; err != nil {
 		tx.Rollback()
@@ -64,6 +77,16 @@ func (c *adminDatabase) BlockUser(body helperStruct.BlockData, adminId int) erro
 
 func (c *adminDatabase) UnblockUser(id int) error {
 	tx := c.DB.Begin()
+
+	var isExists bool
+	if err := tx.Raw("SELECT EXISTS(SELECT 1 FROM users WHERE id = $1 AND is_blocked=true)", id).Scan(&isExists).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	if !isExists {
+		tx.Rollback()
+		return fmt.Errorf("no such user to unblock")
+	}
 	if err := tx.Exec("UPDATE users SET is_blocked = false WHERE id=$1", id).Error; err != nil {
 		tx.Rollback()
 		return err
