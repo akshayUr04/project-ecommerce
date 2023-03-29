@@ -22,7 +22,18 @@ func NewCouponHandler(couponusecase services.CouponUsecase) *CouponHandler {
 	}
 }
 
-func (cr *CouponHandler) AddCoupon(c *gin.Context) {
+// CreateCoupon
+// @Summary Admin can create new coupon
+// @ID create-coupon
+// @Description Admin can create new coupons
+// @Tags Coupon
+// @Accept json
+// @Produce json
+// @Param new_coupon_details body helperStruct.Coupons true "details of new coupon to be created"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /admin/createcoupon/ [post]
+func (cr *CouponHandler) CreateCoupon(c *gin.Context) {
 	var newCoupon helperStruct.Coupons
 	err := c.Bind(&newCoupon)
 	if err != nil {
@@ -53,6 +64,18 @@ func (cr *CouponHandler) AddCoupon(c *gin.Context) {
 	})
 }
 
+// UpdateCoupon
+// @Summary Admin can update existing coupon
+// @ID update-coupon
+// @Description Admin can update existing coupon
+// @Tags Coupon
+// @Accept json
+// @Produce json
+// @Param couponId path string true "Coupon ID"
+// @Param coupon_details body helperStruct.Coupons true "details of coupon to be updated"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /admin/updatecoupen/{couponId} [patch]
 func (cr *CouponHandler) UpdateCoupon(c *gin.Context) {
 	id := c.Param("couponId")
 	coupenId, err := strconv.Atoi(id)
@@ -95,6 +118,17 @@ func (cr *CouponHandler) UpdateCoupon(c *gin.Context) {
 	})
 }
 
+// DeleteCoupon
+// @Summary Admin can delete existing coupon
+// @ID delete-coupon
+// @Description Admin can delete existing coupon
+// @Tags Coupon
+// @Accept json
+// @Produce json
+// @Param coupon_id path string true "details of coupon to be updated"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /admin/deletecoupon/{couponId} [delete]
 func (cr *CouponHandler) DeleteCoupon(c *gin.Context) {
 	id := c.Param("couponId")
 	couponId, err := strconv.Atoi(id)
@@ -126,6 +160,16 @@ func (cr *CouponHandler) DeleteCoupon(c *gin.Context) {
 	})
 }
 
+// ViewAllCoupons
+// @Summary Admins and users can see all available coupons
+// @ID view-coupons
+// @Description Admins and users can see all available coupons
+// @Tags Coupon
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /admin/viewcoupons/ [get]
 func (cr *CouponHandler) ViewCoupons(c *gin.Context) {
 	coupons, err := cr.couponusecase.ViewCoupons()
 
@@ -147,6 +191,17 @@ func (cr *CouponHandler) ViewCoupons(c *gin.Context) {
 	})
 }
 
+// ViewCouponByID
+// @Summary Admins and users can see coupon with coupon id
+// @ID view-coupon-by-id
+// @Description Admins and users can see coupon with id
+// @Tags Coupon
+// @Accept json
+// @Produce json
+// @Param coupon_id path string true "coupon_id"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /admin/viewcoupon/{couponId} [get]
 func (cr *CouponHandler) ViewCoupon(c *gin.Context) {
 	id := c.Param("couponId")
 	couponId, err := strconv.Atoi(id)
@@ -180,6 +235,17 @@ func (cr *CouponHandler) ViewCoupon(c *gin.Context) {
 	})
 }
 
+// ApplayCoupon
+// @Summary User can add a coupon to the cart
+// @ID applay-coupon-to-cart
+// @Description User can add coupon to the cart
+// @Tags Cart
+// @Accept json
+// @Produce json
+// @Param coupon_id path string true "coupon_id"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /addcoupontocart/{coupon_id} [patch]
 func (cr *CouponHandler) ApplyCoupon(c *gin.Context) {
 	userId, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
@@ -214,6 +280,16 @@ func (cr *CouponHandler) ApplyCoupon(c *gin.Context) {
 
 }
 
+// ReomoveCoupon
+// @Summary User can remove the coupon that added to the cart
+// @ID remove-coupon-to-cart
+// @Description User can add coupon to the cart
+// @Tags Cart
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /removecoupon [patch]
 func (cr *CouponHandler) RemoveCoupon(c *gin.Context) {
 	userId, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {

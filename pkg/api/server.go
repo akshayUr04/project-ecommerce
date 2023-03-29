@@ -53,8 +53,8 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 			user.GET("viewprfile", userHandler.Viewprfile)
 			user.PATCH("editprofile", userHandler.UserEditProfile)
 			user.PATCH("updatepassword", userHandler.UpdatePassword)
-			user.POST("addtocaart/:id", cartHandler.AddToCart)
-			user.PATCH("removefromcart/:id", cartHandler.RemoveFromCart)
+			user.POST("addtocart/:product_item_id", cartHandler.AddToCart)
+			user.PATCH("removefromcart/:product_item_id", cartHandler.RemoveFromCart)
 			user.GET("listcart", cartHandler.ListCart)
 			user.POST("addaddress", userHandler.AddAddress)
 			user.PATCH("updateaddress/:id", userHandler.UpdateAddress)
@@ -73,8 +73,8 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 			user.GET("userdisaplayproductitem/:id", productHandler.DisaplyProductItem)
 
 			//Coupon
-			user.PATCH("addcoupontocart/", couponHandler.ApplyCoupon)
-			user.PATCH("removercoupon", couponHandler.RemoveCoupon)
+			user.PATCH("addcoupontocart/:coupon_id", couponHandler.ApplyCoupon)
+			user.PATCH("removecoupon", couponHandler.RemoveCoupon)
 
 			//Favourites
 			user.POST("addtofav/:productId", favourites.AddToFavourites)
@@ -123,10 +123,11 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 			//Dashboard
 			admin.GET("getdashboard", adminHandler.AdminDashBoard)
 			//Coupons
-			admin.POST("createcoupon", couponHandler.AddCoupon)
-
+			admin.POST("createcoupon", couponHandler.CreateCoupon)
 			admin.PATCH("updatecoupen/:couponId", couponHandler.UpdateCoupon)
 			admin.DELETE("deletecoupon/:couponId", couponHandler.DeleteCoupon)
+			admin.GET("viewcoupon/:couponId", couponHandler.ViewCoupon)
+			admin.GET("viewcoupons", couponHandler.ViewCoupons)
 			//Sales report
 			admin.GET("salesreport", adminHandler.ViewSalesReport)
 

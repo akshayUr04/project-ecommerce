@@ -20,6 +20,17 @@ func NewCartHandler(cartUsecase services.CartUsecase) *CartHandler {
 	}
 }
 
+// AddToCart
+// @Summary User can add a product item to the cart
+// @ID add-to-cart
+// @Description User can add product item to the cart
+// @Tags Cart
+// @Accept json
+// @Produce json
+// @Param product_item_id path string true "product_item_id"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /addtocart/{product_item_id} [post]
 func (cr *CartHandler) AddToCart(c *gin.Context) {
 	userId, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
@@ -31,7 +42,7 @@ func (cr *CartHandler) AddToCart(c *gin.Context) {
 		})
 		return
 	}
-	paramsId := c.Param("id")
+	paramsId := c.Param("product_item_id")
 	productId, err := strconv.Atoi(paramsId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
@@ -62,6 +73,17 @@ func (cr *CartHandler) AddToCart(c *gin.Context) {
 	})
 }
 
+// RemoveFromCart
+// @Summary Remove a product from the cart
+// @ID remove-from-cart
+// @Description User can remove product from cart
+// @Tags Cart
+// @Accept json
+// @Produce json
+// @Param product_item_id path string true "product_item_id"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /removefromcart/{product_item_id} [delete]
 func (cr *CartHandler) RemoveFromCart(c *gin.Context) {
 	userId, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
@@ -103,6 +125,16 @@ func (cr *CartHandler) RemoveFromCart(c *gin.Context) {
 	})
 }
 
+// ViewCart
+// @Summary User can view cart items and total
+// @ID view-cart
+// @Description User can view cart and cart items
+// @Tags Cart
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /listcart [get]
 func (cr *CartHandler) ListCart(c *gin.Context) {
 	userId, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
