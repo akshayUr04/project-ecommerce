@@ -91,8 +91,8 @@ func (c *adminUseCase) FindUser(id int) (response.UserDetails, error) {
 	return userDetails, err
 }
 
-func (c *adminUseCase) FindAll() ([]response.UserDetails, error) {
-	users, err := c.adminRepo.FindAll()
+func (c *adminUseCase) FindAll(queryParams helperStruct.QueryParams) ([]response.UserDetails, error) {
+	users, err := c.adminRepo.FindAll(queryParams)
 	return users, err
 }
 

@@ -36,7 +36,7 @@ func NewUserHandler(usecase services.UserUseCase, cartUseCase services.CartUseca
 // @Param user_details body  helperStruct.UserReq true "User details"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /signup [post]
+// @Router /user/signup [post]
 func (cr *UserHandler) UserSignUp(c *gin.Context) {
 	// ctx, cancel := context.WithTimeout(c.Request.Context(), time.Minute)
 	// defer cancel()
@@ -96,7 +96,7 @@ func (cr *UserHandler) UserSignUp(c *gin.Context) {
 // @Param user_details body helperStruct.LoginReq true "User details"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /userlogin [post]
+// @Router /user/login [post]
 func (cr *UserHandler) UserLogin(c *gin.Context) {
 
 	var user helperStruct.LoginReq
@@ -125,6 +125,12 @@ func (cr *UserHandler) UserLogin(c *gin.Context) {
 
 	c.SetSameSite(http.SameSiteLaxMode)
 	c.SetCookie("UserAuth", ss, 3600*24*30, "", "", false, true)
+	c.JSON(http.StatusOK, response.Response{
+		StatusCode: 200,
+		Message:    "logined successfuly",
+		Data:       nil,
+		Errors:     nil,
+	})
 }
 
 // UserLogout
@@ -136,7 +142,7 @@ func (cr *UserHandler) UserLogin(c *gin.Context) {
 // @Produce json
 // @Success 200
 // @Failure 400
-// @Router /logout [post]
+// @Router /user/logout [post]
 func (cr *UserHandler) UserLogout(c *gin.Context) {
 	c.SetCookie("UserAuth", "", -1, "", "", false, true)
 	c.JSON(http.StatusOK, gin.H{
@@ -154,7 +160,7 @@ func (cr *UserHandler) UserLogout(c *gin.Context) {
 // @Param user_address body helperStruct.Address true "User address"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /user/addaddress/add [post]
+// @Router /user/address/add [post]
 func (cr *UserHandler) AddAddress(c *gin.Context) {
 	Id, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {

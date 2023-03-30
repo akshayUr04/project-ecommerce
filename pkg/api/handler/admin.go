@@ -152,7 +152,7 @@ func (cr *AdminHandler) AdminLogout(c *gin.Context) {
 // @Param blocking_details body helperStruct.BlockData true "User bolocking details"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /admin/blockuser/{id} [patch]
+// @Router /admin/user/block/ [patch]
 func (cr *AdminHandler) BlockUser(c *gin.Context) {
 	var body helperStruct.BlockData
 	err := c.Bind(&body)
@@ -203,9 +203,9 @@ func (cr *AdminHandler) BlockUser(c *gin.Context) {
 // @Param user_id path string true "ID of the user to be blocked"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /admin/unblockuser/{id} [patch]
+// @Router /admin/user/unblock/{user_id} [patch]
 func (cr *AdminHandler) UnblockUser(c *gin.Context) {
-	paramsId := c.Param("id")
+	paramsId := c.Param("user_id")
 	id, err := strconv.Atoi(paramsId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
@@ -245,9 +245,9 @@ func (cr *AdminHandler) UnblockUser(c *gin.Context) {
 // @Param user_id path string true "ID of the user to be found"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /admin/finduser/{id} [get]
+// @Router /admin/user/find/{user_id} [get]
 func (cr *AdminHandler) FindUser(c *gin.Context) {
-	paramsId := c.Param("id")
+	paramsId := c.Param("user_id")
 	id, err := strconv.Atoi(paramsId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
@@ -292,9 +292,18 @@ func (cr *AdminHandler) FindUser(c *gin.Context) {
 // @Param sort_desc query bool false "Sorting in descending order"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /admin/findall [get]
+// @Router /admin/user/findall [get]
 func (cr *AdminHandler) FindAllUsers(c *gin.Context) {
-	users, err := cr.adminUseCase.FindAll()
+	var queryParams helperStruct.QueryParams
+
+	queryParams.Page, _ = strconv.Atoi(c.Query("page"))
+	queryParams.Limit, _ = strconv.Atoi(c.Query("limit"))
+	queryParams.Query = c.Query("query")
+	queryParams.Filter = c.Query("filter")
+	queryParams.SortBy = c.Query("sort_by")
+	queryParams.SortDesc, _ = strconv.ParseBool(c.Query("sort_desc"))
+
+	users, err := cr.adminUseCase.FindAll(queryParams)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
 			StatusCode: 400,
@@ -382,7 +391,6 @@ func (cr *AdminHandler) ViewSalesReport(c *gin.Context) {
 // @Tags Admin
 // @Accept json
 // @Produce json
-// @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
 // @Router /admin/sales/download [get]
 func (cr *AdminHandler) DownloadSalesReport(c *gin.Context) {

@@ -198,7 +198,7 @@ func (cr *CouponHandler) ViewCoupons(c *gin.Context) {
 // @Tags Coupon
 // @Accept json
 // @Produce json
-// @Param coupon_id path string true "coupon_id"
+// @Param couponId path string true "coupon_id"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
 // @Router /admin/coupon/view/{couponId} [get]

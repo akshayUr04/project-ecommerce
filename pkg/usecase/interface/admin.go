@@ -13,7 +13,7 @@ type AdminUsecase interface {
 	BlockUser(body helperStruct.BlockData, adminId int) error
 	UnblockUser(id int) error
 	FindUser(id int) (response.UserDetails, error)
-	FindAll() ([]response.UserDetails, error)
+	FindAll(queryParams helperStruct.QueryParams) ([]response.UserDetails, error)
 	GetDashBoard() (response.DashBoard, error)
 	ViewSalesReport() ([]response.SalesReport, error)
 }

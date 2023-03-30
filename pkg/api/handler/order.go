@@ -78,10 +78,10 @@ func (cr *OrderHandler) OrderAll(c *gin.Context) {
 // @Tags Order
 // @Accept json
 // @Produce json
-// @Param order_id path int true "ID of the order to be cancelled"
+// @Param orderId path int true "ID of the order to be cancelled"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router user/order/cancel/{orderId} [patch]
+// @Router /user/order/cancel/{orderId} [patch]
 func (cr *OrderHandler) UserCancelOrder(c *gin.Context) {
 	userId, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
@@ -182,7 +182,7 @@ func (cr *OrderHandler) ListOrder(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router user/order/listall [get]
+// @Router /user/order/listall [get]
 func (cr *OrderHandler) ListAllOrders(c *gin.Context) {
 	Id, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
@@ -219,10 +219,9 @@ func (cr *OrderHandler) ListAllOrders(c *gin.Context) {
 // @Tags Order
 // @Accept json
 // @Produce json
-// @Param order_id path int true "ID of the order to be cancelled"
+// @Param orderId path int true "ID of the order to be cancelled"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Failure 401 {object} response.Response
 // @Router /user/order/return/{orderId} [patch]
 func (cr *OrderHandler) ReturnOrder(c *gin.Context) {
 	userId, err := handlerUtil.GetUserIdFromContext(c)

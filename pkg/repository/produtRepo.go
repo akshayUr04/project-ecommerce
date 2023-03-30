@@ -195,7 +195,7 @@ func (c *ProductDatabase) DisaplyaAllProductItems(queryParams helperStruct.Query
 		pi.*
 		FROM products p 
 		JOIN categories c ON p.category_id=c.id 
-		JOIN product_items pi ON p.id=pi.product_id;`
+		JOIN product_items pi ON p.id=pi.product_id`
 
 	if queryParams.Query != "" && queryParams.Filter != "" {
 		getProductItemDetails = fmt.Sprintf("%s WHERE LOWER(%s) LIKE '%%%s%%'", getProductItemDetails, queryParams.Filter, strings.ToLower(queryParams.Query))

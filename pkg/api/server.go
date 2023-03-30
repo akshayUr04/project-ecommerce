@@ -35,7 +35,7 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 	user := engine.Group("/user")
 	{
 		user.POST("signup", userHandler.UserSignUp)
-		user.POST("userlogin", userHandler.UserLogin)
+		user.POST("login", userHandler.UserLogin)
 		user.POST("logout", userHandler.UserLogout)
 
 		//Otp
@@ -122,14 +122,14 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 
 		admin.Use(middleware.AdminAuth)
 		{
-			admin.POST("creatadmin", adminHandler.CreateAdmin)
+			admin.POST("createadmin", adminHandler.CreateAdmin)
 			admin.POST("logout", adminHandler.AdminLogout)
 
 			adminUsers := admin.Group("/user")
 			{
 				adminUsers.PATCH("/block", adminHandler.BlockUser)
-				adminUsers.PATCH("/unblock/:id", adminHandler.UnblockUser)
-				adminUsers.GET("find/:id", adminHandler.FindUser)
+				adminUsers.PATCH("/unblock/:user_id", adminHandler.UnblockUser)
+				adminUsers.GET("find/:user_id", adminHandler.FindUser)
 				adminUsers.GET("findall", adminHandler.FindAllUsers)
 			}
 
@@ -138,7 +138,7 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 			{
 				category.POST("add", productHandler.CreateCategory)
 				category.PATCH("update/:id", productHandler.UpdatCategory)
-				category.DELETE("delete/:id", productHandler.DeleteCategory)
+				category.DELETE("delete/:category_id", productHandler.DeleteCategory)
 				category.GET("listall", productHandler.ListCategories)
 				category.GET("find/:id", productHandler.DisplayCategory)
 			}

@@ -63,7 +63,7 @@ func (c *CouponDatabase) ViewCoupons() ([]domain.Coupons, error) {
 
 func (c *CouponDatabase) ViewCoupon(couponId int) (domain.Coupons, error) {
 	var coupon domain.Coupons
-	fetchCoupenDetails := `SELECT * FORM coupons WHERE id=$1`
+	fetchCoupenDetails := `SELECT * FROM coupons WHERE id=$1`
 	err := c.DB.Raw(fetchCoupenDetails, couponId).Scan(&coupon).Error
 	return coupon, err
 

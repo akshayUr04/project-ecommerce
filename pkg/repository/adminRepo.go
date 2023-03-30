@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/akshayur04/project-ecommerce/pkg/common/helperStruct"
 	"github.com/akshayur04/project-ecommerce/pkg/common/response"
@@ -119,9 +120,9 @@ func (c *adminDatabase) FindUser(id int) (response.UserDetails, error) {
 	return userDetails, err
 }
 
-func (c *adminDatabase) FindAll() ([]response.UserDetails, error) {
+func (c *adminDatabase) FindAll(queryParams helperStruct.QueryParams) ([]response.UserDetails, error) {
 	var users []response.UserDetails
-	qury := `SELECT users.name,
+	getUsers := `SELECT users.name,
 			 users.email, 
 			 users.mobile,  
 			 users.is_blocked, 
@@ -129,7 +130,28 @@ func (c *adminDatabase) FindAll() ([]response.UserDetails, error) {
 			 infos.blocked_at,
 			 infos.reason_for_blocking 
 			 FROM users as users FULL OUTER JOIN user_infos as infos ON users.id = infos.users_id`
-	err := c.DB.Raw(qury).Scan(&users).Error
+	if queryParams.Query != "" && queryParams.Filter != "" {
+		getUsers = fmt.Sprintf("%s WHERE LOWER(%s) LIKE '%%%s%%'", getUsers, queryParams.Filter, strings.ToLower(queryParams.Query))
+	}
+
+	if queryParams.SortBy != "" {
+		if queryParams.SortDesc {
+			getUsers = fmt.Sprintf("%s ORDER BY %s DESC", getUsers, queryParams.SortBy)
+		} else {
+			getUsers = fmt.Sprintf("%s ORDER BY %s ASC", getUsers, queryParams.SortBy)
+		}
+	} else {
+		getUsers = fmt.Sprintf("%s ORDER BY users.name DESC", getUsers)
+	}
+	//to set the page number and the qty that need to display in a single responce
+	if queryParams.Limit != 0 && queryParams.Page != 0 {
+		getUsers = fmt.Sprintf("%s LIMIT %d OFFSET %d", getUsers, queryParams.Limit, (queryParams.Page-1)*queryParams.Limit)
+	}
+	if queryParams.Limit == 0 || queryParams.Page == 0 {
+		getUsers = fmt.Sprintf("%s LIMIT 10 OFFSET 0", getUsers)
+	}
+
+	err := c.DB.Raw(getUsers).Scan(&users).Error
 	return users, err
 }
 

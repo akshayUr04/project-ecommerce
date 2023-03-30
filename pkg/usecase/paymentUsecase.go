@@ -4,26 +4,24 @@ import (
 	"fmt"
 
 	"github.com/akshayur04/project-ecommerce/pkg/common/helperStruct"
+	"github.com/akshayur04/project-ecommerce/pkg/config"
 	"github.com/akshayur04/project-ecommerce/pkg/domain"
 	interfaces "github.com/akshayur04/project-ecommerce/pkg/repository/interface"
 	services "github.com/akshayur04/project-ecommerce/pkg/usecase/interface"
 	"github.com/razorpay/razorpay-go"
 )
 
-const (
-	razorpayID     = "rzp_test_eyqZ1tRruc2fkz"
-	razorpaySecret = "OgWcECIh3uZvf7qBCgGf2Pz8"
-)
-
 type PaymentUseCase struct {
 	paymentRepo interfaces.PaymentRepository
 	orderRepo   interfaces.OrderRepository
+	cfg         config.Config
 }
 
-func NewPaymentuseCase(paymentRepo interfaces.PaymentRepository, orderRepo interfaces.OrderRepository) services.PaymentUseCase {
+func NewPaymentuseCase(paymentRepo interfaces.PaymentRepository, orderRepo interfaces.OrderRepository, cfg config.Config) services.PaymentUseCase {
 	return &PaymentUseCase{
 		paymentRepo: paymentRepo,
 		orderRepo:   orderRepo,
+		cfg:         cfg,
 	}
 }
 
@@ -43,7 +41,7 @@ func (c *PaymentUseCase) CreateRazorpayPayment(userId, orderId int) (domain.Orde
 	if order.Id == 0 {
 		return domain.Orders{}, "", fmt.Errorf("no such order found")
 	}
-	client := razorpay.NewClient(razorpayID, razorpaySecret)
+	client := razorpay.NewClient(c.cfg.RAZORPAYID, c.cfg.RAZORPAYSECRET)
 
 	data := map[string]interface{}{
 		"amount":   order.OrderTotal * 100,

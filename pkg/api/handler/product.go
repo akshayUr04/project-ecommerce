@@ -122,14 +122,15 @@ func (cr *ProductHandler) UpdatCategory(c *gin.Context) {
 // @Summary Admin can delete a category
 // @ID delete-category
 // @Description Admin can delete a category
+// @Tags Product Category
 // @Accept json
 // @Produce json
 // @Param category_id path string true "category_id"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @ Router /admin/category/delete/{id} [delete]
+// @Router /admin/category/delete/{category_id} [delete]
 func (cr *ProductHandler) DeleteCategory(c *gin.Context) {
-	parmasId := c.Param("id")
+	parmasId := c.Param("category_id")
 	id, err := strconv.Atoi(parmasId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
@@ -228,7 +229,7 @@ func (cr *ProductHandler) DisplayCategory(c *gin.Context) {
 
 	c.JSON(http.StatusOK, response.Response{
 		StatusCode: 200,
-		Message:    "Product is",
+		Message:    "Category is",
 		Data:       category,
 		Errors:     nil,
 	})
@@ -450,7 +451,7 @@ func (cr *ProductHandler) ListAllProduct(c *gin.Context) {
 // @Param id path string true "product id"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @ Router /admin/product/show/{id} [get]
+// @Router /admin/product/show/{id} [get]
 func (cr *ProductHandler) ShowProduct(c *gin.Context) {
 
 	paramsId := c.Param("id")
