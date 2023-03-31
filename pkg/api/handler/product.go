@@ -288,7 +288,7 @@ func (cr *ProductHandler) AddProduct(c *gin.Context) {
 // @Tags Product
 // @Accept json
 // @Produce json
-// @Param Id path string true "ID of the product to be updated"
+// @Param id path string true "ID of the product to be updated"
 // @Param updated_product_details body  helperStruct.Product true "Updated product details"
 // @Success 202 {object} response.Response "Successfully updated product"
 // @Failure 400 {object} response.Response "Unable to update product"
@@ -533,7 +533,7 @@ func (cr *ProductHandler) AddProductItem(c *gin.Context) {
 // @Tags Product Item
 // @Accept json
 // @Produce json
-// @Param Id path string true "ID of the productitem to be updated"
+// @Param id path string true "ID of the productitem to be updated"
 // @Param product_item body helperStruct.ProductItem true "Product item information to update"
 // @Success 202 {object} response.Response
 // @Failure 400 {object} response.Response

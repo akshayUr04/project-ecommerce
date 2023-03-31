@@ -83,7 +83,7 @@ func (cr *CartHandler) AddToCart(c *gin.Context) {
 // @Param product_item_id path string true "product_item_id"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /user/cart/remove/{product_item_id} [delete]
+// @Router /user/cart/remove/{product_item_id} [patch]
 func (cr *CartHandler) RemoveFromCart(c *gin.Context) {
 	userId, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
@@ -95,7 +95,7 @@ func (cr *CartHandler) RemoveFromCart(c *gin.Context) {
 		})
 		return
 	}
-	paramsId := c.Param("id")
+	paramsId := c.Param("product_item_id")
 	productId, err := strconv.Atoi(paramsId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{

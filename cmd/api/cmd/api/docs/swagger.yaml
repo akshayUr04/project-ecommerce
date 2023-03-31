@@ -1,0 +1,16 @@
+basePath: /
+host: https://www.akshayur.xyz/
+info:
+  contact:
+    email: akshayur0404@gmail.com
+    name: Akshay ur
+    url: https://github.com/akshayUr04
+  description: Ecommerce REST API built using Go Lang, PSQL, REST API following Clean
+    Architecture. Hosted with Ngnix, AWS EC2 and RDS
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  title: Ecommerce REST API
+  version: "1.0"
+paths: {}
+swagger: "2.0"

@@ -41,8 +41,8 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 		//Otp
 		otp := user.Group("/otp")
 		{
-			otp.POST("sendotp", otpHandler.SendOtp)
-			otp.POST("verifyotp", otpHandler.ValidateOtp)
+			otp.POST("send", otpHandler.SendOtp)
+			otp.POST("verify", otpHandler.ValidateOtp)
 		}
 
 		products := user.Group("/products")
@@ -95,7 +95,7 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 			//Coupon
 			coupon := user.Group("coupon")
 			{
-				coupon.PATCH("applay/:coupon_id", couponHandler.ApplayCoupon)
+				coupon.PATCH("applay/:code", couponHandler.ApplayCoupon)
 				coupon.PATCH("remove", couponHandler.RemoveCoupon)
 			}
 

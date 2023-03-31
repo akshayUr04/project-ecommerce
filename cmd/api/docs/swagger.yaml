@@ -621,7 +621,7 @@ paths:
       parameters:
       - description: ID of the productitem to be updated
         in: path
-        name: Id
+        name: id
         required: true
         type: string
       - description: Product item information to update
@@ -732,7 +732,7 @@ paths:
       parameters:
       - description: ID of the product to be updated
         in: path
-        name: Id
+        name: id
         required: true
         type: string
       - description: Updated product details
@@ -1103,7 +1103,7 @@ paths:
       tags:
       - Cart
   /user/cart/remove/{product_item_id}:
-    delete:
+    patch:
       consumes:
       - application/json
       description: User can remove product from cart
@@ -1128,16 +1128,16 @@ paths:
       summary: Remove a product from the cart
       tags:
       - Cart
-  /user/coupon/applay/{coupon_id}:
+  /user/coupon/applay/{code}:
     patch:
       consumes:
       - application/json
       description: User can add coupon to the cart
       operationId: applay-coupon-to-cart
       parameters:
-      - description: coupon_id
-        in: path
-        name: coupon_id
+      - description: code
+        in: query
+        name: code
         required: true
         type: string
       produces:
@@ -1441,7 +1441,7 @@ paths:
       summary: Send OTP to user's mobile
       tags:
       - Otp
-  /user/otp/verif:
+  /user/otp/verify:
     post:
       consumes:
       - application/json

@@ -691,7 +691,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "ID of the productitem to be updated",
-                        "name": "Id",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     },
@@ -858,7 +858,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "ID of the product to be updated",
-                        "name": "Id",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     },
@@ -1409,7 +1409,7 @@ const docTemplate = `{
             }
         },
         "/user/cart/remove/{product_item_id}": {
-            "delete": {
+            "patch": {
                 "description": "User can remove product from cart",
                 "consumes": [
                     "application/json"
@@ -1447,7 +1447,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/coupon/applay/{coupon_id}": {
+        "/user/coupon/applay/{code}": {
             "patch": {
                 "description": "User can add coupon to the cart",
                 "consumes": [
@@ -1464,9 +1464,9 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "coupon_id",
-                        "name": "coupon_id",
-                        "in": "path",
+                        "description": "code",
+                        "name": "code",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -1916,7 +1916,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/otp/verif": {
+        "/user/otp/verify": {
             "post": {
                 "description": "Validate the  OTP sent to use's mobile",
                 "consumes": [

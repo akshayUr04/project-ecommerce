@@ -11,21 +11,20 @@ import (
 	di "github.com/akshayur04/project-ecommerce/pkg/di"
 )
 
-// @title Go + Gin E Commerce API
+// @title Ecommerce REST API
 // @version 1.0
-// @description This is an ECommerce server . You can visit the GitHub repository at https://github.com/akshayUr04/project-ecommerce-
+// @description Ecommerce REST API built using Go Lang, PSQL, REST API following Clean Architecture. Hosted with Ngnix, AWS EC2 and RDS
 
-// @contact.name API Support
-// @contact.url https://github.com/akshayUr04/project-ecommerce-
+// @contact.name Akshay ur
+// @contact.url https://github.com/akshayUr04
 // @contact.email akshayur0404@gmail.com
 
 // @license.name MIT
+// @host https://www.akshayur.xyz/
 // @license.url https://opensource.org/licenses/MIT
 
-// @host localhost:3000
 // @BasePath /
 // @query.collection.format multi
-
 func main() {
 	config, configErr := config.LoadConfig()
 	if configErr != nil {

@@ -72,12 +72,17 @@ func (c *CouponDatabase) ViewCoupon(couponId int) (domain.Coupons, error) {
 func (c *CouponDatabase) ApplayCoupon(userId int, couponCode string) (int, error) {
 	tx := c.DB.Begin()
 	// find the coupon details
+	fmt.Println(couponCode)
 	var couponDetails domain.Coupons
 	findCouponDetails := `SELECT * FROM coupons WHERE code=$1`
 	err := tx.Raw(findCouponDetails, couponCode).Scan(&couponDetails).Error
 	if err != nil {
 		tx.Rollback()
 		return 0, err
+	}
+	fmt.Println(couponDetails.Id)
+	if couponDetails.Id == 0 {
+		return 0, fmt.Errorf("no coupon found")
 	}
 	if couponDetails.ExpirationDate.Before(time.Now()) {
 		tx.Rollback()

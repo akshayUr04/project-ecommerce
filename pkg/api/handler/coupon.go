@@ -242,10 +242,10 @@ func (cr *CouponHandler) ViewCoupon(c *gin.Context) {
 // @Tags Cart
 // @Accept json
 // @Produce json
-// @Param coupon_id path string true "coupon_id"
+// @Param code query string true "code"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /user/coupon/applay/{coupon_id} [patch]
+// @Router /user/coupon/applay/{code} [patch]
 func (cr *CouponHandler) ApplayCoupon(c *gin.Context) {
 	userId, err := handlerUtil.GetUserIdFromContext(c)
 	if err != nil {
@@ -257,8 +257,8 @@ func (cr *CouponHandler) ApplayCoupon(c *gin.Context) {
 		})
 		return
 	}
-	couponCode := c.Query("c_id")
-	fmt.Println(couponCode)
+	couponCode := c.Query("code")
+	fmt.Println("wr", couponCode)
 	discountRate, err := cr.couponusecase.ApplayCoupon(userId, couponCode)
 	if err != nil {
 		if err != nil {

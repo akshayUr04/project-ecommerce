@@ -109,7 +109,7 @@ func (cr *OtpHandler) SendOtp(c *gin.Context) {
 // @Param otp body helperStruct.VerifyOtp true "OTP sent to user's mobile number"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /user/otp/verif [post]
+// @Router /user/otp/verify [post]
 func (cr *OtpHandler) ValidateOtp(c *gin.Context) {
 	var otpDetails helperStruct.VerifyOtp
 	err := c.Bind(&otpDetails)
@@ -154,4 +154,10 @@ func (cr *OtpHandler) ValidateOtp(c *gin.Context) {
 
 	c.SetSameSite(http.SameSiteLaxMode)
 	c.SetCookie("UserAuth", ss, 3600*24*30, "", "", false, true)
+	c.JSON(http.StatusOK, response.Response{
+		StatusCode: 200,
+		Message:    "login successful",
+		Data:       nil,
+		Errors:     nil,
+	})
 }
