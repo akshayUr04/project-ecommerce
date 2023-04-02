@@ -1758,7 +1758,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/order/orderall/{paymentId}": {
+        "/user/order/orderall/{payment_id}": {
             "post": {
                 "description": "This endpoint allows a user to purchase all items in their cart",
                 "consumes": [

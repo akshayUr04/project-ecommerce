@@ -25,7 +25,6 @@ func (c *CartDatabase) CreateCart(id int) error {
 
 func (c *CartDatabase) AddToCart(productId, userId int) error {
 	tx := c.DB.Begin()
-
 	//finding cart id coresponding to the user
 	var cartId int
 	findCartId := `SELECT id FROM carts WHERE user_id=? `
@@ -34,7 +33,6 @@ func (c *CartDatabase) AddToCart(productId, userId int) error {
 		tx.Rollback()
 		return err
 	}
-
 	//Check whether the product exists in the cart_items
 	var cartItemId int
 	cartItemCheck := `SELECT id FROM cart_items WHERE carts_id = $1 AND product_item_id = $2 LIMIT 1`

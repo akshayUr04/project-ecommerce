@@ -85,7 +85,7 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 			//Orders
 			order := user.Group("/order")
 			{
-				order.POST("orderall/:paymentId", orderHandler.OrderAll)
+				order.POST("orderall/:payment_id", orderHandler.OrderAll)
 				order.PATCH("cancel/:orderId", orderHandler.UserCancelOrder)
 				order.GET("view/:orderId", orderHandler.ListOrder)
 				order.GET("listall", orderHandler.ListAllOrders)

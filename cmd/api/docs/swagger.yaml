@@ -1335,7 +1335,7 @@ paths:
       summary: Retrieves all orders of currently logged in user
       tags:
       - Order
-  /user/order/orderall/{paymentId}:
+  /user/order/orderall/{payment_id}:
     post:
       consumes:
       - application/json

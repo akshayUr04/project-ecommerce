@@ -30,9 +30,9 @@ func NewOrderHandler(orderUseCase services.OrderUseCase) *OrderHandler {
 // @Param payment_id path string true "payment_id"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /user/order/orderall/{paymentId} [post]
+// @Router /user/order/orderall/{payment_id} [post]
 func (cr *OrderHandler) OrderAll(c *gin.Context) {
-	paramsId := c.Param("paymentId")
+	paramsId := c.Param("payment_id")
 	paymentTypeId, err := strconv.Atoi(paramsId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
