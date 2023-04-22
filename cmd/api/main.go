@@ -1,3 +1,4 @@
+//go:generate swagger generate spec
 package main
 
 import (
@@ -14,15 +15,15 @@ import (
 // @title Ecommerce REST API
 // @version 1.0
 // @description Ecommerce REST API built using Go Lang, PSQL, REST API following Clean Architecture. Hosted with Ngnix, AWS EC2 and RDS
-
+//
+//	Schemes:  https
+//
 // @contact.name Akshay ur
 // @contact.url https://github.com/akshayUr04
 // @contact.email akshayur0404@gmail.com
-
 // @license.name MIT
 // @host https://www.akshayur.xyz/
 // @license.url https://opensource.org/licenses/MIT
-
 // @BasePath /
 // @query.collection.format multi
 func main() {

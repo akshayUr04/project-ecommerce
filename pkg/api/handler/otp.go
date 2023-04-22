@@ -65,8 +65,6 @@ func (cr *OtpHandler) SendOtp(c *gin.Context) {
 		return
 	}
 
-	fmt.Println(isSignIn)
-
 	if !isSignIn {
 		fmt.Println("login err")
 		c.JSON(http.StatusBadRequest, response.Response{

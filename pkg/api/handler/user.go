@@ -41,7 +41,7 @@ func (cr *UserHandler) UserSignUp(c *gin.Context) {
 	// ctx, cancel := context.WithTimeout(c.Request.Context(), time.Minute)
 	// defer cancel()
 	var user helperStruct.UserReq
-	err := c.Bind(&user)
+	err := c.BindJSON(&user)
 	fmt.Println(user)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, response.Response{
@@ -58,7 +58,7 @@ func (cr *UserHandler) UserSignUp(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response.Response{
 			StatusCode: 400,
 			Message:    "unable signup",
-			Data:       nil,
+			Data:       response.UserData{},
 			Errors:     err.Error(),
 		})
 		return
