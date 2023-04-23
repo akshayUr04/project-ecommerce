@@ -1,0 +1,43 @@
+name: Go Build and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+env:
+  GO111MODULE: "on"
+  CGO_ENABLED: 0
+  GOPROXY: "https://proxy.golang.org,direct"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.19.0'
+
+      - name: Install dependencies
+        run: |
+          go mod download
+          go mod tidy
+          go mod verify
+
+      - name: go fmt
+        run: |
+          go fmt ./...
+
+      - name : Unit Tests
+        run: |
+          go test ./... -cover
+
+      - name: Build the Go application
+        run: |
+          mkdir -p build/bin
+          go build -o build/bin/myapp ./cmd/api
