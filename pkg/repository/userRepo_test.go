@@ -81,6 +81,7 @@ func TestUersSignUp(t *testing.T) {
 			}
 			defer db.Close()
 
+			//initialize the db instance with the mock db connection
 			gormDB, err := gorm.Open(postgres.New(postgres.Config{Conn: db}), &gorm.Config{})
 			if err != nil {
 				t.Fatalf("an error '%s' was not expected when initializing a mock db session", err)
