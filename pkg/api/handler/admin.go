@@ -20,7 +20,7 @@ func NewAdminHandler(adminUseCae services.AdminUsecase) *AdminHandler {
 	return &AdminHandler{
 		adminUseCase: adminUseCae,
 	}
-}
+
 
 // CreateAdmin
 // @Summary Create a new admin from admin panel
