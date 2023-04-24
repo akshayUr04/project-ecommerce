@@ -13,7 +13,7 @@ import (
 
 type userDatabase struct {
 	DB *gorm.DB
-
+}
 
 func NewUserRepository(DB *gorm.DB) interfaces.UserRepository {
 	return &userDatabase{DB}
