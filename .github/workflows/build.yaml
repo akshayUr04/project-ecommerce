@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3 
 
       - name: Set up Go
         uses: actions/setup-go@v4
@@ -40,4 +40,4 @@ jobs:
       - name: Build the Go application
         run: |
           mkdir -p build/bin
-          go build -o build/bin/myapp ./cmd/api
+          go build -o build/bin/api ./cmd/api
