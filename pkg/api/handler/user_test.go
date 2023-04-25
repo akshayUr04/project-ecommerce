@@ -110,7 +110,7 @@ func TestUserSignUp(t *testing.T) {
 	for _, tt := range testData {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.buildStub(*userUseCase)
-			engine := gin.Default()
+			engine := gin.Default()            //create an engin instance
 			recorder := httptest.NewRecorder() //creeate a responce recorder to capture the responce from the request
 			engine.POST("/user/signup", UserHandler.UserSignUp)
 			var body []byte
@@ -125,22 +125,6 @@ func TestUserSignUp(t *testing.T) {
 			assert.NoError(t, err)
 			assert.Equal(t, tt.expectedCode, recorder.Code)
 			assert.Equal(t, tt.expectedResponse.Message, actual.Message)
-
-			// fmt.Printf("type of actual data %t \n %v", actual.Data, actual.Data)
-			// data, ok := actual.Data.(map[string]interface{})
-			// if ok {
-			// 	userData := response.UserData{
-			// 		Id:     int(data["id"].(float64)),
-			// 		Name:   data["name"].(string),
-			// 		Email:  data["email"].(string),
-			// 		Mobile: data["mobile"].(string),
-			// 	}
-			// 	if !reflect.DeepEqual(tt.expectedData, userData) {
-			// 		t.Errorf("got %q, but want %q", userData, tt.expectedData)
-			// 	}
-			// } else {
-			// 	t.Errorf("actual.Data is not of type map[string]interface{}")
-			// }
 
 		})
 	}
