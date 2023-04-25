@@ -20,7 +20,7 @@ func NewCouponHandler(couponusecase services.CouponUsecase) *CouponHandler {
 	return &CouponHandler{
 		couponusecase: couponusecase,
 	}
-
+}
 
 // CreateCoupon
 // @Summary Admin can create new coupon
