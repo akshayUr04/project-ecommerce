@@ -10,4 +10,5 @@ type OrderUseCase interface {
 	ListOrder(userId, orderId int) (domain.Orders, error)
 	ListAllOrders(userId int) ([]domain.Orders, error)
 	ReturnOrder(userId, orderId int) (int, error)
+	UpdateOrder(orderId int) error
 }

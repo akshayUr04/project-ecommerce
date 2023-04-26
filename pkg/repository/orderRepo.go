@@ -213,3 +213,8 @@ func (c *OrderDatabase) ReturnOrder(userId, orderId int) (int, error) {
 	return orders.OrderTotal, nil
 
 }
+
+func (c *OrderDatabase) UpdateOrder(orderId int) error {
+	//update the order with appropriate status id
+	return nil
+}
