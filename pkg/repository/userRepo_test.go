@@ -46,7 +46,7 @@ func TestUersSignUp(t *testing.T) {
 				// 	WithArgs(args...).
 				// 	WillReturnRows(rows)
 				rows := sqlmock.NewRows([]string{"id", "name", "email", "mobile"}).
-					AddRow(1, "akshay", "akshay@gmail.com", "9072001341")
+					AddRow(1, "akshay", "akshay@gmail.comsdf", "9072001341")
 
 				mock.ExpectQuery("^INSERT INTO users (.+)$").
 					WithArgs("akshay", "akshay@gmail.com", "9072001341", "123456789").

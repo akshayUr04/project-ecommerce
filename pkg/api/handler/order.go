@@ -263,3 +263,33 @@ func (cr *OrderHandler) ReturnOrder(c *gin.Context) {
 		Errors:     nil,
 	})
 }
+
+func (cr *OrderHandler) UpdateOrder(c *gin.Context) {
+	id := c.Param("order_id")
+	orderId, err := strconv.Atoi(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "bind faild",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	err = cr.orderUseCase.UpdateOrder(orderId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.Response{
+			StatusCode: 400,
+			Message:    "can't update order",
+			Data:       nil,
+			Errors:     err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, response.Response{
+		StatusCode: 200,
+		Message:    "order updated ",
+		Data:       nil,
+		Errors:     nil,
+	})
+}

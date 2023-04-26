@@ -40,3 +40,8 @@ func (c *OrderUseCase) ReturnOrder(userId, orderId int) (int, error) {
 	returnAmount, err := c.orderRepo.ReturnOrder(userId, orderId)
 	return returnAmount, err
 }
+
+func (c *OrderUseCase) UpdateOrder(orderId int) error {
+	err := c.orderRepo.UpdateOrder(orderId)
+	return err
+}
