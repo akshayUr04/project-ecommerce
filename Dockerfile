@@ -1,30 +1,14 @@
 # build stage
 FROM golang:1.19-alpine3.16 AS builder
-#maintainer info
-LABEL maintainer="akshayur <akshayur@gmail.com>"
-#installing git
-RUN apk update && apk add --no-cache git
-
-WORKDIR /Job-Portal
-
+# Set destination for 
+WORKDIR /app
+# Copy the hole directory
 COPY . .
-
-RUN apk add --no-cache make
-
-RUN make deps
-RUN go mod vendor
-RUN make build
-
-
-
-# Run stage
-FROM alpine:3.16
-
-WORKDIR /project-ecommerce
-COPY go.mod .
-COPY go.sum .
-COPY views ./views
-COPY --from=builder /Job-Portal/build/bin/api .
-
-
-CMD [ "/ecommerce/api"] 
+# Download Go modules
+RUN go mod download
+# Build the code
+RUN  go build -o ./out/dist cmd/api/main.go
+# Binding the port
+EXPOSE 8080
+# Run
+CMD ["/app/out/dist"]
