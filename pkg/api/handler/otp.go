@@ -16,7 +16,7 @@ import (
 
 type OtpHandler struct {
 	otpUseCase  services.OtpUseCase
-	userUseCase services.UserUseCase
+	userUseCase services.UserUseCae
 	cfg         config.Config
 }
 
