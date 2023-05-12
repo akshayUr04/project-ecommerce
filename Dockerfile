@@ -13,3 +13,5 @@ COPY template ./template
 WORKDIR /app
 EXPOSE 3000
 CMD ["./dist"]
+
+#go embed 
