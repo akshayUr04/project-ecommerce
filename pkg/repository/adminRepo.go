@@ -117,7 +117,13 @@ func (c *adminDatabase) FindUser(id int) (response.UserDetails, error) {
 			 WHERE users.id = $1;`
 
 	err := c.DB.Raw(qury, id).Scan(&userDetails).Error
-	return userDetails, err
+	if err != nil {
+		return response.UserDetails{}, err
+	}
+	if userDetails.Email == "" {
+		return response.UserDetails{}, fmt.Errorf("no such user")
+	}
+	return userDetails, nil
 }
 
 func (c *adminDatabase) FindAll(queryParams helperStruct.QueryParams) ([]response.UserDetails, error) {
