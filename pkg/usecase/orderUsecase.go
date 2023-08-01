@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"github.com/akshayur04/project-ecommerce/pkg/common/helperStruct"
 	"github.com/akshayur04/project-ecommerce/pkg/domain"
 	interfaces "github.com/akshayur04/project-ecommerce/pkg/repository/interface"
 	services "github.com/akshayur04/project-ecommerce/pkg/usecase/interface"
@@ -41,7 +42,7 @@ func (c *OrderUseCase) ReturnOrder(userId, orderId int) (int, error) {
 	return returnAmount, err
 }
 
-func (c *OrderUseCase) UpdateOrder(orderId int) error {
-	err := c.orderRepo.UpdateOrder(orderId)
+func (c *OrderUseCase) UpdateOrder(updateOrder helperStruct.UpdateOrder) error {
+	err := c.orderRepo.UpdateOrder(updateOrder)
 	return err
 }

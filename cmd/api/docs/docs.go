@@ -554,6 +554,47 @@ const docTemplate = `{
                 }
             }
         },
+        "/admin/order/update": {
+            "patch": {
+                "description": "Endpoint for updating orders by admin",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Order"
+                ],
+                "summary": "Admin can update a specific order status",
+                "operationId": "update-order",
+                "parameters": [
+                    {
+                        "description": "Updated order ",
+                        "name": "updated_order",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/helperStruct.UpdateOrder"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/product-item/add/": {
             "post": {
                 "description": "This endpoint allows an admin user to create a new product item.",
@@ -2262,9 +2303,6 @@ const docTemplate = `{
                 "house_number": {
                     "type": "string"
                 },
-                "id": {
-                    "type": "integer"
-                },
                 "isdefault": {
                     "type": "boolean"
                 },
@@ -2431,6 +2469,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "storage": {
+                    "type": "integer"
+                }
+            }
+        },
+        "helperStruct.UpdateOrder": {
+            "type": "object",
+            "properties": {
+                "orderId": {
+                    "type": "integer"
+                },
+                "orderStatusID": {
                     "type": "integer"
                 }
             }

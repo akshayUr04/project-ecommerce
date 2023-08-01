@@ -167,7 +167,7 @@ func (c *OrderDatabase) UserCancelOrder(orderId, userId int) error {
 	}
 	//update the order status as canceled
 	cancelOrder := `UPDATE orders SET order_status_id=$1 WHERE id=$2 AND user_id=$3`
-	err = tx.Exec(cancelOrder, 4, orderId, userId).Error
+	err = tx.Exec(cancelOrder, 2, orderId, userId).Error
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -214,7 +214,22 @@ func (c *OrderDatabase) ReturnOrder(userId, orderId int) (int, error) {
 
 }
 
-func (c *OrderDatabase) UpdateOrder(orderId int) error {
-	//update the order with appropriate status id
+func (c *OrderDatabase) UpdateOrder(updateOrder helperStruct.UpdateOrder) error {
+	//check whether there is a order with this order number
+
+	var isExists bool
+	query1 := `select exists(select 1 from orders where id=?)`
+	err := c.DB.Raw(query1, updateOrder.OrderId).Scan(&isExists).Error
+	if err != nil {
+		return err
+	}
+	if !isExists {
+		return fmt.Errorf("no such order")
+	}
+	updateOrderQry := `UPDATE orders SET order_status_id=$1 WHERE id=$2`
+	err = c.DB.Exec(updateOrderQry, updateOrder.OrderStatusID, updateOrder.OrderId).Error
+	if err != nil {
+		return err
+	}
 	return nil
 }

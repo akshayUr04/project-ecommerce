@@ -11,3 +11,8 @@ type CartItems struct {
 	Price         int
 	QtyInStock    int
 }
+
+type UpdateOrder struct {
+	OrderId       uint
+	OrderStatusID uint
+}

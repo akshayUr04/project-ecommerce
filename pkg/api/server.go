@@ -180,6 +180,11 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 				coupon.GET("viewall", couponHandler.ViewCoupons)
 			}
 
+			//Order
+			order := admin.Group("/order")
+			{
+				order.PATCH("update", orderHandler.UpdateOrder)
+			}
 			//Sales report
 			sales := admin.Group("/sales")
 			{

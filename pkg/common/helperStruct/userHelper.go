@@ -22,13 +22,12 @@ type VerifyOtp struct {
 }
 
 type Address struct {
-	Id           int    `json:"id"`
-	House_number string `json:"house_number" binding:"required"`
-	Street       string `json:"street" binding:"required"`
-	City         string `json:"city " binding:"required"`
-	District     string `json:"district " binding:"required"`
-	Landmark     string `json:"landmark" binding:"required"`
-	Pincode      int    `json:"pincode " binding:"required"`
+	House_number string `json:"house_number" `
+	Street       string `json:"street" `
+	City         string `json:"city " `
+	District     string `json:"district " `
+	Landmark     string `json:"landmark" `
+	Pincode      int    `json:"pincode " `
 	IsDefault    bool   `json:"isdefault" `
 }
 

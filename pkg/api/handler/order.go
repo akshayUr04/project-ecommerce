@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/akshayur04/project-ecommerce/pkg/api/handlerUtil"
+	"github.com/akshayur04/project-ecommerce/pkg/common/helperStruct"
 	"github.com/akshayur04/project-ecommerce/pkg/common/response"
 	services "github.com/akshayur04/project-ecommerce/pkg/usecase/interface"
 	"github.com/gin-gonic/gin"
@@ -264,19 +265,29 @@ func (cr *OrderHandler) ReturnOrder(c *gin.Context) {
 	})
 }
 
+// UpdateOrder
+// @Summary Admin can update a specific order status
+// @ID update-order
+// @Description Endpoint for updating orders by admin
+// @Tags Order
+// @Accept json
+// @Produce json
+// @Param updated_order body  helperStruct.UpdateOrder true "Updated order "
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /admin/order/update [patch]
 func (cr *OrderHandler) UpdateOrder(c *gin.Context) {
-	id := c.Param("order_id")
-	orderId, err := strconv.Atoi(id)
+	var UpdateOrder helperStruct.UpdateOrder
+	err := c.BindJSON(&UpdateOrder)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
 			StatusCode: 400,
-			Message:    "bind faild",
+			Message:    "can't bind ",
 			Data:       nil,
 			Errors:     err.Error(),
 		})
-		return
 	}
-	err = cr.orderUseCase.UpdateOrder(orderId)
+	err = cr.orderUseCase.UpdateOrder(UpdateOrder)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.Response{
 			StatusCode: 400,

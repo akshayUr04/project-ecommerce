@@ -7,8 +7,6 @@ definitions:
         type: string
       house_number:
         type: string
-      id:
-        type: integer
       isdefault:
         type: boolean
       landmark:
@@ -127,6 +125,13 @@ definitions:
       sku:
         type: string
       storage:
+        type: integer
+    type: object
+  helperStruct.UpdateOrder:
+    properties:
+      orderId:
+        type: integer
+      orderStatusID:
         type: integer
     type: object
   helperStruct.UpdatePassword:
@@ -533,6 +538,33 @@ paths:
       summary: Admin Dashboard
       tags:
       - Admin
+  /admin/order/update:
+    patch:
+      consumes:
+      - application/json
+      description: Endpoint for updating orders by admin
+      operationId: update-order
+      parameters:
+      - description: 'Updated order '
+        in: body
+        name: updated_order
+        required: true
+        schema:
+          $ref: '#/definitions/helperStruct.UpdateOrder'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Admin can update a specific order status
+      tags:
+      - Order
   /admin/product-item/add/:
     post:
       consumes:

@@ -1,6 +1,7 @@
 package interfaces
 
 import (
+	"github.com/akshayur04/project-ecommerce/pkg/common/helperStruct"
 	"github.com/akshayur04/project-ecommerce/pkg/domain"
 )
 
@@ -10,5 +11,5 @@ type OrderUseCase interface {
 	ListOrder(userId, orderId int) (domain.Orders, error)
 	ListAllOrders(userId int) ([]domain.Orders, error)
 	ReturnOrder(userId, orderId int) (int, error)
-	UpdateOrder(orderId int) error
+	UpdateOrder(UpdateOrder helperStruct.UpdateOrder) error
 }
