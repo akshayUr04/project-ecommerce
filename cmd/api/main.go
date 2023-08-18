@@ -22,7 +22,7 @@ import (
 // @contact.url https://github.com/akshayUr04
 // @contact.email akshayur0404@gmail.com
 // @license.name MIT
-// @host http://akshayur.xyz/
+// @host akshayur.xyz
 // @license.url https://opensource.org/licenses/MIT
 // @BasePath /
 // @query.collection.format multi
